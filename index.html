@@ -59,9 +59,10 @@
         ]).then(([sortedDataText, luaDataText]) => {
             // sorted_data_with_keys.txt 처리
             sortedDataText.split('\n').forEach(line => {
-                const [key, ...rest] = line.trim().split(' ');
-                if (key && rest.length > 0) {
-                    sortedData[key] = rest.join(' ');
+                const trimmedLine = line.trim();
+                if (trimmedLine) {
+                    const key = trimmedLine.split(' ')[0];
+                    sortedData[key] = trimmedLine;
                 }
             });
 
@@ -104,8 +105,7 @@
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = filteredData.map(([key, value]) => {
-                const sortedDataValue = sortedData[key];
-                return `<p>${sortedDataValue ? `${key} ${sortedDataValue}` : `${key}: ${value}`}</p>`;
+                return `<p>${sortedData[key] || `${key}: ${value}`}</p>`;
             }).join('');
         }
     </script>
