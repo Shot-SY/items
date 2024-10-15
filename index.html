@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Filter</title>
+    <title>캐릭터 필터</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Malgun Gothic', sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
@@ -38,40 +38,42 @@
     </style>
 </head>
 <body>
-    <h1>Character Filter</h1>
+    <h1>캐릭터 필터</h1>
     <div class="character-grid" id="characterGrid"></div>
-    <button id="filterButton">Filter</button>
-    <div id="dataCount">Data Count: 0 / 0</div>
+    <button id="filterButton">필터 적용</button>
+    <div id="dataCount">물품 개수: 0 / 0</div>
     <div id="results"></div>
 
     <script>
-        const characters = [
-            "ervin", "gerd", "myle", "thomas", "shannon", "hwiri", "guse", "elenoa", "imel", "gawain",
-            "aida", "sarah", "aria", "muse", "rachel", "varius", "palman", "luthis",
-            "madram", "mitchell", "rookius", "volgade"
-        ];
+        const characters = {
+            "gawain": "가웨인", "gerd": "게르드", "guse": "구스", "rachel": "레이첼", "rookius": "루키어스",
+            "luthis": "루티스", "myle": "마일", "madram": "매드람", "mitchell": "미첼", "muse": "뮤즈",
+            "varius": "베리어스", "volgade": "볼게이드", "sarah": "사라", "shannon": "섀넌", "aria": "아리아",
+            "aida": "아이다", "imel": "아이멜", "ervin": "어빈", "elenoa": "엘레노아", "thomas": "토마스",
+            "palman": "팔만", "hwiri": "휘리"
+        };
 
         let sortedData = {};
         let luaData = {};
 
         // 캐릭터 체크박스와 스핀박스 생성
         const characterGrid = document.getElementById('characterGrid');
-        characters.forEach(char => {
+        Object.entries(characters).forEach(([engName, korName]) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
             
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            checkbox.id = char;
-            checkbox.addEventListener('change', () => toggleSpinbox(char));
+            checkbox.id = engName;
+            checkbox.addEventListener('change', () => toggleSpinbox(engName));
 
             const label = document.createElement('label');
-            label.htmlFor = char;
-            label.textContent = char;
+            label.htmlFor = engName;
+            label.textContent = korName;
 
             const spinbox = document.createElement('input');
             spinbox.type = 'number';
-            spinbox.id = `${char}-spin`;
+            spinbox.id = `${engName}-spin`;
             spinbox.min = 0;
             spinbox.max = 9;
             spinbox.value = 0;
@@ -116,13 +118,13 @@
             });
 
             updateDataCount(Object.keys(luaData).length, Object.keys(luaData).length);
-            console.log('Data loaded:', sortedData, luaData);
+            console.log('데이터 로드됨:', sortedData, luaData);
         }).catch(error => {
-            console.error('Error loading data:', error);
+            console.error('데이터 로딩 오류:', error);
         });
 
         function updateDataCount(filtered, total) {
-            document.getElementById('dataCount').textContent = `Data Count: ${filtered} / ${total}`;
+            document.getElementById('dataCount').textContent = `물품 개수: ${filtered} / ${total}`;
         }
 
         function filterData() {
@@ -145,11 +147,11 @@
                 charCount[name] = (charCount[name] || 0) + count;
             });
 
-            return characters.every(char => {
-                const checkbox = document.getElementById(char);
+            return Object.keys(characters).every(engName => {
+                const checkbox = document.getElementById(engName);
                 if (checkbox.checked) {
-                    const requiredCount = parseInt(document.getElementById(`${char}-spin`).value);
-                    const actualCount = charCount[char.slice(0, 2)] || 0;
+                    const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
+                    const actualCount = charCount[engName.slice(0, 2)] || 0;
                     return actualCount >= requiredCount;
                 }
                 return true;
