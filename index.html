@@ -25,7 +25,7 @@
             flex-direction: column;
             align-items: center;
         }
-        .character-image {
+        .character-img {
             width: 85px;
             height: 78px;
             object-fit: cover;
@@ -51,9 +51,9 @@
             width: 100px;
             margin-right: 10px;
         }
-        .character-name {
-            font-size: 12px;
-            margin-bottom: 5px;
+        .character-box input[type="number"] {
+            width: 40px;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -83,7 +83,7 @@
         let sortedData = {};
         let luaData = {};
 
-        // 캐릭터 이미지와 스핀박스 생성
+        // 캐릭터 체크박스와 스핀박스 생성
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
             const charBox = document.createElement('div');
@@ -92,12 +92,12 @@
             const img = document.createElement('img');
             img.src = `cropped_characters/${korName}.png`;
             img.alt = korName;
-            img.className = 'character-image';
-            img.addEventListener('click', () => toggleCharacter(engName));
+            img.className = 'character-img';
 
-            const nameSpan = document.createElement('span');
-            nameSpan.textContent = korName;
-            nameSpan.className = 'character-name';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = engName;
+            checkbox.addEventListener('change', () => toggleSpinbox(engName));
 
             const spinbox = document.createElement('input');
             spinbox.type = 'number';
@@ -106,20 +106,18 @@
             spinbox.max = 9;
             spinbox.value = 0;
             spinbox.disabled = true;
-            spinbox.style.width = '40px';
 
             charBox.appendChild(img);
-            charBox.appendChild(nameSpan);
+            charBox.appendChild(checkbox);
             charBox.appendChild(spinbox);
             characterGrid.appendChild(charBox);
         });
 
-        function toggleCharacter(char) {
+        function toggleSpinbox(char) {
+            const checkbox = document.getElementById(char);
             const spinbox = document.getElementById(`${char}-spin`);
-            spinbox.disabled = !spinbox.disabled;
-            spinbox.value = spinbox.disabled ? 0 : 1;
-            const charBox = spinbox.closest('.character-box');
-            charBox.style.backgroundColor = spinbox.disabled ? '' : '#e0e0e0';
+            spinbox.disabled = !checkbox.checked;
+            spinbox.value = checkbox.checked ? 1 : 0;
         }
 
         // 데이터 로드
@@ -179,9 +177,9 @@
             });
 
             return characters.every(([engName]) => {
-                const spinbox = document.getElementById(`${engName}-spin`);
-                if (!spinbox.disabled) {
-                    const requiredCount = parseInt(spinbox.value);
+                const checkbox = document.getElementById(engName);
+                if (checkbox.checked) {
+                    const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
                     const actualCount = charCount[engName.slice(0, 2)] || 0;
                     return actualCount >= requiredCount;
                 }
