@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Character Filter</title>
-    <script src="https://cdn.jsdelivr.net/npm/fengari-web@0.1.4/dist/fengari-web.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -91,25 +90,33 @@
         }
 
         // 데이터 로드
-        fetch('sorted_data_with_keys.txt')
-            .then(response => response.text())
-            .then(text => {
-                const lines = text.split('\n');
-                lines.forEach(line => {
-                    const [key, value] = line.split(' ', 2);
-                    if (key && value) {
-                        sortedData[key] = value;
-                    }
-                });
+        Promise.all([
+            fetch('sorted_data_with_keys.txt').then(response => response.text()),
+            fetch('data.lua').then(response => response.text())
+        ]).then(([sortedDataText, luaDataText]) => {
+            // sorted_data_with_keys.txt 처리
+            const sortedLines = sortedDataText.split('\n');
+            sortedLines.forEach(line => {
+                const [key, value] = line.split(' ', 2);
+                if (key && value) {
+                    sortedData[key] = value;
+                }
             });
 
-        fetch('data.lua')
-            .then(response => response.text())
-            .then(luaCode => {
-                fengari.load(luaCode)();
-                luaData = fengari.global.get('data');
-                updateDataCount(Object.keys(luaData).length, Object.keys(luaData).length);
+            // data.lua 처리 (Lua 형식의 테이블을 JavaScript 객체로 변환)
+            const luaTable = luaDataText.match(/\{([^}]+)\}/)[1];
+            const entries = luaTable.split(',').map(entry => entry.trim());
+            entries.forEach(entry => {
+                const [key, value] = entry.split('=').map(part => part.trim().replace(/['"]/g, ''));
+                if (key && value) {
+                    luaData[key] = value;
+                }
             });
+
+            updateDataCount(Object.keys(luaData).length, Object.keys(luaData).length);
+        }).catch(error => {
+            console.error('Error loading data:', error);
+        });
 
         function updateDataCount(filtered, total) {
             document.getElementById('dataCount').textContent = `Data Count: ${filtered} / ${total}`;
