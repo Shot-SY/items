@@ -41,7 +41,7 @@
         #results {
             border: 1px solid #ccc;
             padding: 10px;
-            height: 300px;
+            height: 600px;
             overflow-y: auto;
         }
         .price-filter {
@@ -54,6 +54,24 @@
         .character-box input[type="number"] {
             width: 40px;
             margin-top: 5px;
+        }
+        .result-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .result-item img {
+            width: 42px;
+            height: 39px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .result-info {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -202,9 +220,36 @@
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
 
             sortedKeys.forEach(key => {
-                const p = document.createElement('p');
-                p.textContent = sortedData[key] ? `${key} ${sortedData[key]}` : `${key}: ${filteredData[key]}`;
-                resultsDiv.appendChild(p);
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'result-info';
+                infoDiv.textContent = `${key} ${sortedData[key]}`;
+                resultItem.appendChild(infoDiv);
+
+                const chars = filteredData[key].match(/.{1,3}/g) || [];
+                chars.forEach(char => {
+                    const name = char.slice(0, 2);
+                    const count = parseInt(char[2]);
+                    const korName = characters.find(c => c[0].startsWith(name))?.[1];
+                    
+                    if (korName) {
+                        for (let i = 0; i < count; i++) {
+                            const img = document.createElement('img');
+                            img.src = `cropped_characters/${korName}.png`;
+                            img.alt = korName;
+                            img.title = korName;
+                            resultItem.appendChild(img);
+                        }
+                    } else {
+                        const span = document.createElement('span');
+                        span.textContent = `${name}${count} `;
+                        resultItem.appendChild(span);
+                    }
+                });
+
+                resultsDiv.appendChild(resultItem);
             });
         }
 
