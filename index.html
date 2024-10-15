@@ -52,6 +52,11 @@
             spinbox.value = checkbox.checked ? 1 : 0;
         }
 
+        // 키 정규화 함수
+        function normalizeKey(key) {
+            return key.replace(/\s+/g, '').toUpperCase();
+        }
+
         // 데이터 로드
         Promise.all([
             fetch('sorted_data_with_keys.txt').then(response => response.text()),
@@ -59,10 +64,9 @@
         ]).then(([sortedDataText, luaDataText]) => {
             // sorted_data_with_keys.txt 처리
             sortedDataText.split('\n').forEach(line => {
-                const trimmedLine = line.trim();
-                if (trimmedLine) {
-                    const key = trimmedLine.split(' ')[0];
-                    sortedData[key] = trimmedLine;
+                const [key, ...rest] = line.trim().split(' ');
+                if (key && rest.length) {
+                    sortedData[normalizeKey(key)] = rest.join(' ');
                 }
             });
 
@@ -71,7 +75,7 @@
             if (dataMatch) {
                 dataMatch[1].split(',').forEach(item => {
                     const [key, value] = item.trim().split('=').map(s => s.trim().replace(/['"]/g, ''));
-                    if (key && value) luaData[key] = value;
+                    if (key && value) luaData[normalizeKey(key)] = value;
                 });
             }
 
@@ -105,7 +109,8 @@
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = filteredData.map(([key, value]) => {
-                return `<p>${sortedData[key] || `${key}: ${value}`}</p>`;
+                const normalizedKey = normalizeKey(key);
+                return `<p>${sortedData[normalizedKey] || `${key} ${value}`}</p>`;
             }).join('');
         }
     </script>
