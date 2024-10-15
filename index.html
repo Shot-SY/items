@@ -5,50 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Character Filter</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .character-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .character-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #filterButton {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        #results {
-            border: 1px solid #ccc;
-            padding: 10px;
-            height: 300px;
-            overflow-y: auto;
-        }
-        #debugInfo {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-        }
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .character-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .character-box { border: 1px solid #ccc; padding: 10px; text-align: center; }
+        button { display: block; width: 100%; padding: 10px; margin-bottom: 10px; }
+        #results { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
     </style>
 </head>
 <body>
     <h1>Character Filter</h1>
-    <div class="character-grid" id="characterGrid"></div>
-    <button id="filterButton">Filter</button>
+    <div id="characterGrid" class="character-grid"></div>
+    <button onclick="filterData()">Filter</button>
     <div id="dataCount">Data Count: 0 / 0</div>
     <div id="results"></div>
-    <div id="debugInfo"></div>
 
     <script>
         const characters = [
@@ -60,43 +29,24 @@
         let sortedData = {};
         let luaData = {};
 
-        function debug(message) {
-            const debugInfo = document.getElementById('debugInfo');
-            debugInfo.innerHTML += message + '<br>';
-            console.log(message);
-        }
-
         // 캐릭터 체크박스와 스핀박스 생성
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(char => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
-            
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = char;
-            checkbox.addEventListener('change', () => toggleSpinbox(char));
-
-            const label = document.createElement('label');
-            label.htmlFor = char;
-            label.textContent = char;
-
-            const spinbox = document.createElement('input');
-            spinbox.type = 'number';
-            spinbox.id = `${char}-spin`;
-            spinbox.min = 0;
-            spinbox.max = 9;
-            spinbox.value = 0;
-            spinbox.disabled = true;
-
-            charBox.appendChild(checkbox);
-            charBox.appendChild(label);
-            charBox.appendChild(spinbox);
+            charBox.innerHTML = `
+                <label>
+                    <input type="checkbox" id="${char}-check" onchange="toggleSpinbox('${char}')">
+                    ${char}
+                </label>
+                <br>
+                <input type="number" id="${char}-spin" min="0" max="9" value="0" disabled>
+            `;
             characterGrid.appendChild(charBox);
         });
 
         function toggleSpinbox(char) {
-            const checkbox = document.getElementById(char);
+            const checkbox = document.getElementById(`${char}-check`);
             const spinbox = document.getElementById(`${char}-spin`);
             spinbox.disabled = !checkbox.checked;
             spinbox.value = checkbox.checked ? 1 : 0;
@@ -107,85 +57,54 @@
             fetch('sorted_data_with_keys.txt').then(response => response.text()),
             fetch('data.lua').then(response => response.text())
         ]).then(([sortedDataText, luaDataText]) => {
-            debug('Data loaded successfully');
-            
             // sorted_data_with_keys.txt 처리
-            const sortedLines = sortedDataText.split('\n');
-            sortedLines.forEach(line => {
-                const [key, value] = line.split(' ', 2);
-                if (key && value) {
-                    sortedData[key] = value;
-                }
+            sortedDataText.split('\n').forEach(line => {
+                const [key, value] = line.trim().split(' ', 2);
+                if (key && value) sortedData[key] = value;
             });
-            debug(`Sorted data entries: ${Object.keys(sortedData).length}`);
 
-            // data.lua 처리 (Lua 형식의 테이블을 JavaScript 객체로 변환)
-            const luaTable = luaDataText.match(/\{([^}]+)\}/);
-            if (luaTable) {
-                const entries = luaTable[1].split(',').map(entry => entry.trim());
-                entries.forEach(entry => {
-                    const [key, value] = entry.split('=').map(part => part.trim().replace(/['"]/g, ''));
-                    if (key && value) {
-                        luaData[key] = value;
-                    }
+            // data.lua 처리
+            const dataMatch = luaDataText.match(/data\s*=\s*{([^}]+)}/);
+            if (dataMatch) {
+                dataMatch[1].split(',').forEach(item => {
+                    const [key, value] = item.trim().split('=').map(s => s.trim().replace(/['"]/g, ''));
+                    if (key && value) luaData[key] = value;
                 });
             }
-            debug(`Lua data entries: ${Object.keys(luaData).length}`);
 
             updateDataCount(Object.keys(luaData).length, Object.keys(luaData).length);
-        }).catch(error => {
-            debug(`Error loading data: ${error}`);
-        });
+            console.log('Data loaded:', {sortedData, luaData});
+        }).catch(error => console.error('Error loading data:', error));
 
         function updateDataCount(filtered, total) {
             document.getElementById('dataCount').textContent = `Data Count: ${filtered} / ${total}`;
         }
 
         function filterData() {
-            debug('Filtering data...');
-            const filteredData = {};
-            for (const [key, value] of Object.entries(luaData)) {
-                const chars = value.match(/.{1,3}/g);
-                if (checkConditions(chars)) {
-                    filteredData[key] = value;
-                }
-            }
-            debug(`Filtered data entries: ${Object.keys(filteredData).length}`);
+            const filteredData = Object.entries(luaData).filter(([key, value]) => {
+                const chars = value.match(/.{1,3}/g) || [];
+                return characters.every(char => {
+                    const checkbox = document.getElementById(`${char}-check`);
+                    if (checkbox.checked) {
+                        const requiredCount = parseInt(document.getElementById(`${char}-spin`).value);
+                        const actualCount = chars.filter(c => c.startsWith(char.slice(0, 2)))
+                                                 .reduce((sum, c) => sum + parseInt(c[2]), 0);
+                        return actualCount >= requiredCount;
+                    }
+                    return true;
+                });
+            });
+
             displayResults(filteredData);
-            updateDataCount(Object.keys(filteredData).length, Object.keys(luaData).length);
-        }
-
-        function checkConditions(chars) {
-            const charCount = {};
-            chars.forEach(char => {
-                const name = char.slice(0, 2);
-                const count = parseInt(char[2]);
-                charCount[name] = (charCount[name] || 0) + count;
-            });
-
-            return characters.every(char => {
-                const checkbox = document.getElementById(char);
-                if (checkbox.checked) {
-                    const requiredCount = parseInt(document.getElementById(`${char}-spin`).value);
-                    const actualCount = charCount[char.slice(0, 2)] || 0;
-                    return actualCount >= requiredCount;
-                }
-                return true;
-            });
+            updateDataCount(filteredData.length, Object.keys(luaData).length);
         }
 
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '';
-            for (const key of Object.keys(filteredData)) {
-                const p = document.createElement('p');
-                p.textContent = sortedData[key] ? `${key} ${sortedData[key]}` : `${key}: ${filteredData[key]}`;
-                resultsDiv.appendChild(p);
-            }
+            resultsDiv.innerHTML = filteredData.map(([key, value]) => 
+                `<p>${key} ${sortedData[key] || value}</p>`
+            ).join('');
         }
-
-        document.getElementById('filterButton').addEventListener('click', filterData);
-        debug('Script loaded');
     </script>
 </body>
 </html>
