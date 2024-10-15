@@ -186,15 +186,15 @@
 
         function getPrice(key) {
             const priceMatch = sortedData[key]?.match(/=\s*([\d,]+)/);
-            return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : Infinity;
+            return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : -1;
         }
 
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
 
-            // 가격순으로 정렬
-            const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(a) - getPrice(b));
+            // 가격순으로 내림차순 정렬
+            const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
 
             sortedKeys.forEach(key => {
                 const p = document.createElement('p');
