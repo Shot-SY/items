@@ -59,8 +59,8 @@
         ]).then(([sortedDataText, luaDataText]) => {
             // sorted_data_with_keys.txt 처리
             sortedDataText.split('\n').forEach(line => {
-                const [key, value] = line.trim().split(' ', 2);
-                if (key && value) sortedData[key] = value;
+                const [key, ...rest] = line.trim().split(' ');
+                if (key && rest.length > 0) sortedData[key] = rest.join(' ');
             });
 
             // data.lua 처리
@@ -101,9 +101,11 @@
 
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = filteredData.map(([key, value]) => 
-                `<p>${key} ${sortedData[key] || value}</p>`
-            ).join('');
+            resultsDiv.innerHTML = filteredData.map(([key, value]) => {
+                // sortedData에서 해당 키의 값을 찾아 표시, 없으면 원래 값을 표시
+                const displayValue = sortedData[key] || value;
+                return `<p>${key} ${displayValue}</p>`;
+            }).join('');
         }
     </script>
 </body>
