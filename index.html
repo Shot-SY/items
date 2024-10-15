@@ -7,20 +7,29 @@
     <style>
         body {
             font-family: 'Malgun Gothic', sans-serif;
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
         .character-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 10px;
             margin-bottom: 20px;
         }
         .character-box {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 5px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .character-image {
+            width: 85px;
+            height: 78px;
+            object-fit: cover;
+            margin-bottom: 5px;
         }
         #filterButton {
             display: block;
@@ -41,6 +50,10 @@
         .price-filter input {
             width: 100px;
             margin-right: 10px;
+        }
+        .character-name {
+            font-size: 12px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -70,20 +83,21 @@
         let sortedData = {};
         let luaData = {};
 
-        // 캐릭터 체크박스와 스핀박스 생성
+        // 캐릭터 이미지와 스핀박스 생성
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
             
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = engName;
-            checkbox.addEventListener('change', () => toggleSpinbox(engName));
+            const img = document.createElement('img');
+            img.src = `cropped_characters/${korName}.png`;
+            img.alt = korName;
+            img.className = 'character-image';
+            img.addEventListener('click', () => toggleCharacter(engName));
 
-            const label = document.createElement('label');
-            label.htmlFor = engName;
-            label.textContent = korName;
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = korName;
+            nameSpan.className = 'character-name';
 
             const spinbox = document.createElement('input');
             spinbox.type = 'number';
@@ -94,18 +108,18 @@
             spinbox.disabled = true;
             spinbox.style.width = '40px';
 
-            charBox.appendChild(checkbox);
-            charBox.appendChild(label);
-            charBox.appendChild(document.createElement('br'));
+            charBox.appendChild(img);
+            charBox.appendChild(nameSpan);
             charBox.appendChild(spinbox);
             characterGrid.appendChild(charBox);
         });
 
-        function toggleSpinbox(char) {
-            const checkbox = document.getElementById(char);
+        function toggleCharacter(char) {
             const spinbox = document.getElementById(`${char}-spin`);
-            spinbox.disabled = !checkbox.checked;
-            spinbox.value = checkbox.checked ? 1 : 0;
+            spinbox.disabled = !spinbox.disabled;
+            spinbox.value = spinbox.disabled ? 0 : 1;
+            const charBox = spinbox.closest('.character-box');
+            charBox.style.backgroundColor = spinbox.disabled ? '' : '#e0e0e0';
         }
 
         // 데이터 로드
@@ -165,9 +179,9 @@
             });
 
             return characters.every(([engName]) => {
-                const checkbox = document.getElementById(engName);
-                if (checkbox.checked) {
-                    const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
+                const spinbox = document.getElementById(`${engName}-spin`);
+                if (!spinbox.disabled) {
+                    const requiredCount = parseInt(spinbox.value);
                     const actualCount = charCount[engName.slice(0, 2)] || 0;
                     return actualCount >= requiredCount;
                 }
