@@ -184,14 +184,23 @@
             return false;
         }
 
+        function getPrice(key) {
+            const priceMatch = sortedData[key]?.match(/=\s*([\d,]+)/);
+            return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : Infinity;
+        }
+
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
-            for (const key of Object.keys(filteredData)) {
+
+            // 가격순으로 정렬
+            const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(a) - getPrice(b));
+
+            sortedKeys.forEach(key => {
                 const p = document.createElement('p');
                 p.textContent = sortedData[key] ? `${key} ${sortedData[key]}` : `${key}: ${filteredData[key]}`;
                 resultsDiv.appendChild(p);
-            }
+            });
         }
 
         document.getElementById('filterButton').addEventListener('click', filterData);
