@@ -67,7 +67,6 @@
         <input type="number" id="maxPrice" min="0" value="1000000">
     </div>
     <button id="filterButton">필터 적용</button>
-    <div id="dataCount">물품 개수: 0 / 0</div>
     <div id="results"></div>
 
     <script>
@@ -143,15 +142,10 @@
                 }
             });
 
-            updateDataCount(Object.keys(luaData).length, Object.keys(luaData).length);
             console.log('데이터 로드됨:', sortedData, luaData);
         }).catch(error => {
             console.error('데이터 로딩 오류:', error);
         });
-
-        function updateDataCount(filtered, total) {
-            document.getElementById('dataCount').textContent = `물품 개수: ${filtered} / ${total}`;
-        }
 
         function filterData() {
             const filteredData = {};
@@ -165,7 +159,6 @@
                 }
             }
             displayResults(filteredData);
-            updateDataCount(Object.keys(filteredData).length, Object.keys(luaData).length);
         }
 
         function checkConditions(chars) {
