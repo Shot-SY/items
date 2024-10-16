@@ -69,9 +69,13 @@
             padding: 5px;
             border-bottom: 1px solid #eee;
         }
+        .result-item .characters {
+            margin-right: 10px;
+        }
         .result-item .price {
             font-weight: bold;
             color: #007bff;
+            margin-right: 5px;
         }
         .result-item .count {
             color: #28a745;
@@ -236,8 +240,8 @@
                     const [price, count] = priceAndCount.split('(').map(s => s.trim());
                     
                     resultItem.innerHTML = `
-                        ${characters} 
-                        <span class="price">${price}</span> 
+                        <span class="characters">${characters}</span>
+                        <span class="price">${price}</span>
                         <span class="count">(${count.replace(')', '')})</span>
                     `;
                 } else {
