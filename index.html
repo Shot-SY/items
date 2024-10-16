@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캐릭터 필터</title>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JYKV8F2XMM"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-37K1C9W7BK');
+      gtag('config', 'G-JYKV8F2XMM');
     </script>
     <style>
         body {
@@ -68,17 +68,33 @@
             margin-bottom: 10px;
             padding: 5px;
             border-bottom: 1px solid #eee;
+            cursor: pointer;
         }
-        .result-item .characters {
-            margin-right: 10px;
+        .result-item:hover {
+            background-color: #f0f0f0;
         }
         .result-item .price {
             font-weight: bold;
             color: #007bff;
-            margin-right: 5px;
         }
         .result-item .count {
             color: #28a745;
+        }
+        #copyMessage {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        #copyInstruction {
+            margin-bottom: 10px;
+            font-style: italic;
+            color: #666;
         }
     </style>
 </head>
@@ -92,7 +108,9 @@
         <input type="number" id="maxPrice" min="0" value="1000000">
     </div>
     <button id="filterButton">필터 적용</button>
+    <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
+    <div id="copyMessage">복사되었습니다!</div>
 
     <script>
         const characters = [
@@ -226,10 +244,10 @@
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
-        
+
             // 가격순으로 내림차순 정렬
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
-        
+
             sortedKeys.forEach(key => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'result-item';
@@ -244,12 +262,32 @@
                         <span class="price">${price}</span> 
                         <span class="count">(${count.trim()})</span>
                     `;
+
+                    resultItem.addEventListener('click', () => copyToClipboard(resultItem.textContent.trim()));
                 } else {
                     resultItem.textContent = filteredData[key];
                 }
                 
                 resultsDiv.appendChild(resultItem);
             });
+
+            document.getElementById('copyInstruction').style.display = 'block';
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopyMessage();
+            }, (err) => {
+                console.error('복사 실패: ', err);
+            });
+        }
+
+        function showCopyMessage() {
+            const message = document.getElementById('copyMessage');
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
         }
 
         function getSelectedCharacters() {
