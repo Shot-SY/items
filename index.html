@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캐릭터 필터</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JYKV8F2XMM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-JYKV8F2XMM');
+    </script>
     <style>
         body {
             font-family: 'Malgun Gothic', sans-serif;
@@ -120,7 +129,7 @@
         }
 
         function loadData() {
-            const timestamp = new Date().getTime(); // 현재 시간을 밀리초로 가져옴
+            const timestamp = new Date().getTime();
             Promise.all([
                 fetch(`sorted_data_with_keys.txt?t=${timestamp}`).then(response => response.text()),
                 fetch(`data.lua?t=${timestamp}`).then(response => response.text())
@@ -212,9 +221,25 @@
             });
         }
 
+        function getSelectedCharacters() {
+            return characters
+                .filter(([engName]) => document.getElementById(engName).checked)
+                .map(([engName]) => `${engName}:${document.getElementById(`${engName}-spin`).value}`)
+                .join(',');
+        }
+
         document.getElementById('filterButton').addEventListener('click', () => {
-            loadData(); // 필터 적용 버튼을 누를 때마다 데이터를 새로 로드
-            setTimeout(filterData, 500); // 데이터 로드 후 필터링 (약간의 지연 추가)
+            loadData();
+            setTimeout(() => {
+                filterData();
+                
+                // Google Analytics 이벤트 전송
+                gtag('event', 'apply_filter', {
+                    'min_price': document.getElementById('minPrice').value,
+                    'max_price': document.getElementById('maxPrice').value,
+                    'selected_characters': getSelectedCharacters()
+                });
+            }, 500);
         });
 
         // 초기 데이터 로드
