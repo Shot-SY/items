@@ -64,6 +64,18 @@
             width: 40px;
             margin-top: 5px;
         }
+        .result-item {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .result-item .price {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .result-item .count {
+            color: #28a745;
+        }
     </style>
 </head>
 <body>
@@ -215,9 +227,24 @@
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
 
             sortedKeys.forEach(key => {
-                const p = document.createElement('p');
-                p.textContent = sortedData[key] ? `${key} ${sortedData[key]}` : `${key}: ${filteredData[key]}`;
-                resultsDiv.appendChild(p);
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                
+                const sortedDataValue = sortedData[key];
+                if (sortedDataValue) {
+                    const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
+                    const [price, count] = priceAndCount.split('(').map(s => s.trim());
+                    
+                    resultItem.innerHTML = `
+                        ${characters} 
+                        <span class="price">${price}</span> 
+                        <span class="count">(${count.replace(')', '')})</span>
+                    `;
+                } else {
+                    resultItem.textContent = filteredData[key];
+                }
+                
+                resultsDiv.appendChild(resultItem);
             });
         }
 
