@@ -226,10 +226,10 @@
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
-
+        
             // 가격순으로 내림차순 정렬
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
-
+        
             sortedKeys.forEach(key => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'result-item';
@@ -237,12 +237,12 @@
                 const sortedDataValue = sortedData[key];
                 if (sortedDataValue) {
                     const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
-                    const [price, count] = priceAndCount.split('(').map(s => s.trim());
+                    const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
                     
                     resultItem.innerHTML = `
-                        <span class="characters">${characters}</span>
-                        <span class="price">${price}</span>
-                        <span class="count">(${count.replace(')', '')})</span>
+                        ${characters} 
+                        <span class="price">${price}</span> 
+                        <span class="count">(${count.trim()})</span>
                     `;
                 } else {
                     resultItem.textContent = filteredData[key];
