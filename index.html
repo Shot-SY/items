@@ -244,10 +244,10 @@
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
-
+        
             // 가격순으로 내림차순 정렬
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
-
+        
             sortedKeys.forEach(key => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'result-item';
@@ -257,31 +257,33 @@
                     const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
                     const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
                     
-                    resultItem.innerHTML = `
-                        ${characters} 
-                        <span class="price">${price}</span> 
-                        <span class="count">(${count.trim()})</span>
-                    `;
-
-                    resultItem.addEventListener('click', () => copyToClipboard(resultItem.textContent.trim()));
+                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
+        
+                    resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
                 }
                 
                 resultsDiv.appendChild(resultItem);
             });
-
+        
             document.getElementById('copyInstruction').style.display = 'block';
         }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
+        
+        function copyToClipboard(element) {
+            const characters = element.childNodes[0].textContent.trim();
+            const price = element.querySelector('.price').textContent.trim();
+            const count = element.querySelector('.count').textContent.trim();
+        
+            const formattedText = `${characters} ${price} ${count}`;
+        
+            navigator.clipboard.writeText(formattedText).then(() => {
                 showCopyMessage();
             }, (err) => {
                 console.error('복사 실패: ', err);
             });
         }
-
+        
         function showCopyMessage() {
             const message = document.getElementById('copyMessage');
             message.style.display = 'block';
