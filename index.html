@@ -50,7 +50,7 @@
         #results {
             border: 1px solid #ccc;
             padding: 10px;
-            height: 500px;
+            height: 400px;
             overflow-y: auto;
         }
         .price-filter {
@@ -65,10 +65,10 @@
             margin-top: 5px;
         }
         .result-item {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-bottom: 2px solid #ddd;
-            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
         }
         .result-item:hover {
             background-color: #f0f0f0;
@@ -95,27 +95,6 @@
             margin-bottom: 10px;
             font-style: italic;
             color: #666;
-        }
-        .item-images {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-            padding: 5px;
-            background-color: #fff;
-            border: 1px solid #eee;
-            border-radius: 5px;
-        }
-        .small-character-img {
-            width: 70px;
-            height: 65px;
-            object-fit: cover;
-        }
-        .character-text {
-            font-size: 12px;
-            background-color: #f0f0f0;
-            padding: 2px 5px;
-            border-radius: 3px;
         }
     </style>
 </head>
@@ -266,6 +245,7 @@
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
         
+            // 가격순으로 내림차순 정렬
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
         
             sortedKeys.forEach(key => {
@@ -278,28 +258,6 @@
                     const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
                     
                     resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
-        
-                    // 물품 내용 파싱 및 이미지 추가
-                    const itemsDiv = document.createElement('div');
-                    itemsDiv.className = 'item-images';
-                    const items = characters.split(' ');
-                    items.forEach(item => {
-                        const [name, count] = item.match(/([가-힣]+)(\d*)/).slice(1);
-                        const repeatCount = count ? parseInt(count) : 1;
-                        for (let i = 0; i < repeatCount; i++) {
-                            const imgOrText = document.createElement(characters.includes(name) ? 'img' : 'span');
-                            if (imgOrText.tagName === 'IMG') {
-                                imgOrText.src = `cropped_characters/${name}.png`;
-                                imgOrText.alt = name;
-                                imgOrText.className = 'small-character-img';
-                            } else {
-                                imgOrText.textContent = name;
-                                imgOrText.className = 'character-text';
-                            }
-                            itemsDiv.appendChild(imgOrText);
-                        }
-                    });
-                    resultItem.appendChild(itemsDiv);
         
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
