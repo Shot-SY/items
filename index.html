@@ -91,198 +91,268 @@
             border-radius: 5px;
             display: none;
         }
-        .small-character-img {
-            width: 30px;
-            height: 27px;
-            object-fit: cover;
-            margin-right: 2px;
-            vertical-align: middle;
+        #copyInstruction {
+            margin-bottom: 10px;
+            font-style: italic;
+            color: #666;
         }
-        .character-images {
+        .item-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
             margin-top: 5px;
         }
+        .small-character-img {
+            width: 30px;
+            height: 28px;
+            object-fit: cover;
+        }
         .character-text {
-            display: inline-block;
-            margin-right: 5px;
-            padding: 2px 5px;
+            font-size: 12px;
             background-color: #f0f0f0;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
     <h1>캐릭터 필터</h1>
+    <div class="character-grid" id="characterGrid"></div>
     <div class="price-filter">
         <label for="minPrice">최소 가격:</label>
-        <input type="number" id="minPrice" min="0">
+        <input type="number" id="minPrice" min="0" value="0">
         <label for="maxPrice">최대 가격:</label>
-        <input type="number" id="maxPrice" min="0">
+        <input type="number" id="maxPrice" min="0" value="1000000">
     </div>
-    <div class="character-grid" id="characterGrid"></div>
     <button id="filterButton">필터 적용</button>
+    <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
-    <p id="copyInstruction" style="display: none;">결과를 클릭하면 클립보드에 복사됩니다.</p>
-    <div id="copyMessage">복사되었습니다!</div>
+    <div id="copyMessage">복사되었습니다</div>
 
     <script>
-    const characters = ["어빈", "게르드", "마일", "토마스", "섀넌", "휘리", "가웨인", "아이다", "매드람", "미첼", "볼게이드", "어빈전무"];
-    const characterImages = {
-        "어빈": "cropped_characters/어빈.png",
-        "게르드": "cropped_characters/게르드.png",
-        "마일": "cropped_characters/마일.png",
-        "토마스": "cropped_characters/토마스.png",
-        "섀넌": "cropped_characters/섀넌.png",
-        "휘리": "cropped_characters/휘리.png",
-        "가웨인": "cropped_characters/가웨인.png",
-        "아이다": "cropped_characters/아이다.png",
-        "매드람": "cropped_characters/매드람.png",
-        "미첼": "cropped_characters/미첼.png",
-        "볼게이드": "cropped_characters/볼게이드.png"
-    };
+        const characters = [
+            ["ervin", "어빈"], ["gerd", "게르드"], ["myle", "마일"], ["thomas", "토마스"], 
+            ["shannon", "섀넌"], ["hwiri", "휘리"], ["guse", "구스"], ["elenoa", "엘레노아"], 
+            ["imel", "아이멜"], ["gawain", "가웨인"], ["aida", "아이다"], ["sarah", "사라"], 
+            ["aria", "아리아"], ["muse", "뮤즈"], ["rachel", "레이첼"], ["varius", "베리어스"], 
+            ["palman", "팔만"], ["luthis", "루티스"], ["madram", "매드람"], ["mitchell", "미첼"], 
+            ["rookius", "루키어스"], ["volgade", "볼게이드"]
+        ];
 
-    let sortedData = {};
+        let sortedData = {};
+        let luaData = {};
 
-    function createCharacterBoxes() {
-        const grid = document.getElementById('characterGrid');
-        characters.forEach(character => {
-            const box = document.createElement('div');
-            box.className = 'character-box';
-            const imgSrc = characterImages[character];
-            if (imgSrc) {
-                box.innerHTML = `
-                    <img src="${imgSrc}" alt="${character}" class="character-img">
-                    <label>
-                        <input type="checkbox" name="character" value="${character}"> ${character}
-                    </label>
-                    <input type="number" min="0" value="0" class="character-count">
-                `;
-            } else {
-                box.innerHTML = `
-                    <div style="width: 85px; height: 78px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
-                        ${character}
-                    </div>
-                    <label>
-                        <input type="checkbox" name="character" value="${character}"> ${character}
-                    </label>
-                    <input type="number" min="0" value="0" class="character-count">
-                `;
-            }
-            grid.appendChild(box);
-        });
-    }
-
-    function applyFilter() {
-        const selectedCharacters = Array.from(document.querySelectorAll('input[name="character"]:checked'))
-            .map(checkbox => {
-                const count = checkbox.parentNode.nextElementSibling.value;
-                return count > 0 ? `${checkbox.value}${count}` : checkbox.value;
-            })
-            .filter(char => char !== '');
-
-        const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
-        const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
-
-        const filteredData = Object.fromEntries(
-            Object.entries(sortedData).filter(([key, value]) => {
-                const [characters, priceAndCount] = value.split('=').map(s => s.trim());
-                const price = parseFloat(priceAndCount.split(' ')[0]);
-                return price >= minPrice && price <= maxPrice && 
-                       selectedCharacters.every(char => characters.includes(char.replace(/\d+$/, '')));
-            })
-        );
-
-        displayResults(filteredData);
-    }
-
-    function displayResults(filteredData) {
-        const resultsDiv = document.getElementById('results');
-        resultsDiv.innerHTML = '';
-
-        const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
-
-        sortedKeys.forEach(key => {
-            const resultItem = document.createElement('div');
-            resultItem.className = 'result-item';
+        // 캐릭터 체크박스와 스핀박스 생성
+        const characterGrid = document.getElementById('characterGrid');
+        characters.forEach(([engName, korName]) => {
+            const charBox = document.createElement('div');
+            charBox.className = 'character-box';
             
-            const sortedDataValue = sortedData[key];
-            if (sortedDataValue) {
-                const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
-                const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
-                
-                resultItem.innerHTML = `
-                    <div>${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span></div>
-                    <div class="character-images">
-                        ${parseCharacters(characters)}
-                    </div>
-                `;
+            const img = document.createElement('img');
+            img.src = `cropped_characters/${korName}.png`;
+            img.alt = korName;
+            img.className = 'character-img';
 
-                resultItem.addEventListener('click', () => copyToClipboard(resultItem));
-            } else {
-                resultItem.textContent = filteredData[key];
-            }
-            
-            resultsDiv.appendChild(resultItem);
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = engName;
+            checkbox.addEventListener('change', () => toggleSpinbox(engName));
+
+            const spinbox = document.createElement('input');
+            spinbox.type = 'number';
+            spinbox.id = `${engName}-spin`;
+            spinbox.min = 0;
+            spinbox.max = 9;
+            spinbox.value = 0;
+            spinbox.disabled = true;
+
+            charBox.appendChild(img);
+            charBox.appendChild(checkbox);
+            charBox.appendChild(spinbox);
+            characterGrid.appendChild(charBox);
         });
 
-        document.getElementById('copyInstruction').style.display = 'block';
-    }
+        function toggleSpinbox(char) {
+            const checkbox = document.getElementById(char);
+            const spinbox = document.getElementById(`${char}-spin`);
+            spinbox.disabled = !checkbox.checked;
+            spinbox.value = checkbox.checked ? 1 : 0;
+        }
 
-    function parseCharacters(charactersString) {
-        const characterList = charactersString.split(' ');
-        return characterList.map(char => {
-            const match = char.match(/([가-힣]+)(\d*)/);
-            if (match) {
-                const [, name, count] = match;
-                const imgSrc = characterImages[name];
-                const quantity = count ? parseInt(count) : 1;
-                if (imgSrc) {
-                    return `<img src="${imgSrc}" alt="${name}" title="${name}" class="small-character-img" />`.repeat(quantity);
-                } else {
-                    return `<span class="character-text">${name}${count}</span>`;
+        function loadData() {
+            const timestamp = new Date().getTime();
+            Promise.all([
+                fetch(`sorted_data_with_keys.txt?t=${timestamp}`).then(response => response.text()),
+                fetch(`data.lua?t=${timestamp}`).then(response => response.text())
+            ]).then(([sortedDataText, luaDataText]) => {
+                // sorted_data_with_keys.txt 처리
+                sortedData = {};
+                const sortedLines = sortedDataText.split('\n');
+                sortedLines.forEach(line => {
+                    const [key, ...rest] = line.split(' ');
+                    if (key && rest.length > 0) {
+                        sortedData[key] = rest.join(' ');
+                    }
+                });
+
+                // data.lua 처리 (간단한 파싱)
+                luaData = {};
+                const dataLines = luaDataText.split('\n');
+                dataLines.forEach(line => {
+                    const match = line.match(/\["(.+)"\]\s*=\s*"(.+)"/);
+                    if (match) {
+                        luaData[match[1]] = match[2];
+                    }
+                });
+
+                console.log('데이터 로드됨:', sortedData, luaData);
+            }).catch(error => {
+                console.error('데이터 로딩 오류:', error);
+            });
+        }
+
+        function filterData() {
+            const filteredData = {};
+            const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
+
+            for (const [key, value] of Object.entries(luaData)) {
+                const chars = value.match(/.{1,3}/g) || [];
+                if (checkConditions(chars) && checkPrice(key, minPrice, maxPrice)) {
+                    filteredData[key] = value;
                 }
             }
-            return '';
-        }).join('');
-    }
-
-    function getPrice(key) {
-        const value = sortedData[key];
-        if (value) {
-            const priceAndCount = value.split('=')[1].trim();
-            return parseFloat(priceAndCount.split(' ')[0]);
+            displayResults(filteredData);
         }
-        return 0;
-    }
 
-    function copyToClipboard(element) {
-        const textContent = element.querySelector('div').textContent.trim();
-        navigator.clipboard.writeText(textContent).then(() => {
-            showCopyMessage();
-        }, (err) => {
-            console.error('복사 실패: ', err);
+        function checkConditions(chars) {
+            const charCount = {};
+            chars.forEach(char => {
+                const name = char.slice(0, 2);
+                const count = parseInt(char[2]);
+                charCount[name] = (charCount[name] || 0) + count;
+            });
+
+            return characters.every(([engName]) => {
+                const checkbox = document.getElementById(engName);
+                if (checkbox.checked) {
+                    const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
+                    const actualCount = charCount[engName.slice(0, 2)] || 0;
+                    return actualCount >= requiredCount;
+                }
+                return true;
+            });
+        }
+
+        function checkPrice(key, minPrice, maxPrice) {
+            const priceMatch = sortedData[key]?.match(/=\s*([\d,]+)/);
+            if (priceMatch) {
+                const price = parseInt(priceMatch[1].replace(/,/g, ''));
+                return price >= minPrice && price <= maxPrice;
+            }
+            return false;
+        }
+
+        function getPrice(key) {
+            const priceMatch = sortedData[key]?.match(/=\s*([\d,]+)/);
+            return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : -1;
+        }
+
+        function displayResults(filteredData) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+        
+            const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
+        
+            sortedKeys.forEach(key => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                
+                const sortedDataValue = sortedData[key];
+                if (sortedDataValue) {
+                    const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
+                    const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
+                    
+                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
+        
+                    // 물품 내용 파싱 및 이미지 추가
+                    const itemsDiv = document.createElement('div');
+                    itemsDiv.className = 'item-images';
+                    const items = characters.split(' ');
+                    items.forEach(item => {
+                        const [name, count] = item.match(/([가-힣]+)(\d*)/).slice(1);
+                        const repeatCount = count ? parseInt(count) : 1;
+                        for (let i = 0; i < repeatCount; i++) {
+                            const imgOrText = document.createElement(characters.includes(name) ? 'img' : 'span');
+                            if (imgOrText.tagName === 'IMG') {
+                                imgOrText.src = `cropped_characters/${name}.png`;
+                                imgOrText.alt = name;
+                                imgOrText.className = 'small-character-img';
+                            } else {
+                                imgOrText.textContent = name;
+                                imgOrText.className = 'character-text';
+                            }
+                            itemsDiv.appendChild(imgOrText);
+                        }
+                    });
+                    resultItem.appendChild(itemsDiv);
+        
+                    resultItem.addEventListener('click', () => copyToClipboard(resultItem));
+                } else {
+                    resultItem.textContent = filteredData[key];
+                }
+                
+                resultsDiv.appendChild(resultItem);
+            });
+        
+            document.getElementById('copyInstruction').style.display = 'block';
+        }
+        
+        function copyToClipboard(element) {
+            const characters = element.childNodes[0].textContent.trim();
+            const price = element.querySelector('.price').textContent.trim();
+            const count = element.querySelector('.count').textContent.trim();
+        
+            const formattedText = `${characters} ${price} ${count}`;
+        
+            navigator.clipboard.writeText(formattedText).then(() => {
+                showCopyMessage();
+            }, (err) => {
+                console.error('복사 실패: ', err);
+            });
+        }
+        
+        function showCopyMessage() {
+            const message = document.getElementById('copyMessage');
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+
+        function getSelectedCharacters() {
+            return characters
+                .filter(([engName]) => document.getElementById(engName).checked)
+                .map(([engName]) => `${engName}:${document.getElementById(`${engName}-spin`).value}`)
+                .join(',');
+        }
+
+        document.getElementById('filterButton').addEventListener('click', () => {
+            loadData();
+            setTimeout(() => {
+                filterData();
+                
+                // Google Analytics 이벤트 전송
+                gtag('event', 'apply_filter', {
+                    'min_price': document.getElementById('minPrice').value,
+                    'max_price': document.getElementById('maxPrice').value,
+                    'selected_characters': getSelectedCharacters()
+                });
+            }, 500);
         });
-    }
 
-    function showCopyMessage() {
-        const message = document.getElementById('copyMessage');
-        message.style.display = 'block';
-        setTimeout(() => {
-            message.style.display = 'none';
-        }, 2000);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        createCharacterBoxes();
-        document.getElementById('filterButton').addEventListener('click', applyFilter);
-
-        fetch('sorted_data.json')
-            .then(response => response.json())
-            .then(data => {
-                sortedData = data;
-            })
-            .catch(error => console.error('Error:', error));
-    });
+        // 초기 데이터 로드
+        loadData();
     </script>
 </body>
 </html>
