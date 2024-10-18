@@ -22,8 +22,8 @@
         }
         .character-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
             margin-bottom: 20px;
         }
         .character-box {
@@ -33,100 +33,50 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
             cursor: pointer;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            border-radius: 8px;
-        }
-        .character-box:hover {
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            transition: border 0.3s, transform 0.3s;
+            position: relative;
         }
         .character-box.selected {
-            border-color: #007bff;
-        }
-        .character-box.selected::after {
-            content: '✔';
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background-color: rgba(0, 123, 255, 0.8);
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
+            border: 2px solid #007BFF;
+            transform: scale(1.05);
         }
         .character-img {
-            width: 80px;
-            height: 90px;
+            width: 74px;
+            height: 85px;
             object-fit: cover;
             margin-bottom: 5px;
-            border-radius: 5px;
         }
         .character-name {
-            font-size: 14px;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .spinbox-container {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .spinbox-container input[type="number"] {
-            width: 50px;
-            padding: 3px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            font-size: 12px;
         }
         #filterButton {
             display: block;
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             margin: 20px 0;
             font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #filterButton:hover {
-            background-color: #0056b3;
         }
         #results {
             border: 1px solid #ccc;
             padding: 10px;
             height: 800px;
             overflow-y: auto;
-            border-radius: 5px;
-            background-color: #fafafa;
         }
         .price-filter {
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .price-filter label {
-            font-weight: bold;
         }
         .price-filter input {
-            width: 120px;
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            width: 100px;
+            margin-right: 10px;
         }
         .result-item {
             margin-bottom: 15px;
             padding: 10px;
             border-bottom: 2px solid #ddd;
             background-color: #f9f9f9;
-            border-radius: 5px;
+            cursor: pointer;
             transition: background-color 0.3s;
         }
         .result-item:hover {
@@ -149,13 +99,11 @@
             padding: 10px 20px;
             border-radius: 5px;
             display: none;
-            z-index: 1000;
         }
         #copyInstruction {
             margin-bottom: 10px;
             font-style: italic;
             color: #666;
-            display: none;
         }
         .item-images {
             display: flex;
@@ -171,7 +119,6 @@
             width: 65px;
             height: 70px;
             object-fit: cover;
-            border-radius: 4px;
         }
         .character-text {
             font-size: 12px;
@@ -207,16 +154,14 @@
 
         let sortedData = {};
         let luaData = {};
+        const selectedCharacters = new Set();
 
-        // 캐릭터 선택 상태 저장
-        const selectedCharacters = {};
-
-        // 캐릭터 박스 및 스핀박스 생성
+        // 캐릭터 박스 생성 및 이벤트 리스너 추가
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
-            charBox.dataset.engName = engName; // 데이터 속성 추가
+            charBox.dataset.engName = engName;
 
             const img = document.createElement('img');
             img.src = `cropped_characters/${korName}.png`;
@@ -227,40 +172,21 @@
             nameSpan.className = 'character-name';
             nameSpan.textContent = korName;
 
-            const spinbox = document.createElement('input');
-            spinbox.type = 'number';
-            spinbox.id = `${engName}-spin`;
-            spinbox.min = 0;
-            spinbox.max = 9;
-            spinbox.value = 0;
-            spinbox.disabled = true;
-
-            // 스핀박스를 감싸는 컨테이너
-            const spinboxContainer = document.createElement('div');
-            spinboxContainer.className = 'spinbox-container';
-            spinboxContainer.appendChild(document.createTextNode('개수:'));
-            spinboxContainer.appendChild(spinbox);
-
             charBox.appendChild(img);
             charBox.appendChild(nameSpan);
-            charBox.appendChild(spinboxContainer);
             characterGrid.appendChild(charBox);
 
-            // 클릭 이벤트 리스너 추가
-            charBox.addEventListener('click', () => toggleCharacterSelection(charBox, engName));
+            // 클릭 시 선택 토글링
+            charBox.addEventListener('click', () => {
+                if (selectedCharacters.has(engName)) {
+                    selectedCharacters.delete(engName);
+                    charBox.classList.remove('selected');
+                } else {
+                    selectedCharacters.add(engName);
+                    charBox.classList.add('selected');
+                }
+            });
         });
-
-        function toggleCharacterSelection(charBox, engName) {
-            const isSelected = charBox.classList.toggle('selected');
-            selectedCharacters[engName] = isSelected;
-            const spinbox = document.getElementById(`${engName}-spin`);
-            spinbox.disabled = !isSelected;
-            if (isSelected && spinbox.value === "0") {
-                spinbox.value = 1;
-            } else if (!isSelected) {
-                spinbox.value = 0;
-            }
-        }
 
         function loadData() {
             const timestamp = new Date().getTime();
@@ -299,6 +225,11 @@
             const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
             const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
 
+            if (selectedCharacters.size === 0) {
+                alert("적어도 한 개 이상의 캐릭터를 선택해주세요.");
+                return;
+            }
+
             for (const [key, value] of Object.entries(luaData)) {
                 const chars = value.match(/.{1,3}/g) || [];
                 if (checkConditions(chars) && checkPrice(key, minPrice, maxPrice)) {
@@ -316,15 +247,14 @@
                 charCount[name] = (charCount[name] || 0) + count;
             });
 
-            return characters.every(([engName, korName]) => {
-                const shortName = engName.slice(0, 2);
-                if (selectedCharacters[engName]) {
-                    const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value) || 0;
-                    const actualCount = charCount[shortName] || 0;
-                    return actualCount >= requiredCount;
+            for (const engName of selectedCharacters) {
+                const requiredCount = 1; // 선택 시 최소 1개 이상
+                const actualCount = charCount[engName.slice(0, 2)] || 0;
+                if (actualCount < requiredCount) {
+                    return false;
                 }
-                return true;
-            });
+            }
+            return true;
         }
 
         function checkPrice(key, minPrice, maxPrice) {
@@ -355,10 +285,14 @@
                 if (sortedDataValue) {
                     const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
                     const priceMatch = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
-                    const price = priceMatch ? priceMatch[1] : '0';
-                    const count = priceMatch ? priceMatch[2] : '0';
-
-                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
+                    let price = '';
+                    let count = '';
+                    if (priceMatch) {
+                        price = priceMatch[1];
+                        count = priceMatch[2].trim();
+                    }
+                    
+                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count})</span>`;
 
                     // 물품 내용 파싱 및 이미지 추가
                     const itemsDiv = document.createElement('div');
@@ -366,23 +300,20 @@
                     const items = characters.split(' ');
                     items.forEach(item => {
                         const match = item.match(/([가-힣]+)(\d*)/);
-                        if (!match) return;
-                        const [ , name, countStr ] = match;
-                        const repeatCount = countStr ? parseInt(countStr) : 1;
-                        for (let i = 0; i < repeatCount; i++) {
-                            // 해당 캐릭터가 존재하는지 확인
-                            const charExists = characters.some(([_, korName]) => korName === name);
-                            if (charExists) {
-                                const img = document.createElement('img');
-                                img.src = `cropped_characters/${name}.png`;
-                                img.alt = name;
-                                img.className = 'small-character-img';
-                                itemsDiv.appendChild(img);
-                            } else {
-                                const span = document.createElement('span');
-                                span.textContent = name;
-                                span.className = 'character-text';
-                                itemsDiv.appendChild(span);
+                        if (match) {
+                            const name = match[1];
+                            const count = match[2] ? parseInt(match[2]) : 1;
+                            for (let i = 0; i < count; i++) {
+                                const imgOrText = document.createElement(characters.includes(name) ? 'img' : 'span');
+                                if (characters.includes(name)) {
+                                    imgOrText.src = `cropped_characters/${name}.png`;
+                                    imgOrText.alt = name;
+                                    imgOrText.className = 'small-character-img';
+                                } else {
+                                    imgOrText.textContent = name;
+                                    imgOrText.className = 'character-text';
+                                }
+                                itemsDiv.appendChild(imgOrText);
                             }
                         }
                     });
@@ -422,10 +353,7 @@
         }
 
         function getSelectedCharacters() {
-            return characters
-                .filter(([engName]) => selectedCharacters[engName])
-                .map(([engName]) => `${engName}:${document.getElementById(`${engName}-spin`).value}`)
-                .join(',');
+            return Array.from(selectedCharacters).map(engName => `${engName}:1`).join(',');
         }
 
         document.getElementById('filterButton').addEventListener('click', () => {
