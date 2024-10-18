@@ -279,6 +279,29 @@
                     
                     resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
         
+        function displayResults(filteredData) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+        
+            const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
+        
+            sortedKeys.forEach(key => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                
+                const sortedDataValue = sortedData[key];
+                if (sortedDataValue) {
+                    const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
+                    const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
+                    
+                    resultItem.innerHTML = `
+                        <div class="item-info">
+                            <span class="item-characters">${characters}</span>
+                            <span class="price">${price}</span>
+                            <span class="count">(${count.trim()})</span>
+                        </div>
+                    `;
+        
                     // 물품 내용 파싱 및 이미지 추가
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
