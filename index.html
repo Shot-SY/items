@@ -40,6 +40,10 @@
             object-fit: cover;
             margin-bottom: 5px;
         }
+        .character-name {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
         #filterButton {
             display: block;
             width: 100%;
@@ -157,6 +161,10 @@
             img.alt = korName;
             img.className = 'character-img';
 
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'character-name';
+            nameSpan.textContent = korName;
+
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.id = engName;
@@ -171,6 +179,7 @@
             spinbox.disabled = true;
 
             charBox.appendChild(img);
+            charBox.appendChild(nameSpan);
             charBox.appendChild(checkbox);
             charBox.appendChild(spinbox);
             characterGrid.appendChild(charBox);
