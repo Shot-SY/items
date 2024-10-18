@@ -33,15 +33,18 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .character-box.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            border-color: #007bff;
         }
         .character-img {
             width: 74px;
             height: 85px;
             object-fit: cover;
-            margin-bottom: 5px;
-        }
-        .character-name {
-            font-size: 12px;
             margin-bottom: 5px;
         }
         #filterButton {
@@ -54,7 +57,7 @@
         #results {
             border: 1px solid #ccc;
             padding: 10px;
-            height: 800px;
+            height: 500px;
             overflow-y: auto;
         }
         .price-filter {
@@ -63,10 +66,6 @@
         .price-filter input {
             width: 100px;
             margin-right: 10px;
-        }
-        .character-box input[type="number"] {
-            width: 40px;
-            margin-top: 5px;
         }
         .result-item {
             margin-bottom: 15px;
@@ -149,47 +148,34 @@
 
         let sortedData = {};
         let luaData = {};
+        let selectedCharacters = new Set();
 
-        // 캐릭터 체크박스와 스핀박스 생성
+        // 캐릭터 박스 생성
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
+            charBox.dataset.engName = engName;
             
             const img = document.createElement('img');
             img.src = `cropped_characters/${korName}.png`;
             img.alt = korName;
             img.className = 'character-img';
 
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'character-name';
-            nameSpan.textContent = korName;
-
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = engName;
-            checkbox.addEventListener('change', () => toggleSpinbox(engName));
-
-            const spinbox = document.createElement('input');
-            spinbox.type = 'number';
-            spinbox.id = `${engName}-spin`;
-            spinbox.min = 0;
-            spinbox.max = 9;
-            spinbox.value = 0;
-            spinbox.disabled = true;
-
             charBox.appendChild(img);
-            charBox.appendChild(nameSpan);
-            charBox.appendChild(checkbox);
-            charBox.appendChild(spinbox);
             characterGrid.appendChild(charBox);
+
+            charBox.addEventListener('click', () => toggleCharacterSelection(charBox, engName));
         });
 
-        function toggleSpinbox(char) {
-            const checkbox = document.getElementById(char);
-            const spinbox = document.getElementById(`${char}-spin`);
-            spinbox.disabled = !checkbox.checked;
-            spinbox.value = checkbox.checked ? 1 : 0;
+        function toggleCharacterSelection(charBox, engName) {
+            if (selectedCharacters.has(engName)) {
+                selectedCharacters.delete(engName);
+                charBox.classList.remove('selected');
+            } else {
+                selectedCharacters.add(engName);
+                charBox.classList.add('selected');
+            }
         }
 
         function loadData() {
@@ -246,14 +232,10 @@
                 charCount[name] = (charCount[name] || 0) + count;
             });
 
-            return characters.every(([engName]) => {
-                const checkbox = document.getElementById(engName);
-                if (checkbox.checked) {
-                    const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
-                    const actualCount = charCount[engName.slice(0, 2)] || 0;
-                    return actualCount >= requiredCount;
-                }
-                return true;
+            return Array.from(selectedCharacters).every(engName => {
+                const requiredCount = 1; // 선택된 경우 최소 1개 이상이어야 함
+                const actualCount = charCount[engName.slice(0, 2)] || 0;
+                return actualCount >= requiredCount;
             });
         }
 
@@ -344,10 +326,7 @@
         }
 
         function getSelectedCharacters() {
-            return characters
-                .filter(([engName]) => document.getElementById(engName).checked)
-                .map(([engName]) => `${engName}:${document.getElementById(`${engName}-spin`).value}`)
-                .join(',');
+            return Array.from(selectedCharacters).join(',');
         }
 
         document.getElementById('filterButton').addEventListener('click', () => {
