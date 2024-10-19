@@ -14,265 +14,112 @@
       gtag('config', 'G-37K1C9W7BK');
     </script>
     <style>
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #50e3c2;
-            --background-color: #f5f7fa;
-            --text-color: #333;
-            --border-color: #ddd;
-            --hover-color: #e0f7fa;
-            --button-bg: #4a90e2;
-            --button-hover-bg: #357ab8;
-            --input-bg: #fff;
-            --input-border: #ccc;
-            --box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-        }
-
         body {
             font-family: 'Malgun Gothic', sans-serif;
             max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
-            background-color: var(--background-color);
-            color: var(--text-color);
         }
-
-        h1 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 30px;
-        }
-
         .character-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
         }
-
         .character-box {
-            background-color: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
+            border: 1px solid #ddd;
+            padding: 5px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: var(--box-shadow);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .character-box:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--box-shadow), 0px 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
         .character-img {
-            width: 80px;
-            height: 90px;
+            width: 74px;
+            height: 85px;
             object-fit: cover;
-            margin-bottom: 10px;
-            border-radius: 5px;
+            margin-bottom: 5px;
         }
-
         .character-name {
-            font-size: 14px;
-            margin-bottom: 10px;
-            font-weight: 500;
-            color: var(--text-color);
+            font-size: 12px;
+            margin-bottom: 5px;
         }
-
-        .character-box input[type="checkbox"] {
-            transform: scale(1.2);
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-
-        .character-box input[type="number"] {
-            width: 50px;
-            padding: 5px;
-            border: 1px solid var(--input-border);
-            border-radius: 4px;
-            text-align: center;
-            background-color: var(--input-bg);
-            transition: border-color 0.3s;
-        }
-
-        .character-box input[type="number"]:disabled {
-            background-color: #e9ecef;
-        }
-
         #filterButton {
             display: block;
             width: 100%;
-            padding: 12px;
-            margin: 25px 0;
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            background-color: var(--button-bg);
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: var(--box-shadow);
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 16px;
         }
-
-        #filterButton:hover {
-            background-color: var(--button-hover-bg);
-            transform: translateY(-2px);
-        }
-
-        #filterButton:active {
-            transform: translateY(0);
-            box-shadow: var(--box-shadow);
-        }
-
         #results {
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 8px;
+            border: 1px solid #ccc;
+            padding: 10px;
             height: 800px;
             overflow-y: auto;
-            background-color: #fff;
-            box-shadow: var(--box-shadow);
         }
-
         .price-filter {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
             margin-bottom: 20px;
         }
-
-        .price-filter label {
-            font-weight: 500;
-        }
-
         .price-filter input {
-            width: 120px;
-            padding: 8px;
-            border: 1px solid var(--input-border);
-            border-radius: 4px;
-            background-color: var(--input-bg);
-            transition: border-color 0.3s;
+            width: 100px;
+            margin-right: 10px;
         }
-
-        .price-filter input:focus {
-            border-color: var(--primary-color);
-            outline: none;
+        .character-box input[type="number"] {
+            width: 40px;
+            margin-top: 5px;
         }
-
+        .result-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .result-item:hover {
+            background-color: #f0f0f0;
+        }
+        .result-item .price {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .result-item .count {
+            color: #28a745;
+        }
         #copyMessage {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 25px;
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
             display: none;
-            font-size: 14px;
-            z-index: 1000;
-            box-shadow: var(--box-shadow);
         }
-
         #copyInstruction {
-            text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-style: italic;
             color: #666;
         }
-
         .item-images {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 5px;
             margin-top: 10px;
-            padding: 6px;
-            background-color: #fafafa;
-            border: 1px solid #eee;
-            border-radius: 6px;
-        }
-
-        .small-character-img {
-            width: 60px;
-            height: 65px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .character-text {
-            font-size: 13px;
-            background-color: #e0f7fa;
-            padding: 3px 6px;
-            border-radius: 4px;
-            color: #00796b;
-            display: inline-block;
-        }
-
-        .result-item {
-            margin-bottom: 20px;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
+            padding: 5px;
             background-color: #fff;
-            border-radius: 6px;
-            box-shadow: var(--box-shadow);
-            transition: background-color 0.3s;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
+            border: 1px solid #eee;
+            border-radius: 5px;
         }
-
-        .result-item:hover {
-            background-color: var(--hover-color);
+        .small-character-img {
+            width: 65px;
+            height: 70px;
+            object-fit: cover;
         }
-
-        .result-item .main-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .result-item .main-info span {
-            margin-right: 10px;
-        }
-
-        .result-item .price {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .result-item .count {
-            color: var(--secondary-color);
-        }
-
-        @media (max-width: 600px) {
-            .price-filter {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .price-filter input {
-                width: 100%;
-            }
-
-            .character-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            }
-
-            .character-img {
-                width: 70px;
-                height: 80px;
-            }
-
-            .small-character-img {
-                width: 50px;
-                height: 55px;
-            }
+        .character-text {
+            font-size: 12px;
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
         }
     </style>
 </head>
@@ -399,14 +246,11 @@
                 charCount[name] = (charCount[name] || 0) + count;
             });
 
-            console.log('charCount:', charCount);
-
-            return characters.every(([engName, korName]) => {
+            return characters.every(([engName]) => {
                 const checkbox = document.getElementById(engName);
                 if (checkbox.checked) {
                     const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
                     const actualCount = charCount[engName.slice(0, 2)] || 0;
-                    console.log(`Checking ${engName}: required=${requiredCount}, actual=${actualCount}`);
                     return actualCount >= requiredCount;
                 }
                 return true;
@@ -427,21 +271,6 @@
             return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : -1;
         }
 
-        function createImageElement(name) {
-            const img = document.createElement('img');
-            img.src = `cropped_characters/${name}.png`;
-            img.alt = name;
-            img.className = 'small-character-img';
-            img.onerror = function() {
-                this.style.display = 'none';
-                const textSpan = document.createElement('span');
-                textSpan.textContent = name;
-                textSpan.className = 'character-text';
-                this.parentNode.appendChild(textSpan);
-            };
-            return img;
-        }
-
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
@@ -454,55 +283,33 @@
                 
                 const sortedDataValue = sortedData[key];
                 if (sortedDataValue) {
-                    const [charactersStr, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
-                    const priceMatch = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
-                    let price = '', count = '';
-                    if (priceMatch) {
-                        price = priceMatch[1];
-                        count = priceMatch[2];
-                    }
+                    const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
+                    const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
                     
-                    // 메인 정보
-                    const mainInfo = document.createElement('div');
-                    mainInfo.className = 'main-info';
-                    const charactersSpan = document.createElement('span');
-                    charactersSpan.textContent = charactersStr;
-                    const priceSpan = document.createElement('span');
-                    priceSpan.className = 'price';
-                    priceSpan.textContent = price;
-                    const countSpan = document.createElement('span');
-                    countSpan.className = 'count';
-                    countSpan.textContent = `(${count.trim()})`;
-                    mainInfo.appendChild(charactersSpan);
-                    mainInfo.appendChild(priceSpan);
-                    mainInfo.appendChild(countSpan);
-                    resultItem.appendChild(mainInfo);
-
+                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
+        
                     // 물품 내용 파싱 및 이미지 추가
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
-                    const items = charactersStr.split(' ');
+                    const items = characters.split(' ');
                     items.forEach(item => {
-                        const match = item.match(/([가-힣]+)(\d*)/);
-                        if (match) {
-                            const name = match[1];
-                            const count = match[2] ? parseInt(match[2]) : 1;
-                            for (let i = 0; i < count; i++) {
-                                const isCharacter = characters.some(([eng, kor]) => kor === name);
-                                if (isCharacter) {
-                                    const img = createImageElement(name);
-                                    itemsDiv.appendChild(img);
-                                } else {
-                                    const span = document.createElement('span');
-                                    span.textContent = name;
-                                    span.className = 'character-text';
-                                    itemsDiv.appendChild(span);
-                                }
+                        const [name, count] = item.match(/([가-힣]+)(\d*)/).slice(1);
+                        const repeatCount = count ? parseInt(count) : 1;
+                        for (let i = 0; i < repeatCount; i++) {
+                            const imgOrText = document.createElement(characters.includes(name) ? 'img' : 'span');
+                            if (imgOrText.tagName === 'IMG') {
+                                imgOrText.src = `cropped_characters/${name}.png`;
+                                imgOrText.alt = name;
+                                imgOrText.className = 'small-character-img';
+                            } else {
+                                imgOrText.textContent = name;
+                                imgOrText.className = 'character-text';
                             }
+                            itemsDiv.appendChild(imgOrText);
                         }
                     });
                     resultItem.appendChild(itemsDiv);
-
+        
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
@@ -515,7 +322,7 @@
         }
         
         function copyToClipboard(element) {
-            const characters = element.querySelector('.main-info span').textContent.trim();
+            const characters = element.childNodes[0].textContent.trim();
             const price = element.querySelector('.price').textContent.trim();
             const count = element.querySelector('.count').textContent.trim();
         
