@@ -27,19 +27,12 @@
             margin-bottom: 20px;
         }
         .character-box {
-            border: 2px solid transparent;
+            border: 1px solid #ddd;
             padding: 5px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            cursor: pointer;
-            transition: border 0.3s, transform 0.3s;
-            position: relative;
-        }
-        .character-box.selected {
-            border: 2px solid #007BFF;
-            transform: scale(1.05);
         }
         .character-img {
             width: 74px;
@@ -49,6 +42,7 @@
         }
         .character-name {
             font-size: 12px;
+            margin-bottom: 5px;
         }
         #filterButton {
             display: block;
@@ -56,7 +50,6 @@
             padding: 10px;
             margin: 20px 0;
             font-size: 16px;
-            cursor: pointer;
         }
         #results {
             border: 1px solid #ccc;
@@ -71,13 +64,15 @@
             width: 100px;
             margin-right: 10px;
         }
+        .character-box input[type="number"] {
+            width: 40px;
+            margin-top: 5px;
+        }
         .result-item {
             margin-bottom: 15px;
             padding: 10px;
             border-bottom: 2px solid #ddd;
             background-color: #f9f9f9;
-            cursor: pointer;
-            transition: background-color 0.3s;
         }
         .result-item:hover {
             background-color: #f0f0f0;
@@ -109,7 +104,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
-                margin-top: 10px;
+            margin-top: 10px;
             padding: 5px;
             background-color: #fff;
             border: 1px solid #eee;
@@ -154,15 +149,13 @@
 
         let sortedData = {};
         let luaData = {};
-        const selectedCharacters = new Set();
 
-        // 캐릭터 박스 생성 및 이벤트 리스너 추가
+        // 캐릭터 체크박스와 스핀박스 생성
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
-            charBox.dataset.engName = engName;
-
+            
             const img = document.createElement('img');
             img.src = `cropped_characters/${korName}.png`;
             img.alt = korName;
@@ -172,21 +165,32 @@
             nameSpan.className = 'character-name';
             nameSpan.textContent = korName;
 
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = engName;
+            checkbox.addEventListener('change', () => toggleSpinbox(engName));
+
+            const spinbox = document.createElement('input');
+            spinbox.type = 'number';
+            spinbox.id = `${engName}-spin`;
+            spinbox.min = 0;
+            spinbox.max = 9;
+            spinbox.value = 0;
+            spinbox.disabled = true;
+
             charBox.appendChild(img);
             charBox.appendChild(nameSpan);
+            charBox.appendChild(checkbox);
+            charBox.appendChild(spinbox);
             characterGrid.appendChild(charBox);
-
-            // 클릭 시 선택 토글링
-            charBox.addEventListener('click', () => {
-                if (selectedCharacters.has(engName)) {
-                    selectedCharacters.delete(engName);
-                    charBox.classList.remove('selected');
-                } else {
-                    selectedCharacters.add(engName);
-                    charBox.classList.add('selected');
-                }
-            });
         });
+
+        function toggleSpinbox(char) {
+            const checkbox = document.getElementById(char);
+            const spinbox = document.getElementById(`${char}-spin`);
+            spinbox.disabled = !checkbox.checked;
+            spinbox.value = checkbox.checked ? 1 : 0;
+        }
 
         function loadData() {
             const timestamp = new Date().getTime();
@@ -225,11 +229,6 @@
             const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
             const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
 
-            if (selectedCharacters.size === 0) {
-                alert("적어도 한 개 이상의 캐릭터를 선택해주세요.");
-                return;
-            }
-
             for (const [key, value] of Object.entries(luaData)) {
                 const chars = value.match(/.{1,3}/g) || [];
                 if (checkConditions(chars) && checkPrice(key, minPrice, maxPrice)) {
@@ -247,14 +246,15 @@
                 charCount[name] = (charCount[name] || 0) + count;
             });
 
-            for (const engName of selectedCharacters) {
-                const requiredCount = 1; // 선택 시 최소 1개 이상
-                const actualCount = charCount[engName.slice(0, 2)] || 0;
-                if (actualCount < requiredCount) {
-                    return false;
+            return characters.every(([engName]) => {
+                const checkbox = document.getElementById(engName);
+                if (checkbox.checked) {
+                    const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
+                    const actualCount = charCount[engName.slice(0, 2)] || 0;
+                    return actualCount >= requiredCount;
                 }
-            }
-            return true;
+                return true;
+            });
         }
 
         function checkPrice(key, minPrice, maxPrice) {
@@ -284,41 +284,32 @@
                 const sortedDataValue = sortedData[key];
                 if (sortedDataValue) {
                     const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
-                    const priceMatch = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
-                    let price = '';
-                    let count = '';
-                    if (priceMatch) {
-                        price = priceMatch[1];
-                        count = priceMatch[2].trim();
-                    }
+                    const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
                     
-                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count})</span>`;
-
+                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
+        
                     // 물품 내용 파싱 및 이미지 추가
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
                     const items = characters.split(' ');
                     items.forEach(item => {
-                        const match = item.match(/([가-힣]+)(\d*)/);
-                        if (match) {
-                            const name = match[1];
-                            const count = match[2] ? parseInt(match[2]) : 1;
-                            for (let i = 0; i < count; i++) {
-                                const imgOrText = document.createElement(characters.includes(name) ? 'img' : 'span');
-                                if (characters.includes(name)) {
-                                    imgOrText.src = `cropped_characters/${name}.png`;
-                                    imgOrText.alt = name;
-                                    imgOrText.className = 'small-character-img';
-                                } else {
-                                    imgOrText.textContent = name;
-                                    imgOrText.className = 'character-text';
-                                }
-                                itemsDiv.appendChild(imgOrText);
+                        const [name, count] = item.match(/([가-힣]+)(\d*)/).slice(1);
+                        const repeatCount = count ? parseInt(count) : 1;
+                        for (let i = 0; i < repeatCount; i++) {
+                            const imgOrText = document.createElement(characters.includes(name) ? 'img' : 'span');
+                            if (imgOrText.tagName === 'IMG') {
+                                imgOrText.src = `cropped_characters/${name}.png`;
+                                imgOrText.alt = name;
+                                imgOrText.className = 'small-character-img';
+                            } else {
+                                imgOrText.textContent = name;
+                                imgOrText.className = 'character-text';
                             }
+                            itemsDiv.appendChild(imgOrText);
                         }
                     });
                     resultItem.appendChild(itemsDiv);
-
+        
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
@@ -353,7 +344,10 @@
         }
 
         function getSelectedCharacters() {
-            return Array.from(selectedCharacters).map(engName => `${engName}:1`).join(',');
+            return characters
+                .filter(([engName]) => document.getElementById(engName).checked)
+                .map(([engName]) => `${engName}:${document.getElementById(`${engName}-spin`).value}`)
+                .join(',');
         }
 
         document.getElementById('filterButton').addEventListener('click', () => {
