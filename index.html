@@ -98,6 +98,7 @@
             border: 1px solid var(--border-color);
             border-radius: 4px;
             text-align: center;
+            margin-top: 5px;
         }
 
         #filterButton {
@@ -155,6 +156,8 @@
             border-radius: 6px;
             transition: background-color 0.2s;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
 
         .result-item:last-child {
@@ -165,35 +168,19 @@
             background-color: var(--hover-background);
         }
 
-        .result-item .price {
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .result-header .price {
             font-weight: bold;
             color: var(--primary-color);
-            margin-right: 10px;
         }
 
-        .result-item .count {
+        .result-header .count {
             color: var(--success-color);
-        }
-
-        #copyMessage {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--copy-message-bg);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: none;
-            z-index: 1000;
-            font-size: 14px;
-        }
-
-        #copyInstruction {
-            margin-bottom: 15px;
-            font-style: italic;
-            color: var(--light-text-color);
-            text-align: center;
         }
 
         .item-images {
@@ -220,6 +207,30 @@
             padding: 3px 6px;
             border-radius: 3px;
             color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #copyMessage {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--copy-message-bg);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            font-size: 14px;
+        }
+
+        #copyInstruction {
+            margin-bottom: 15px;
+            font-style: italic;
+            color: var(--light-text-color);
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -244,6 +255,10 @@
             .small-character-img {
                 width: 55px;
                 height: 60px;
+            }
+
+            .character-text {
+                font-size: 12px;
             }
         }
     </style>
@@ -320,14 +335,20 @@
         function loadData() {
             const timestamp = new Date().getTime();
             Promise.all([
-                fetch(`sorted_data_with_keys.txt?t=${timestamp}`).then(response => response.text()),
-                fetch(`data.lua?t=${timestamp}`).then(response => response.text())
+                fetch(`sorted_data_with_keys.txt?t=${timestamp}`).then(response => {
+                    if (!response.ok) throw new Error('sorted_data_with_keys.txt 로딩 실패');
+                    return response.text();
+                }),
+                fetch(`data.lua?t=${timestamp}`).then(response => {
+                    if (!response.ok) throw new Error('data.lua 로딩 실패');
+                    return response.text();
+                })
             ]).then(([sortedDataText, luaDataText]) => {
                 // sorted_data_with_keys.txt 처리
                 sortedData = {};
                 const sortedLines = sortedDataText.split('\n');
                 sortedLines.forEach(line => {
-                    const [key, ...rest] = line.split(' ');
+                    const [key, ...rest] = line.trim().split(' ');
                     if (key && rest.length > 0) {
                         sortedData[key] = rest.join(' ');
                     }
@@ -371,7 +392,7 @@
                 charCount[name] = (charCount[name] || 0) + count;
             });
 
-            return characters.every(([engName]) => {
+            return characters.every(([engName, korName]) => {
                 const checkbox = document.getElementById(engName);
                 if (checkbox.checked) {
                     const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
@@ -408,7 +429,7 @@
                 
                 const sortedDataValue = sortedData[key];
                 if (sortedDataValue) {
-                    const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
+                    const [charactersStr, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
                     const priceMatch = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
                     let price = '';
                     let count = '';
@@ -416,23 +437,35 @@
                         price = priceMatch[1];
                         count = priceMatch[2];
                     }
-                    
-                    resultItem.innerHTML = `
-                        <span class="price">${price}</span>
-                        <span class="count">(${count.trim()})</span>
-                        <div class="item-images"></div>
-                    `;
+
+                    // 결과 헤더 생성 (가격 및 개수)
+                    const resultHeader = document.createElement('div');
+                    resultHeader.className = 'result-header';
+                    const priceSpan = document.createElement('span');
+                    priceSpan.className = 'price';
+                    priceSpan.textContent = price;
+
+                    const countSpan = document.createElement('span');
+                    countSpan.className = 'count';
+                    countSpan.textContent = `(${count.trim()})`;
+
+                    resultHeader.appendChild(priceSpan);
+                    resultHeader.appendChild(countSpan);
+                    resultItem.appendChild(resultHeader);
 
                     // 물품 내용 파싱 및 이미지 추가
-                    const itemsDiv = resultItem.querySelector('.item-images');
-                    const items = characters.split(' ');
+                    const itemsDiv = document.createElement('div');
+                    itemsDiv.className = 'item-images';
+                    const items = charactersStr.split(' ');
                     items.forEach(item => {
                         const match = item.match(/([가-힣]+)(\d*)/);
                         if (match) {
                             const name = match[1];
                             const count = match[2] ? parseInt(match[2]) : 1;
                             for (let i = 0; i < count; i++) {
-                                if (characters.includes(name)) {
+                                // 캐릭터 이미지가 존재하는지 확인
+                                const characterExists = characters.some(([_, korName]) => korName === name);
+                                if (characterExists) {
                                     const img = document.createElement('img');
                                     img.src = `cropped_characters/${name}.png`;
                                     img.alt = name;
@@ -447,7 +480,8 @@
                             }
                         }
                     });
-            
+                    resultItem.appendChild(itemsDiv);
+
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
@@ -458,9 +492,11 @@
         
             document.getElementById('copyInstruction').style.display = 'block';
         }
-        
+
         function copyToClipboard(element) {
-            const characters = element.querySelector('.item-images').textContent.trim();
+            const characters = Array.from(element.querySelectorAll('.item-images img, .item-images .character-text'))
+                                    .map(el => el.alt || el.textContent.trim())
+                                    .join(' ');
             const price = element.querySelector('.price').textContent.trim();
             const count = element.querySelector('.count').textContent.trim();
         
@@ -472,7 +508,7 @@
                 console.error('복사 실패: ', err);
             });
         }
-        
+
         function showCopyMessage() {
             const message = document.getElementById('copyMessage');
             message.style.display = 'block';
