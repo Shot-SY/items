@@ -14,111 +14,249 @@
       gtag('config', 'G-37K1C9W7BK');
     </script>
     <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --background-color: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-color: #343a40;
+            --light-text-color: #6c757d;
+            --hover-background: #e9ecef;
+            --copy-message-bg: rgba(0, 0, 0, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Malgun Gothic', sans-serif;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: var(--primary-color);
+        }
+
         .character-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
         }
+
         .character-box {
-            border: 1px solid #ddd;
-            padding: 5px;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
             text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
+        .character-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
         .character-img {
-            width: 74px;
-            height: 85px;
+            width: 80px;
+            height: 90px;
             object-fit: cover;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            border-radius: 4px;
         }
+
         .character-name {
-            font-size: 12px;
-            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--text-color);
         }
+
+        .character-box input[type="checkbox"] {
+            transform: scale(1.2);
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .character-box input[type="number"] {
+            width: 50px;
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+        }
+
         #filterButton {
             display: block;
             width: 100%;
-            padding: 10px;
-            margin: 20px 0;
-            font-size: 16px;
+            padding: 12px;
+            margin: 25px 0;
+            font-size: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
+
+        #filterButton:hover {
+            background-color: #0056b3;
+        }
+
+        .price-filter {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .price-filter label {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .price-filter input {
+            width: 120px;
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
         #results {
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: 1px solid var(--border-color);
+            padding: 15px;
             height: 800px;
             overflow-y: auto;
+            background-color: white;
+            border-radius: 8px;
         }
-        .character-box input[type="number"] {
-            width: 40px;
-            margin-top: 5px;
-        }
+
         .result-item {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-bottom: 2px solid #ddd;
-            background-color: #f9f9f9;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            border-radius: 6px;
+            transition: background-color 0.2s;
+            cursor: pointer;
         }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
         .result-item:hover {
-            background-color: #f0f0f0;
+            background-color: var(--hover-background);
         }
+
         .result-item .price {
             font-weight: bold;
-            color: #007bff;
+            color: var(--primary-color);
+            margin-right: 10px;
         }
+
         .result-item .count {
-            color: #28a745;
+            color: var(--success-color);
         }
+
         #copyMessage {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #333;
+            background-color: var(--copy-message-bg);
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
             display: none;
+            z-index: 1000;
+            font-size: 14px;
         }
+
         #copyInstruction {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-style: italic;
-            color: #666;
+            color: var(--light-text-color);
+            text-align: center;
         }
+
         .item-images {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 10px;
-            padding: 5px;
-            background-color: #fff;
-            border: 1px solid #eee;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 6px;
+            background-color: white;
+            border: 1px solid var(--border-color);
             border-radius: 5px;
         }
+
         .small-character-img {
             width: 65px;
             height: 70px;
             object-fit: cover;
+            border-radius: 4px;
         }
+
         .character-text {
-            font-size: 12px;
-            background-color: #f0f0f0;
-            padding: 2px 5px;
+            font-size: 13px;
+            background-color: var(--hover-background);
+            padding: 3px 6px;
             border-radius: 3px;
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            .price-filter {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .price-filter input {
+                width: 100%;
+            }
+
+            .result-item {
+                padding: 10px;
+            }
+
+            .character-img {
+                width: 70px;
+                height: 80px;
+            }
+
+            .small-character-img {
+                width: 55px;
+                height: 60px;
+            }
         }
     </style>
 </head>
 <body>
     <h1>캐릭터 필터</h1>
     <div class="character-grid" id="characterGrid"></div>
+    <div class="price-filter">
+        <label for="minPrice">최소 가격:</label>
+        <input type="number" id="minPrice" min="0" value="0">
+        <label for="maxPrice">최대 가격:</label>
+        <input type="number" id="maxPrice" min="0" value="1000000">
+    </div>
     <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
@@ -213,10 +351,12 @@
 
         function filterData() {
             const filteredData = {};
+            const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
 
             for (const [key, value] of Object.entries(luaData)) {
                 const chars = value.match(/.{1,3}/g) || [];
-                if (checkConditions(chars)) {
+                if (checkConditions(chars) && checkPrice(key, minPrice, maxPrice)) {
                     filteredData[key] = value;
                 }
             }
@@ -242,6 +382,15 @@
             });
         }
 
+        function checkPrice(key, minPrice, maxPrice) {
+            const priceMatch = sortedData[key]?.match(/=\s*([\d,]+)/);
+            if (priceMatch) {
+                const price = parseInt(priceMatch[1].replace(/,/g, ''));
+                return price >= minPrice && price <= maxPrice;
+            }
+            return false;
+        }
+
         function getPrice(key) {
             const priceMatch = sortedData[key]?.match(/=\s*([\d,]+)/);
             return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : -1;
@@ -260,13 +409,22 @@
                 const sortedDataValue = sortedData[key];
                 if (sortedDataValue) {
                     const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
-                    const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
+                    const priceMatch = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
+                    let price = '';
+                    let count = '';
+                    if (priceMatch) {
+                        price = priceMatch[1];
+                        count = priceMatch[2];
+                    }
                     
-                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
+                    resultItem.innerHTML = `
+                        <span class="price">${price}</span>
+                        <span class="count">(${count.trim()})</span>
+                        <div class="item-images"></div>
+                    `;
 
                     // 물품 내용 파싱 및 이미지 추가
-                    const itemsDiv = document.createElement('div');
-                    itemsDiv.className = 'item-images';
+                    const itemsDiv = resultItem.querySelector('.item-images');
                     const items = characters.split(' ');
                     items.forEach(item => {
                         const match = item.match(/([가-힣]+)(\d*)/);
@@ -274,21 +432,22 @@
                             const name = match[1];
                             const count = match[2] ? parseInt(match[2]) : 1;
                             for (let i = 0; i < count; i++) {
-                                const imgOrText = document.createElement(characters.some(([_, korName]) => korName === name) ? 'img' : 'span');
-                                if (imgOrText.tagName === 'IMG') {
-                                    imgOrText.src = `cropped_characters/${name}.png`;
-                                    imgOrText.alt = name;
-                                    imgOrText.className = 'small-character-img';
+                                if (characters.includes(name)) {
+                                    const img = document.createElement('img');
+                                    img.src = `cropped_characters/${name}.png`;
+                                    img.alt = name;
+                                    img.className = 'small-character-img';
+                                    itemsDiv.appendChild(img);
                                 } else {
-                                    imgOrText.textContent = name;
-                                    imgOrText.className = 'character-text';
+                                    const span = document.createElement('span');
+                                    span.textContent = name;
+                                    span.className = 'character-text';
+                                    itemsDiv.appendChild(span);
                                 }
-                                itemsDiv.appendChild(imgOrText);
                             }
                         }
                     });
-                    resultItem.appendChild(itemsDiv);
-
+            
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
@@ -301,7 +460,7 @@
         }
         
         function copyToClipboard(element) {
-            const characters = element.childNodes[0].textContent.trim();
+            const characters = element.querySelector('.item-images').textContent.trim();
             const price = element.querySelector('.price').textContent.trim();
             const count = element.querySelector('.count').textContent.trim();
         
@@ -336,6 +495,8 @@
                 
                 // Google Analytics 이벤트 전송
                 gtag('event', 'apply_filter', {
+                    'min_price': document.getElementById('minPrice').value,
+                    'max_price': document.getElementById('maxPrice').value,
                     'selected_characters': getSelectedCharacters()
                 });
             }, 500);
