@@ -12,15 +12,12 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-37K1C9W7BK');
     </script>
     <!-- Particle.js for background effect -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- GSAP for animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-PeEccjhxeGe8kQcOnPvvd7Iuir6NDe4LaQ9HQx+AQxQEGz26Yf378grc6mozyRj9pa0GlebRhgHj0UBa/m3sPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         /* CSS Variables for theming */
         :root {
@@ -30,6 +27,7 @@
             --background-color: #1e1e1e;
             --card-bg: rgba(255, 255, 255, 0.1);
             --text-color: #ffffff;
+            --heading-color: #ff6ec7;
             --shadow-color: rgba(0, 0, 0, 0.5);
             --transition-speed: 0.4s;
             --font-primary: 'Orbitron', sans-serif;
@@ -45,6 +43,7 @@
             --background-color: #f0f2f5;
             --card-bg: rgba(255, 255, 255, 0.8);
             --text-color: #333333;
+            --heading-color: #ff4081;
             --shadow-color: rgba(0, 0, 0, 0.2);
         }
 
@@ -58,23 +57,16 @@
             position: relative;
             overflow-x: hidden;
             transition: background-color var(--transition-speed), color var(--transition-speed);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
         }
 
         h1 {
             text-align: center;
-            margin: 40px 0 20px 0;
+            margin: 40px 20px 20px 20px;
             font-family: var(--font-primary);
-            font-size: 3em;
-            color: var(--primary-color);
-            text-shadow: 2px 2px 10px var(--shadow-color);
+            font-size: 2.5em;
+            color: var(--heading-color);
+            text-shadow: 1px 1px 5px var(--shadow-color);
             transition: color var(--transition-speed);
-            opacity: 0;
-            transform: translateY(-20px);
         }
 
         /* 테마 전환 스위치 */
@@ -86,6 +78,8 @@
             align-items: center;
             cursor: pointer;
             z-index: 1000;
+            color: var(--text-color);
+            font-size: 1.2em;
         }
 
         .theme-switch input {
@@ -128,7 +122,7 @@
             font-size: 1em;
         }
 
-        /* 캐릭터 그리드 */
+        /* 그리드 레이아웃 */
         .character-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -136,11 +130,9 @@
             padding: 0 20px;
             margin-bottom: 40px;
             perspective: 1000px;
-            opacity: 0;
-            transform: translateY(20px);
         }
 
-        /* 캐릭터 박스 */
+        /* 캐릭터 박스 스타일링 */
         .character-box {
             background: var(--card-bg);
             border: none;
@@ -158,8 +150,6 @@
             overflow: hidden;
             transform-style: preserve-3d;
             backface-visibility: hidden;
-            background-image: url('path/to/gloss-effect.png'); /* 글로스 효과 이미지 추가 */
-            background-size: cover;
         }
 
         .character-box::before {
@@ -191,6 +181,7 @@
             box-shadow: 0 12px 24px var(--shadow-color);
         }
 
+        /* 캐릭터 이미지 스타일링 */
         .character-img {
             width: 100px;
             height: 130px;
@@ -206,6 +197,7 @@
             transform: rotate(10deg) translateZ(30px) translateY(-10px);
         }
 
+        /* 캐릭터 이름 스타일링 */
         .character-name {
             font-size: 1.2em;
             margin-bottom: 15px;
@@ -216,6 +208,7 @@
             transition: color var(--transition-speed);
         }
 
+        /* 스핀박스 컨테이너 스타일링 */
         .spinbox-container {
             width: 60%;
             visibility: hidden;
@@ -253,7 +246,7 @@
             outline: none;
         }
 
-        /* 인터랙티브 버튼 */
+        /* 인터랙티브 버튼 스타일링 */
         #filterButton {
             display: flex;
             align-items: center;
@@ -302,16 +295,16 @@
             box-shadow: 0 6px 12px var(--shadow-color);
         }
 
+        /* 지침 텍스트 스타일링 */
         #copyInstruction {
             margin: 20px auto;
             font-style: italic;
             color: #bbb;
             text-align: center;
             width: 80%;
-            opacity: 0;
-            transition: opacity var(--transition-speed);
         }
 
+        /* 복사 메시지 스타일링 */
         #copyMessage {
             position: fixed;
             bottom: 30px;
@@ -339,6 +332,7 @@
             100% { opacity: 0; }
         }
 
+        /* 결과 영역 스타일링 */
         #results {
             border: none;
             padding: 25px;
@@ -349,10 +343,9 @@
             box-shadow: inset 0 0 15px var(--shadow-color);
             margin: 0 20px 40px 20px;
             transition: background var(--transition-speed), box-shadow var(--transition-speed);
-            opacity: 0;
-            transform: translateY(20px);
         }
 
+        /* 결과 아이템 스타일링 */
         .result-item {
             margin-bottom: 25px;
             padding: 20px;
@@ -364,10 +357,9 @@
             display: flex;
             flex-direction: column;
             backdrop-filter: blur(5px);
-            overflow: hidden;
             position: relative;
-            opacity: 0;
-            transform: translateY(20px);
+            overflow: hidden;
+            color: var(--text-color);
         }
 
         .result-item::before {
@@ -419,6 +411,7 @@
             color: #4caf50;
         }
 
+        /* 물품 이미지 컨테이너 스타일링 */
         .item-images {
             display: flex;
             flex-wrap: wrap;
@@ -433,6 +426,7 @@
             z-index: 2;
         }
 
+        /* 작은 캐릭터 이미지 스타일링 */
         .small-character-img {
             width: 60px;
             height: 60px;
@@ -526,29 +520,10 @@
             z-index: -2;
             top: 0;
             left: 0;
-            overflow: hidden;
-        }
-
-        /* 비디오 배경 추가 */
-        #background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.2;
-            z-index: -3;
         }
     </style>
 </head>
 <body>
-    <!-- 비디오 배경 -->
-    <video autoplay muted loop id="background-video">
-        <source src="path/to/background-video.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-
     <!-- Particle Background -->
     <div id="particles-js"></div>
 
@@ -565,15 +540,6 @@
     <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
     <div id="copyMessage"><i class="fas fa-check-circle"></i> 복사되었습니다</div>
-
-    <!-- SVG 애니메이션 추가 (옵션) -->
-    <svg width="0" height="0" style="position:absolute">
-        <defs>
-            <symbol id="check" viewBox="0 0 16 16">
-                <path d="M6.173 13.708L1.793 9.328a1 1 0 00-1.414 1.414l5.657 5.657a1 1 0 001.414 0l9-9a1 1 0 10-1.414-1.414L6.173 13.708z"/>
-            </symbol>
-        </defs>
-    </svg>
 
     <script>
         // Initialize particles.js with enhanced settings
@@ -675,13 +641,6 @@
         let sortedData = {};
         let luaData = {};
 
-        // GSAP 애니메이션 초기화
-        gsap.from("h1", { duration: 1, opacity: 1, y: 0, delay: 0.5, ease: "bounce.out" });
-        gsap.from(".character-grid", { duration: 1, opacity: 1, y: 0, delay: 1, ease: "power2.out" });
-        gsap.from("#filterButton", { duration: 1, opacity: 1, y: 0, delay: 1.5, ease: "power2.out" });
-        gsap.from("#copyInstruction", { duration: 1, opacity: 1, y: 0, delay: 2, ease: "power2.out" });
-        gsap.from("#results", { duration: 1, opacity: 1, y: 0, delay: 2.5, ease: "power2.out" });
-
         // 캐릭터 박스 생성 및 이벤트 리스너 추가
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
@@ -716,32 +675,18 @@
             charBox.appendChild(nameSpan);
             charBox.appendChild(spinboxContainer);
             characterGrid.appendChild(charBox);
-        });
 
-        // GSAP을 사용한 캐릭터 박스 애니메이션
-        gsap.utils.toArray(".character-box").forEach((box, index) => {
-            gsap.from(box, {
-                duration: 1,
-                opacity: 0,
-                y: 20,
-                delay: 1 + index * 0.1,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: box,
-                    start: "top 80%",
-                    toggleActions: "play none none none"
-                }
+            // 박스 클릭 시 선택 상태 토글
+            charBox.addEventListener('click', (event) => {
+                // 스핀박스 클릭 시 이벤트 전파 방지
+                if (event.target.tagName.toLowerCase() === 'input') return;
+                toggleSelection(charBox);
             });
-        });
 
-        // 박스 클릭 시 선택 상태 토글
-        characterGrid.addEventListener('click', (event) => {
-            const charBox = event.target.closest('.character-box');
-            if (!charBox) return;
-
-            // 스핀박스 클릭 시 이벤트 전파 방지
-            if (event.target.tagName.toLowerCase() === 'input') return;
-            toggleSelection(charBox);
+            // 스핀박스 클릭 시 이벤트 전파 방지 (선택 상태 변경 방지)
+            spinbox.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
         });
 
         function toggleSelection(charBox) {
@@ -831,10 +776,10 @@
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
-
+        
             // 가격 순으로 정렬 (내림차순)
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
-
+        
             sortedKeys.forEach(key => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'result-item';
@@ -879,10 +824,8 @@
                 
                 resultsDiv.appendChild(resultItem);
             });
-
+        
             document.getElementById('copyInstruction').style.display = 'block';
-            gsap.to("#copyInstruction", { duration: 1, opacity: 1, y: 0, ease: "power2.out" });
-            gsap.from(".result-item", { duration: 1, opacity: 0, y: 20, stagger: 0.1, ease: "power2.out" });
         }
         
         function copyToClipboard(element) {
@@ -902,11 +845,8 @@
         function showCopyMessage() {
             const message = document.getElementById('copyMessage');
             message.style.display = 'flex';
-            gsap.fromTo(message, { opacity: 0, y: 20 }, { duration: 0.5, opacity: 1, y: 0 });
             setTimeout(() => {
-                gsap.to(message, { duration: 0.5, opacity: 0, y: 20, onComplete: () => {
-                    message.style.display = 'none';
-                }});
+                message.style.display = 'none';
             }, 2000);
         }
 
