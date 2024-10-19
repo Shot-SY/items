@@ -399,11 +399,14 @@
                 charCount[name] = (charCount[name] || 0) + count;
             });
 
+            console.log('charCount:', charCount);
+
             return characters.every(([engName, korName]) => {
                 const checkbox = document.getElementById(engName);
                 if (checkbox.checked) {
                     const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
-                    const actualCount = charCount[engName.slice(0, 2)] || 0; // 수정된 부분
+                    const actualCount = charCount[engName.slice(0, 2)] || 0;
+                    console.log(`Checking ${engName}: required=${requiredCount}, actual=${actualCount}`);
                     return actualCount >= requiredCount;
                 }
                 return true;
@@ -422,6 +425,21 @@
         function getPrice(key) {
             const priceMatch = sortedData[key]?.match(/=\s*([\d,]+)/);
             return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : -1;
+        }
+
+        function createImageElement(name) {
+            const img = document.createElement('img');
+            img.src = `cropped_characters/${name}.png`;
+            img.alt = name;
+            img.className = 'small-character-img';
+            img.onerror = function() {
+                this.style.display = 'none';
+                const textSpan = document.createElement('span');
+                textSpan.textContent = name;
+                textSpan.className = 'character-text';
+                this.parentNode.appendChild(textSpan);
+            };
+            return img;
         }
 
         function displayResults(filteredData) {
@@ -470,11 +488,9 @@
                             const name = match[1];
                             const count = match[2] ? parseInt(match[2]) : 1;
                             for (let i = 0; i < count; i++) {
-                                if (characters.some(([eng, kor]) => kor === name)) {
-                                    const img = document.createElement('img');
-                                    img.src = `cropped_characters/${name}.png`;
-                                    img.alt = name;
-                                    img.className = 'small-character-img';
+                                const isCharacter = characters.some(([eng, kor]) => kor === name);
+                                if (isCharacter) {
+                                    const img = createImageElement(name);
                                     itemsDiv.appendChild(img);
                                 } else {
                                     const span = document.createElement('span');
