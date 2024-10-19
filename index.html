@@ -174,25 +174,35 @@
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* 유지 */
         }
         .result-item:hover {
             background-color: #e3f2fd;
             box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
         }
-        .result-item .price {
-            font-weight: bold;
-            color: #007bff;
-            margin-top: 5px;
+        /* 새로 추가된 텍스트 컨테이너 스타일 */
+        .result-text {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px; /* 요소 간 간격 조정 */
+            flex-wrap: wrap; /* 요소가 넘칠 경우 다음 줄로 감 */
         }
-        .result-item .count {
+        .result-text strong {
+            font-size: 1.2em;
+            color: #333;
+        }
+        .result-text .price {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .result-text .count {
             color: #28a745;
-            margin-top: 3px;
         }
         .item-images {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 10px;
             margin-top: 10px;
             padding: 5px;
             background-color: #fff;
@@ -200,10 +210,29 @@
             border-radius: 10px;
         }
         .small-character-img {
-            width: auto;
-            height: 70px;
-            object-fit: contain;
+            width: 80px; /* 기존 60px에서 80px으로 크기 증가 */
+            height: 80px; /* 기존 60px에서 80px으로 크기 증가 */
+            object-fit: contain; /* cover에서 contain으로 변경하여 이미지 전체 표시 */
             border-radius: 8px;
+            /* transition: transform 0.3s; */ /* 호버 효과 제거 */
+        }
+        /* 호버 효과 제거: 해당 섹션을 삭제하거나 주석 처리 */
+        /*
+        .small-character-img:hover {
+            transform: scale(1.1);
+        }
+        */
+        /* 추가적인 그래픽 요소 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/geometry3.png') repeat;
+            opacity: 0.04;
+            z-index: -1;
         }
         /* 반응형 디자인 */
         @media (max-width: 768px) {
@@ -228,6 +257,10 @@
             .small-character-img {
                 width: 60px; /* 작은 화면에서는 약간 줄임 */
                 height: 60px; /* 작은 화면에서는 약간 줄임 */
+                object-fit: contain;
+            }
+            .result-text {
+                gap: 5px; /* 작은 화면에서는 간격 줄임 */
             }
         }
     </style>
@@ -403,7 +436,12 @@
                     const price = priceMatch ? priceMatch[1] : '가격 정보 없음';
                     const count = priceMatch ? priceMatch[2] : '0';
                     
-                    resultItem.innerHTML = `<strong>${characters}</strong> <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
+                    // 텍스트 그룹화
+                    const resultText = document.createElement('div');
+                    resultText.className = 'result-text';
+                    resultText.innerHTML = `<strong>${characters}</strong> <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
+                    
+                    resultItem.appendChild(resultText);
 
                     // 물품 내용 파싱 및 이미지 추가
                     const itemsDiv = document.createElement('div');
@@ -436,9 +474,9 @@
         }
         
         function copyToClipboard(element) {
-            const characters = element.querySelector('strong').textContent.trim();
-            const price = element.querySelector('.price').textContent.trim();
-            const count = element.querySelector('.count').textContent.trim();
+            const characters = element.querySelector('.result-text strong').textContent.trim();
+            const price = element.querySelector('.result-text .price').textContent.trim();
+            const count = element.querySelector('.result-text .count').textContent.trim();
         
             const formattedText = `${characters} ${price} ${count}`;
         
