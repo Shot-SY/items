@@ -28,11 +28,17 @@
         }
         .character-box {
             border: 1px solid #ddd;
-            padding: 5px;
+            padding: 10px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
+            cursor: pointer; /* 클릭 가능함을 나타내는 커서 */
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .character-box.selected {
+            background-color: #e0f7fa;
+            border-color: #007bff;
         }
         .character-img {
             width: 74px;
@@ -44,12 +50,22 @@
             font-size: 12px;
             margin-bottom: 5px;
         }
+        .spinbox-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 5px;
+        }
+        .spinbox-container input[type="number"] {
+            width: 60px;
+        }
         #filterButton {
             display: block;
             width: 100%;
             padding: 10px;
             margin: 20px 0;
             font-size: 16px;
+            cursor: pointer;
         }
         #results {
             border: 1px solid #ccc;
@@ -57,16 +73,13 @@
             height: 800px;
             overflow-y: auto;
         }
-        .character-box input[type="number"] {
-            width: 40px;
-            margin-top: 5px;
-        }
         .result-item {
             margin-bottom: 15px;
             padding: 10px;
             border-bottom: 2px solid #ddd;
             background-color: #f9f9f9;
             cursor: pointer; /* 클릭 가능함을 나타내는 포인터 커서 유지 */
+            transition: background-color 0.3s;
         }
         .result-item:hover {
             background-color: #f0f0f0;
@@ -147,12 +160,13 @@
         let sortedData = {};
         let luaData = {};
 
-        // 캐릭터 체크박스와 스핀박스 생성
+        // 캐릭터 박스 생성 및 이벤트 리스너 추가
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
-            
+            charBox.dataset.engName = engName; // 나중에 쉽게 접근하기 위해 데이터 속성 추가
+
             const img = document.createElement('img');
             img.src = `cropped_characters/${korName}.png`;
             img.alt = korName;
@@ -162,10 +176,9 @@
             nameSpan.className = 'character-name';
             nameSpan.textContent = korName;
 
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = engName;
-            checkbox.addEventListener('change', () => toggleSpinbox(engName));
+            // 스핀박스 컨테이너 생성
+            const spinboxContainer = document.createElement('div');
+            spinboxContainer.className = 'spinbox-container';
 
             const spinbox = document.createElement('input');
             spinbox.type = 'number';
@@ -173,20 +186,31 @@
             spinbox.min = 0;
             spinbox.max = 9;
             spinbox.value = 0;
-            spinbox.disabled = true;
+            spinbox.disabled = true; // 초기에는 비활성화
+
+            spinboxContainer.appendChild(spinbox);
 
             charBox.appendChild(img);
             charBox.appendChild(nameSpan);
-            charBox.appendChild(checkbox);
-            charBox.appendChild(spinbox);
+            charBox.appendChild(spinboxContainer);
             characterGrid.appendChild(charBox);
+
+            // 박스 클릭 시 선택 상태 토글
+            charBox.addEventListener('click', () => toggleSelection(charBox));
         });
 
-        function toggleSpinbox(char) {
-            const checkbox = document.getElementById(char);
-            const spinbox = document.getElementById(`${char}-spin`);
-            spinbox.disabled = !checkbox.checked;
-            spinbox.value = checkbox.checked ? 1 : 0;
+        function toggleSelection(charBox) {
+            if (charBox.classList.contains('selected')) {
+                charBox.classList.remove('selected');
+                const spinbox = charBox.querySelector('input[type="number"]');
+                spinbox.disabled = true;
+                spinbox.value = 0;
+            } else {
+                charBox.classList.add('selected');
+                const spinbox = charBox.querySelector('input[type="number"]');
+                spinbox.disabled = false;
+                spinbox.value = 1; // 기본값 설정
+            }
         }
 
         function loadData() {
@@ -241,10 +265,11 @@
                 charCount[name] = (charCount[name] || 0) + count;
             });
 
-            return characters.every(([engName]) => {
-                const checkbox = document.getElementById(engName);
-                if (checkbox.checked) {
-                    const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
+            return characters.every(([engName, korName]) => {
+                const charBox = Array.from(document.getElementsByClassName('character-box')).find(box => box.dataset.engName === engName);
+                if (charBox && charBox.classList.contains('selected')) {
+                    const spinbox = charBox.querySelector('input[type="number"]');
+                    const requiredCount = parseInt(spinbox.value);
                     const actualCount = charCount[engName.slice(0, 2)] || 0;
                     return actualCount >= requiredCount;
                 }
@@ -331,9 +356,9 @@
         }
 
         function getSelectedCharacters() {
-            return characters
-                .filter(([engName]) => document.getElementById(engName).checked)
-                .map(([engName]) => `${engName}:${document.getElementById(`${engName}-spin`).value}`)
+            const selectedBoxes = Array.from(document.getElementsByClassName('character-box')).filter(box => box.classList.contains('selected'));
+            return selectedBoxes
+                .map(box => `${box.dataset.engName}:${box.querySelector('input[type="number"]').value}`)
                 .join(',');
         }
 
