@@ -19,6 +19,8 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-PeEccjhxeGe8kQcOnPvvd7Iuir6NDe4LaQ9HQx+AQxQEGz26Yf378grc6mozyRj9pa0GlebRhgHj0UBa/m3sPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         /* CSS Variables for theming */
         :root {
@@ -33,7 +35,6 @@
             --font-primary: 'Orbitron', sans-serif;
             --font-secondary: 'Roboto', sans-serif;
             --border-radius: 15px;
-            --glow-color: #ff6ec7;
         }
 
         /* Light Theme Variables */
@@ -45,7 +46,6 @@
             --card-bg: rgba(255, 255, 255, 0.8);
             --text-color: #333333;
             --shadow-color: rgba(0, 0, 0, 0.2);
-            --glow-color: #ff4081;
         }
 
         /* 기본 스타일링 */
@@ -58,6 +58,11 @@
             position: relative;
             overflow-x: hidden;
             transition: background-color var(--transition-speed), color var(--transition-speed);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
         }
 
         h1 {
@@ -66,42 +71,10 @@
             font-family: var(--font-primary);
             font-size: 3em;
             color: var(--primary-color);
-            text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color);
+            text-shadow: 2px 2px 10px var(--shadow-color);
             transition: color var(--transition-speed);
-        }
-
-        /* 로딩 스피너 */
-        #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--background-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            transition: opacity 0.5s ease, visibility 0.5s;
-        }
-
-        #loader.hidden {
             opacity: 0;
-            visibility: hidden;
-        }
-
-        .spinner {
-            border: 8px solid rgba(255, 255, 255, 0.2);
-            border-top: 8px solid var(--primary-color);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            transform: translateY(-20px);
         }
 
         /* 테마 전환 스위치 */
@@ -155,6 +128,7 @@
             font-size: 1em;
         }
 
+        /* 캐릭터 그리드 */
         .character-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -162,8 +136,11 @@
             padding: 0 20px;
             margin-bottom: 40px;
             perspective: 1000px;
+            opacity: 0;
+            transform: translateY(20px);
         }
 
+        /* 캐릭터 박스 */
         .character-box {
             background: var(--card-bg);
             border: none;
@@ -181,16 +158,8 @@
             overflow: hidden;
             transform-style: preserve-3d;
             backface-visibility: hidden;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
+            background-image: url('path/to/gloss-effect.png'); /* 글로스 효과 이미지 추가 */
+            background-size: cover;
         }
 
         .character-box::before {
@@ -218,8 +187,8 @@
         }
 
         .character-box:hover {
-            transform: scale(1.1) translateY(-5px);
-            box-shadow: 0 16px 32px var(--shadow-color);
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 12px 24px var(--shadow-color);
         }
 
         .character-img {
@@ -242,7 +211,7 @@
             margin-bottom: 15px;
             font-weight: 600;
             color: var(--text-color);
-            text-shadow: 0 0 5px var(--shadow-color);
+            text-shadow: 1px 1px 5px var(--shadow-color);
             z-index: 2;
             transition: color var(--transition-speed);
         }
@@ -304,7 +273,6 @@
             font-weight: bold;
             position: relative;
             overflow: hidden;
-            text-shadow: 0 0 10px var(--glow-color);
         }
 
         #filterButton::after {
@@ -325,13 +293,13 @@
 
         #filterButton:hover {
             background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-            box-shadow: 0 12px 24px var(--shadow-color);
+            box-shadow: 0 8px 16px var(--shadow-color);
             transform: translateY(-3px);
         }
 
         #filterButton:active {
             transform: translateY(0);
-            box-shadow: 0 8px 16px var(--shadow-color);
+            box-shadow: 0 6px 12px var(--shadow-color);
         }
 
         #copyInstruction {
@@ -340,6 +308,8 @@
             color: #bbb;
             text-align: center;
             width: 80%;
+            opacity: 0;
+            transition: opacity var(--transition-speed);
         }
 
         #copyMessage {
@@ -362,11 +332,6 @@
             gap: 10px;
         }
 
-        #copyMessage i {
-            font-size: 1.2em;
-            color: var(--accent-color);
-        }
-
         @keyframes fadeInOut {
             0% { opacity: 0; }
             10% { opacity: 0.95; }
@@ -379,11 +344,13 @@
             padding: 25px;
             height: 800px;
             overflow-y: auto;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
             border-radius: var(--border-radius);
             box-shadow: inset 0 0 15px var(--shadow-color);
             margin: 0 20px 40px 20px;
             transition: background var(--transition-speed), box-shadow var(--transition-speed);
+            opacity: 0;
+            transform: translateY(20px);
         }
 
         .result-item {
@@ -399,13 +366,8 @@
             backdrop-filter: blur(5px);
             overflow: hidden;
             position: relative;
-            animation: slideIn 0.5s ease forwards;
             opacity: 0;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            transform: translateY(20px);
         }
 
         .result-item::before {
@@ -427,7 +389,7 @@
 
         .result-item:hover {
             background: var(--primary-color);
-            box-shadow: 0 8px 16px var(--shadow-color);
+            box-shadow: 0 6px 12px var(--shadow-color);
             transform: translateY(-5px);
             color: var(--text-color);
         }
@@ -446,7 +408,6 @@
             font-size: 1.2em;
             color: var(--text-color);
             transition: color var(--transition-speed);
-            text-shadow: 0 0 5px var(--shadow-color);
         }
 
         .result-text .price {
@@ -565,14 +526,28 @@
             z-index: -2;
             top: 0;
             left: 0;
+            overflow: hidden;
+        }
+
+        /* 비디오 배경 추가 */
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.2;
+            z-index: -3;
         }
     </style>
 </head>
 <body>
-    <!-- 로딩 스피너 -->
-    <div id="loader">
-        <div class="spinner"></div>
-    </div>
+    <!-- 비디오 배경 -->
+    <video autoplay muted loop id="background-video">
+        <source src="path/to/background-video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 
     <!-- Particle Background -->
     <div id="particles-js"></div>
@@ -591,13 +566,16 @@
     <div id="results"></div>
     <div id="copyMessage"><i class="fas fa-check-circle"></i> 복사되었습니다</div>
 
-    <script>
-        // 페이지 로딩 후 로딩 스피너 숨기기
-        window.addEventListener('load', () => {
-            const loader = document.getElementById('loader');
-            loader.classList.add('hidden');
-        });
+    <!-- SVG 애니메이션 추가 (옵션) -->
+    <svg width="0" height="0" style="position:absolute">
+        <defs>
+            <symbol id="check" viewBox="0 0 16 16">
+                <path d="M6.173 13.708L1.793 9.328a1 1 0 00-1.414 1.414l5.657 5.657a1 1 0 001.414 0l9-9a1 1 0 10-1.414-1.414L6.173 13.708z"/>
+            </symbol>
+        </defs>
+    </svg>
 
+    <script>
         // Initialize particles.js with enhanced settings
         particlesJS("particles-js",
         {
@@ -697,6 +675,13 @@
         let sortedData = {};
         let luaData = {};
 
+        // GSAP 애니메이션 초기화
+        gsap.from("h1", { duration: 1, opacity: 1, y: 0, delay: 0.5, ease: "bounce.out" });
+        gsap.from(".character-grid", { duration: 1, opacity: 1, y: 0, delay: 1, ease: "power2.out" });
+        gsap.from("#filterButton", { duration: 1, opacity: 1, y: 0, delay: 1.5, ease: "power2.out" });
+        gsap.from("#copyInstruction", { duration: 1, opacity: 1, y: 0, delay: 2, ease: "power2.out" });
+        gsap.from("#results", { duration: 1, opacity: 1, y: 0, delay: 2.5, ease: "power2.out" });
+
         // 캐릭터 박스 생성 및 이벤트 리스너 추가
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
@@ -731,18 +716,32 @@
             charBox.appendChild(nameSpan);
             charBox.appendChild(spinboxContainer);
             characterGrid.appendChild(charBox);
+        });
 
-            // 박스 클릭 시 선택 상태 토글
-            charBox.addEventListener('click', (event) => {
-                // 스핀박스 클릭 시 이벤트 전파 방지
-                if (event.target.tagName.toLowerCase() === 'input') return;
-                toggleSelection(charBox);
+        // GSAP을 사용한 캐릭터 박스 애니메이션
+        gsap.utils.toArray(".character-box").forEach((box, index) => {
+            gsap.from(box, {
+                duration: 1,
+                opacity: 0,
+                y: 20,
+                delay: 1 + index * 0.1,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: box,
+                    start: "top 80%",
+                    toggleActions: "play none none none"
+                }
             });
+        });
 
-            // 스핀박스 클릭 시 이벤트 전파 방지 (선택 상태 변경 방지)
-            spinbox.addEventListener('click', (event) => {
-                event.stopPropagation();
-            });
+        // 박스 클릭 시 선택 상태 토글
+        characterGrid.addEventListener('click', (event) => {
+            const charBox = event.target.closest('.character-box');
+            if (!charBox) return;
+
+            // 스핀박스 클릭 시 이벤트 전파 방지
+            if (event.target.tagName.toLowerCase() === 'input') return;
+            toggleSelection(charBox);
         });
 
         function toggleSelection(charBox) {
@@ -832,10 +831,10 @@
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
-        
+
             // 가격 순으로 정렬 (내림차순)
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
-        
+
             sortedKeys.forEach(key => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'result-item';
@@ -873,19 +872,17 @@
                     });
                     resultItem.appendChild(itemsDiv);
 
-                    // 파티클 효과 추가
-                    resultItem.addEventListener('click', () => {
-                        createParticleEffect(resultItem);
-                        copyToClipboard(resultItem);
-                    });
+                    resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
                 }
                 
                 resultsDiv.appendChild(resultItem);
             });
-        
+
             document.getElementById('copyInstruction').style.display = 'block';
+            gsap.to("#copyInstruction", { duration: 1, opacity: 1, y: 0, ease: "power2.out" });
+            gsap.from(".result-item", { duration: 1, opacity: 0, y: 20, stagger: 0.1, ease: "power2.out" });
         }
         
         function copyToClipboard(element) {
@@ -905,81 +902,11 @@
         function showCopyMessage() {
             const message = document.getElementById('copyMessage');
             message.style.display = 'flex';
+            gsap.fromTo(message, { opacity: 0, y: 20 }, { duration: 0.5, opacity: 1, y: 0 });
             setTimeout(() => {
-                message.style.display = 'none';
-            }, 2000);
-        }
-
-        function createParticleEffect(element) {
-            const rect = element.getBoundingClientRect();
-            const particlesContainer = document.createElement('div');
-            particlesContainer.style.position = 'absolute';
-            particlesContainer.style.top = `${rect.top + window.scrollY}px`;
-            particlesContainer.style.left = `${rect.left + window.scrollX}px`;
-            particlesContainer.style.width = `${rect.width}px`;
-            particlesContainer.style.height = `${rect.height}px`;
-            particlesContainer.style.pointerEvents = 'none';
-            particlesContainer.style.zIndex = '999';
-            document.body.appendChild(particlesContainer);
-
-            particlesJS(particlesContainer, {
-                "particles": {
-                    "number": {
-                        "value": 30,
-                        "density": {
-                            "enable": true,
-                            "value_area": 800
-                        }
-                    },
-                    "color": {
-                        "value": "#ffffff"
-                    },
-                    "shape": {
-                        "type": "circle",
-                        "stroke": {
-                            "width": 0,
-                            "color": "#000000"
-                        },
-                    },
-                    "opacity": {
-                        "value": 0.8,
-                        "random": true
-                    },
-                    "size": {
-                        "value": 4,
-                        "random": true
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 6,
-                        "direction": "none",
-                        "random": false,
-                        "straight": false,
-                        "out_mode": "destroy",
-                        "bounce": false
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": false,
-                            "mode": "repulse"
-                        },
-                        "onclick": {
-                            "enable": false,
-                            "mode": "push"
-                        },
-                        "resize": true
-                    }
-                },
-                "retina_detect": true
-            });
-
-            // 파티클 효과을 2초 후 제거
-            setTimeout(() => {
-                particlesJS(particlesContainer, {});
-                document.body.removeChild(particlesContainer);
+                gsap.to(message, { duration: 0.5, opacity: 0, y: 20, onComplete: () => {
+                    message.style.display = 'none';
+                }});
             }, 2000);
         }
 
