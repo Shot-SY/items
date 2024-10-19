@@ -3,22 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>캐릭터 필터 - 버전 2</title>
+    <title>캐릭터 필터 - 버전 3</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Google Tag Manager -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-37K1C9W7BK');
-    </script>
-    <!-- Particle.js for background effect -->
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-P0yYZjtlGFnRFlvsU8/6gbx9IPhxOylc3PFlG6G6EFPdMELT6jnEc32pDKAMK/KENXwkOW0rQi+X8rjN5Tq3/Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- ScrollMagic for scroll animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/ScrollMagic.min.js" integrity="sha512-3R3aTszImEq2uQlJoQhaKggiMEfrWdFhGBoajzilTw3aYzCo36p1BFe7B4P2X3pzOGgY6OphBLkgryva_hClUg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- tsParticles for advanced particle effects -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
     <style>
         /* CSS Variables for theming */
         :root {
@@ -60,12 +55,14 @@
 
         h1 {
             text-align: center;
-            margin: 40px 0 20px 0;
+            margin: 60px 0 20px 0;
             font-family: var(--font-primary);
-            font-size: 3em;
+            font-size: 3.5em;
             color: var(--primary-color);
-            text-shadow: 2px 2px 10px var(--shadow-color);
+            text-shadow: 2px 2px 15px var(--shadow-color);
             transition: color var(--transition-speed);
+            opacity: 0;
+            transform: translateY(-50px);
         }
 
         /* 테마 전환 스위치 */
@@ -117,21 +114,26 @@
         .theme-switch span {
             margin-left: 10px;
             font-size: 1em;
+            color: var(--text-color);
+            transition: color var(--transition-speed);
         }
 
+        /* 캐릭터 그리드 */
         .character-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 25px;
-            padding: 0 20px;
-            margin-bottom: 40px;
-            perspective: 1000px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 30px;
+            padding: 0 40px;
+            margin-bottom: 60px;
+            perspective: 1200px;
+            opacity: 0;
         }
 
+        /* 캐릭터 박스 */
         .character-box {
             background: var(--card-bg);
             border: none;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -139,12 +141,14 @@
             cursor: pointer;
             transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
             position: relative;
-            height: 220px;
+            height: 260px;
             border-radius: var(--border-radius);
-            box-shadow: 0 8px 16px var(--shadow-color);
+            box-shadow: 0 10px 20px var(--shadow-color);
             overflow: hidden;
             transform-style: preserve-3d;
             backface-visibility: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .character-box::before {
@@ -167,48 +171,48 @@
 
         .character-box.selected {
             background-color: var(--secondary-color);
-            box-shadow: 0 12px 24px var(--shadow-color);
-            transform: translateY(-10px) rotateY(10deg);
+            box-shadow: 0 15px 30px var(--shadow-color);
+            transform: translateY(-15px) rotateY(10deg);
         }
 
         .character-box:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 12px 24px var(--shadow-color);
+            transform: scale(1.08) translateY(-8px);
+            box-shadow: 0 15px 30px var(--shadow-color);
         }
 
         .character-img {
-            width: 100px;
-            height: 130px;
+            width: 120px;
+            height: 150px;
             object-fit: cover;
-            margin-bottom: 15px;
-            border-radius: 20px;
+            margin-bottom: 20px;
+            border-radius: 25px;
             transition: transform var(--transition-speed);
             z-index: 2;
-            transform: translateZ(30px);
+            transform: translateZ(40px);
         }
 
         .character-box:hover .character-img {
-            transform: rotate(10deg) translateZ(30px) translateY(-10px);
+            transform: rotate(15deg) translateZ(40px) translateY(-15px);
         }
 
         .character-name {
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            font-weight: 600;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-weight: 700;
             color: var(--text-color);
-            text-shadow: 1px 1px 5px var(--shadow-color);
+            text-shadow: 1px 1px 10px var(--shadow-color);
             z-index: 2;
             transition: color var(--transition-speed);
         }
 
         .spinbox-container {
-            width: 60%;
+            width: 70%;
             visibility: hidden;
             opacity: 0;
             transition: visibility var(--transition-speed), opacity var(--transition-speed), transform var(--transition-speed);
             justify-content: center;
-            margin-top: -10px;
-            transform: translateY(-20px);
+            margin-top: -15px;
+            transform: translateY(-30px);
             z-index: 2;
         }
 
@@ -219,14 +223,14 @@
         }
 
         .spinbox-container input[type="number"] {
-            width: 50px;
-            padding: 8px;
+            width: 60px;
+            padding: 10px;
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
             text-align: center;
-            font-size: 1em;
+            font-size: 1.1em;
             font-family: var(--font-primary);
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.3);
             color: var(--text-color);
             transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
             backdrop-filter: blur(5px);
@@ -234,30 +238,31 @@
 
         .spinbox-container input[type="number"]:focus {
             background-color: var(--primary-color);
-            box-shadow: 0 0 10px var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-color);
             outline: none;
         }
 
         /* 인터랙티브 버튼 */
         #filterButton {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 220px;
-            margin: 20px auto;
-            padding: 15px 25px;
-            font-size: 1.2em;
+            width: 240px;
+            margin: 30px auto;
+            padding: 18px 30px;
+            font-size: 1.3em;
             cursor: pointer;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: var(--text-color);
             border: none;
             border-radius: var(--border-radius);
-            box-shadow: 0 6px 12px var(--shadow-color);
+            box-shadow: 0 8px 16px var(--shadow-color);
             transition: background var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
             font-family: var(--font-primary);
             font-weight: bold;
             position: relative;
             overflow: hidden;
+            text-transform: uppercase;
         }
 
         #filterButton::after {
@@ -270,6 +275,7 @@
             background: rgba(255, 255, 255, 0.1);
             transform: skewX(-45deg) translateX(0);
             transition: transform 0.6s;
+            pointer-events: none;
         }
 
         #filterButton:hover::after {
@@ -278,37 +284,39 @@
 
         #filterButton:hover {
             background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-            box-shadow: 0 8px 16px var(--shadow-color);
-            transform: translateY(-3px);
+            box-shadow: 0 10px 20px var(--shadow-color);
+            transform: translateY(-5px);
         }
 
         #filterButton:active {
             transform: translateY(0);
-            box-shadow: 0 6px 12px var(--shadow-color);
+            box-shadow: 0 8px 16px var(--shadow-color);
         }
 
         #copyInstruction {
-            margin: 20px auto;
+            margin: 30px auto;
             font-style: italic;
             color: #bbb;
             text-align: center;
-            width: 80%;
+            width: 90%;
+            font-size: 1.1em;
         }
 
         #copyMessage {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             color: var(--text-color);
-            padding: 12px 25px;
-            border-radius: 25px;
+            padding: 15px 30px;
+            border-radius: 30px;
             display: none;
             opacity: 0.95;
             font-family: var(--font-primary);
-            box-shadow: 0 4px 12px var(--shadow-color);
-            animation: fadeInOut 2s forwards;
+            font-size: 1.2em;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            animation: fadeInOut 2.5s forwards;
             z-index: 1000;
         }
 
@@ -319,31 +327,34 @@
             100% { opacity: 0; }
         }
 
+        /* 결과 섹션 */
         #results {
             border: none;
-            padding: 25px;
-            height: 800px;
+            padding: 30px;
+            min-height: 900px;
+            max-height: 900px;
             overflow-y: auto;
             background: var(--card-bg);
             border-radius: var(--border-radius);
-            box-shadow: inset 0 0 15px var(--shadow-color);
-            margin: 0 20px 40px 20px;
+            box-shadow: inset 0 0 20px var(--shadow-color);
+            margin: 0 40px 60px 40px;
             transition: background var(--transition-speed), box-shadow var(--transition-speed);
+            backdrop-filter: blur(10px);
         }
 
         .result-item {
-            margin-bottom: 25px;
-            padding: 20px;
+            margin-bottom: 30px;
+            padding: 25px;
             background: rgba(255, 255, 255, 0.1);
             cursor: pointer;
             transition: background var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
             border-radius: var(--border-radius);
-            box-shadow: 0 4px 8px var(--shadow-color);
+            box-shadow: 0 6px 12px var(--shadow-color);
             display: flex;
             flex-direction: column;
             backdrop-filter: blur(5px);
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
         }
 
         .result-item::before {
@@ -365,8 +376,8 @@
 
         .result-item:hover {
             background: var(--primary-color);
-            box-shadow: 0 6px 12px var(--shadow-color);
-            transform: translateY(-5px);
+            box-shadow: 0 8px 16px var(--shadow-color);
+            transform: translateY(-7px);
             color: var(--text-color);
         }
 
@@ -374,14 +385,14 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
             position: relative;
             z-index: 2;
         }
 
         .result-text strong {
-            font-size: 1.2em;
+            font-size: 1.4em;
             color: var(--text-color);
             transition: color var(--transition-speed);
         }
@@ -389,46 +400,162 @@
         .result-text .price {
             color: var(--accent-color);
             font-weight: bold;
+            font-size: 1.2em;
         }
 
         .result-text .count {
             color: #4caf50;
+            font-size: 1.1em;
         }
 
         .item-images {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #333;
-            border-radius: 10px;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid #444;
+            border-radius: 12px;
             backdrop-filter: blur(5px);
             position: relative;
             z-index: 2;
         }
 
         .small-character-img {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             object-fit: contain;
-            border-radius: 8px;
+            border-radius: 10px;
             transition: transform var(--transition-speed);
         }
 
         .small-character-img:hover {
-            transform: scale(1.2);
+            transform: scale(1.3);
+        }
+
+        /* 모달 윈도우 */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1500; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            margin: 10% auto; 
+            padding: 20px;
+            border: 2px solid var(--primary-color);
+            width: 80%; 
+            max-width: 600px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 16px var(--shadow-color);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .close {
+            color: var(--text-color);
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color var(--transition-speed);
+        }
+
+        .close:hover {
+            color: var(--primary-color);
         }
 
         /* 반응형 디자인 */
-        @media (max-width: 1024px) {
+        @media (max-width: 1440px) {
             h1 {
-                font-size: 2.5em;
+                font-size: 3em;
             }
             .character-grid {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 25px;
+            }
+            .character-box {
+                height: 240px;
+                padding: 20px;
+            }
+            .character-img {
+                width: 110px;
+                height: 140px;
+                margin-bottom: 18px;
+            }
+            .spinbox-container input[type="number"] {
+                width: 55px;
+            }
+            #filterButton {
+                font-size: 1.2em;
+                padding: 16px 25px;
+            }
+            .result-item {
+                padding: 22px;
+            }
+            .small-character-img {
+                width: 65px;
+                height: 65px;
+            }
+            .result-text {
+                gap: 9px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            h1 {
+                font-size: 2.8em;
+            }
+            .character-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 20px;
+            }
+            .character-box {
+                height: 220px;
+                padding: 18px;
+            }
+            .character-img {
+                width: 100px;
+                height: 130px;
+                margin-bottom: 16px;
+            }
+            .spinbox-container input[type="number"] {
+                width: 50px;
+            }
+            #filterButton {
+                font-size: 1.1em;
+                padding: 14px 22px;
+            }
+            .result-item {
+                padding: 20px;
+            }
+            .small-character-img {
+                width: 60px;
+                height: 60px;
+            }
+            .result-text {
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.3em;
+            }
+            .character-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 18px;
             }
             .character-box {
                 height: 200px;
@@ -436,18 +563,54 @@
             }
             .character-img {
                 width: 90px;
-                height: 110px;
-                margin-bottom: 12px;
+                height: 120px;
+                margin-bottom: 14px;
             }
             .spinbox-container input[type="number"] {
                 width: 45px;
             }
             #filterButton {
-                font-size: 1.1em;
+                font-size: 1em;
                 padding: 12px 20px;
             }
             .result-item {
                 padding: 18px;
+            }
+            .small-character-img {
+                width: 55px;
+                height: 55px;
+            }
+            .result-text {
+                gap: 7px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2em;
+            }
+            .character-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 16px;
+            }
+            .character-box {
+                height: 180px;
+                padding: 12px;
+            }
+            .character-img {
+                width: 80px;
+                height: 110px;
+                margin-bottom: 12px;
+            }
+            .spinbox-container input[type="number"] {
+                width: 40px;
+            }
+            #filterButton {
+                font-size: 0.9em;
+                padding: 10px 18px;
+            }
+            .result-item {
+                padding: 15px;
             }
             .small-character-img {
                 width: 50px;
@@ -458,88 +621,73 @@
             }
         }
 
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
-            }
-            .character-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 18px;
-            }
-            .character-box {
-                height: 180px;
-                padding: 12px;
-            }
-            .character-img {
-                width: 80px;
-                height: 100px;
-                margin-bottom: 10px;
-            }
-            .spinbox-container input[type="number"] {
-                width: 40px;
-            }
-            #filterButton {
-                font-size: 1em;
-                padding: 10px 18px;
-            }
-            .result-item {
-                padding: 15px;
-            }
-            .small-character-img {
-                width: 45px;
-                height: 45px;
-            }
-            .result-text strong {
-                font-size: 1.1em;
-            }
-        }
-
-        /* Particle.js container */
-        #particles-js {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            top: 0;
-            left: 0;
+        /* Glassmorphism 스타일 */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
         }
     </style>
 </head>
 <body>
     <!-- Particle Background -->
-    <div id="particles-js"></div>
+    <div id="tsparticles"></div>
 
     <!-- 테마 전환 스위치 -->
-    <div class="theme-switch">
-        <input type="checkbox" id="themeToggle">
+    <div class="theme-switch" aria-label="테마 전환 스위치">
+        <input type="checkbox" id="themeToggle" aria-label="테마 전환 스위치">
         <label for="themeToggle" class="slider"></label>
-        <span><i class="fas fa-adjust"></i></span>
+        <span><i class="fas fa-adjust" aria-hidden="true"></i></span>
     </div>
 
+    <!-- 헤더 -->
     <h1>영웅전설: 가가브 트릴로지</h1>
+
+    <!-- 캐릭터 그리드 -->
     <div class="character-grid" id="characterGrid"></div>
+
+    <!-- 필터 버튼 -->
     <button id="filterButton"><i class="fas fa-filter"></i> 필터 적용</button>
+
+    <!-- 복사 지침 -->
     <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
+
+    <!-- 결과 섹션 -->
     <div id="results"></div>
+
+    <!-- 복사 완료 메시지 -->
     <div id="copyMessage"><i class="fas fa-check-circle"></i> 복사되었습니다</div>
 
+    <!-- 모달 윈도우 -->
+    <div id="infoModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close" aria-label="닫기">&times;</span>
+            <h2>캐릭터 필터 정보</h2>
+            <p>필터 기능을 사용하여 원하는 캐릭터를 선택하고, 수량을 지정한 후 필터를 적용하세요.</p>
+            <p>결과 목록에서 원하는 항목을 클릭하면 해당 정보가 클립보드에 복사됩니다.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
     <script>
-        // Initialize particles.js with enhanced settings
-        particlesJS("particles-js",
-        {
+        // Initialize tsParticles
+        tsParticles.load("tsparticles", {
             "particles": {
                 "number": {
-                    "value": 100,
+                    "value": 120,
                     "density": {
                         "enable": true,
                         "value_area": 800
                     }
                 },
                 "color": {
-                    "value": ["#ff6ec7", "#7873f5", "#04e762"]
+                    "value": ["#ff6ec7", "#7873f5", "#04e762", "#ffffff"]
                 },
                 "shape": {
-                    "type": "star",
+                    "type": "triangle",
                     "stroke": {
                         "width": 0,
                         "color": "#000000"
@@ -549,15 +697,12 @@
                     },
                 },
                 "opacity": {
-                    "value": 0.7,
+                    "value": 0.6,
                     "random": true
                 },
                 "size": {
                     "value": 4,
                     "random": true
-                },
-                "line_linked": {
-                    "enable": false
                 },
                 "move": {
                     "enable": true,
@@ -574,7 +719,7 @@
                 "events": {
                     "onhover": {
                         "enable": true,
-                        "mode": "grab"
+                        "mode": "repulse"
                     },
                     "onclick": {
                         "enable": true,
@@ -583,34 +728,19 @@
                     "resize": true
                 },
                 "modes": {
-                    "grab": {
-                        "distance": 200,
-                        "line_linked": {
-                            "opacity": 0.5
-                        }
-                    },
-                    "bubble": {
-                        "distance": 400,
-                        "size": 40,
-                        "duration": 2,
-                        "opacity": 8,
-                        "speed": 3
-                    },
                     "repulse": {
                         "distance": 100,
                         "duration": 0.4
                     },
                     "push": {
                         "particles_nb": 4
-                    },
-                    "remove": {
-                        "particles_nb": 2
                     }
                 }
             },
             "retina_detect": true
         });
 
+        // 캐릭터 데이터
         const characters = [
             ["ervin", "어빈"], ["gerd", "게르드"], ["myle", "마일"], ["thomas", "토마스"], 
             ["shannon", "섀넌"], ["hwiri", "휘리"], ["guse", "구스"], ["elenoa", "엘레노아"], 
@@ -627,8 +757,8 @@
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
             const charBox = document.createElement('div');
-            charBox.className = 'character-box';
-            charBox.dataset.engName = engName; // 나중에 쉽게 접근하기 위해 데이터 속성 추가
+            charBox.className = 'character-box glass';
+            charBox.dataset.engName = engName; // 데이터 속성 추가
 
             const img = document.createElement('img');
             img.src = `cropped_characters/${korName}.png`;
@@ -649,7 +779,7 @@
             spinbox.min = 0;
             spinbox.max = 9;
             spinbox.value = 0;
-            spinbox.disabled = true; // 초기에는 비활성화
+            spinbox.disabled = true; // 초기 비활성화
 
             spinboxContainer.appendChild(spinbox);
 
@@ -665,7 +795,7 @@
                 toggleSelection(charBox);
             });
 
-            // 스핀박스 클릭 시 이벤트 전파 방지 (선택 상태 변경 방지)
+            // 스핀박스 클릭 시 이벤트 전파 방지
             spinbox.addEventListener('click', (event) => {
                 event.stopPropagation();
             });
@@ -685,6 +815,7 @@
             }
         }
 
+        // 데이터 로드 함수
         function loadData() {
             const timestamp = new Date().getTime();
             Promise.all([
@@ -712,11 +843,13 @@
                 });
 
                 console.log('데이터 로드됨:', sortedData, luaData);
+                animateHeader(); // 헤더 애니메이션 호출
             }).catch(error => {
                 console.error('데이터 로딩 오류:', error);
             });
         }
 
+        // 필터링 함수
         function filterData() {
             const filteredData = {};
 
@@ -729,6 +862,7 @@
             displayResults(filteredData);
         }
 
+        // 조건 체크 함수
         function checkConditions(chars) {
             const charCount = {};
             chars.forEach(char => {
@@ -749,22 +883,23 @@
             });
         }
 
-        // getPrice 함수는 가격 순 정렬에 필요하므로 유지합니다.
+        // 가격 추출 함수
         function getPrice(key) {
             const priceMatch = sortedData[key]?.match(/=\s*([\d,]+)/);
             return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : -1;
         }
 
+        // 결과 표시 함수
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
-        
+
             // 가격 순으로 정렬 (내림차순)
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
-        
+
             sortedKeys.forEach(key => {
                 const resultItem = document.createElement('div');
-                resultItem.className = 'result-item';
+                resultItem.className = 'result-item glass';
                 
                 const sortedDataValue = sortedData[key];
                 if (sortedDataValue) {
@@ -799,17 +934,22 @@
                     });
                     resultItem.appendChild(itemsDiv);
 
-                    resultItem.addEventListener('click', () => copyToClipboard(resultItem));
+                    // 모달 열기 이벤트 추가
+                    resultItem.addEventListener('click', () => {
+                        copyToClipboard(resultItem);
+                        openModal(resultItem);
+                    });
                 } else {
                     resultItem.textContent = filteredData[key];
                 }
                 
                 resultsDiv.appendChild(resultItem);
             });
-        
+
             document.getElementById('copyInstruction').style.display = 'block';
         }
-        
+
+        // 클립보드 복사 함수
         function copyToClipboard(element) {
             const characters = element.querySelector('.result-text strong').textContent.trim();
             const price = element.querySelector('.result-text .price').textContent.trim();
@@ -823,15 +963,20 @@
                 console.error('복사 실패: ', err);
             });
         }
-        
+
+        // 복사 메시지 표시 함수
         function showCopyMessage() {
             const message = document.getElementById('copyMessage');
             message.style.display = 'block';
+            gsap.fromTo(message, { opacity: 0, y: 50 }, { opacity: 0.95, y: 0, duration: 0.5 });
             setTimeout(() => {
-                message.style.display = 'none';
-            }, 2000);
+                gsap.to(message, { opacity: 0, y: 50, duration: 0.5, onComplete: () => {
+                    message.style.display = 'none';
+                }});
+            }, 2500);
         }
 
+        // 선택된 캐릭터 정보 가져오기
         function getSelectedCharacters() {
             const selectedBoxes = Array.from(document.getElementsByClassName('character-box')).filter(box => box.classList.contains('selected'));
             return selectedBoxes
@@ -839,6 +984,7 @@
                 .join(',');
         }
 
+        // 필터 버튼 클릭 이벤트
         document.getElementById('filterButton').addEventListener('click', () => {
             loadData();
             setTimeout(() => {
@@ -848,7 +994,7 @@
                 gtag('event', 'apply_filter', {
                     'selected_characters': getSelectedCharacters()
                 });
-            }, 500);
+            }, 1000);
         });
 
         // 초기 데이터 로드
@@ -874,6 +1020,37 @@
                 localStorage.setItem('theme', 'dark');
             }
         });
+
+        // 헤더 애니메이션
+        function animateHeader() {
+            gsap.to("h1", { opacity: 1, y: 0, duration: 1, delay: 0.5, ease: "power2.out" });
+        }
+
+        // 모달 윈도우 관련 기능
+        const modal = document.getElementById('infoModal');
+        const closeModal = document.querySelector('.close');
+
+        function openModal(element) {
+            modal.style.display = "block";
+            modal.setAttribute('aria-hidden', 'false');
+            gsap.fromTo(".modal-content", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" });
+        }
+
+        closeModal.onclick = function() {
+            gsap.to(".modal-content", { scale: 0.8, opacity: 0, duration: 0.5, ease: "back.in(1.7)", onComplete: () => {
+                modal.style.display = "none";
+                modal.setAttribute('aria-hidden', 'true');
+            }});
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                gsap.to(".modal-content", { scale: 0.8, opacity: 0, duration: 0.5, ease: "back.in(1.7)", onComplete: () => {
+                    modal.style.display = "none";
+                    modal.setAttribute('aria-hidden', 'true');
+                }});
+            }
+        }
     </script>
 </body>
 </html>
