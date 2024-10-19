@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캐릭터 필터</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
     <script>
@@ -14,162 +16,240 @@
       gtag('config', 'G-37K1C9W7BK');
     </script>
     <style>
+        /* 기본 스타일링 */
         body {
-            font-family: 'Malgun Gothic', sans-serif;
-            max-width: 1000px;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5em;
+            color: #007bff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         .character-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
         .character-box {
-            border: 1px solid #ddd;
-            padding: 10px;
+            background: #fff;
+            border: none;
+            padding: 15px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            cursor: pointer; /* 클릭 가능함을 나타내는 커서 */
-            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-            position: relative; /* 스핀박스 위치 조정을 위해 추가 */
-            height: 140px; /* 스핀박스 공간 확보 */
-            box-sizing: border-box;
-        }
-        .character-box.selected {
-            background-color: #e0f7fa;
-            border-color: #007bff;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            position: relative;
+            height: 160px;
+            border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        .character-box.selected {
+            background-color: #d0ebff;
+            box-shadow: 0 8px 16px rgba(0, 123, 255, 0.2);
+            transform: translateY(-5px);
+        }
         .character-box:hover {
-            background-color: #f5f5f5;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         .character-img {
-            width: 74px;
-            height: 85px;
+            width: 80px;
+            height: 90px;
             object-fit: cover;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        .character-box:hover .character-img {
+            transform: rotate(5deg);
         }
         .character-name {
-            font-size: 12px;
-            margin-bottom: 5px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
         }
         .spinbox-container {
-            width: 100%;
-            /* Hidden 상태에서도 공간을 유지 */
+            width: 80%;
             visibility: hidden;
             opacity: 0;
-            transition: visibility 0.3s, opacity 0.3s;
+            transition: visibility 0.3s, opacity 0.3s, transform 0.3s;
             justify-content: center;
             margin-top: -5px;
+            transform: translateY(-10px);
         }
         .character-box.selected .spinbox-container {
             visibility: visible;
             opacity: 1;
+            transform: translateY(0);
         }
         .spinbox-container input[type="number"] {
-            width: 60px;
+            width: 50px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .spinbox-container input[type="number"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
         }
         #filterButton {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            padding: 10px;
-            margin: 20px 0;
-            font-size: 16px;
+            padding: 15px;
+            margin: 25px 0;
+            font-size: 18px;
             cursor: pointer;
-            background-color: #007bff;
+            background: linear-gradient(45deg, #007bff, #00c6ff);
             color: white;
             border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            border-radius: 30px;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+            transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
         }
         #filterButton:hover {
-            background-color: #0056b3;
+            background: linear-gradient(45deg, #00c6ff, #007bff);
+            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.6);
+            transform: translateY(-3px);
+        }
+        #filterButton:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+        }
+        #copyInstruction {
+            margin-bottom: 15px;
+            font-style: italic;
+            color: #666;
+            text-align: center;
+        }
+        #copyMessage {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            display: none;
+            opacity: 0.95;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         #results {
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: none;
+            padding: 20px;
             height: 800px;
             overflow-y: auto;
-            background-color: #fafafa;
-            border-radius: 5px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
         }
         .result-item {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+            padding: 15px;
             background-color: #f9f9f9;
-            cursor: pointer; /* 클릭 가능함을 나타내는 포인터 커서 유지 */
+            cursor: pointer;
             transition: background-color 0.3s, box-shadow 0.3s;
-            border-radius: 5px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
         .result-item:hover {
-            background-color: #f0f0f0;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            background-color: #e3f2fd;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
         }
         .result-item .price {
             font-weight: bold;
             color: #007bff;
+            margin-top: 5px;
         }
         .result-item .count {
             color: #28a745;
-        }
-        #copyMessage {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: none;
-            opacity: 0.9;
-        }
-        #copyInstruction {
-            margin-bottom: 10px;
-            font-style: italic;
-            color: #666;
+            margin-top: 3px;
         }
         .item-images {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 10px;
             margin-top: 10px;
             padding: 5px;
             background-color: #fff;
             border: 1px solid #eee;
-            border-radius: 5px;
+            border-radius: 10px;
         }
         .small-character-img {
-            width: 65px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             object-fit: cover;
+            border-radius: 8px;
+            transition: transform 0.3s;
         }
-        .character-text {
-            font-size: 12px;
-            background-color: #f0f0f0;
-            padding: 2px 5px;
-            border-radius: 3px;
+        .small-character-img:hover {
+            transform: scale(1.1);
+        }
+        /* 추가적인 그래픽 요소 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/geometry3.png') repeat;
+            opacity: 0.04;
+            z-index: -1;
+        }
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .character-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 15px;
+            }
+            .character-box {
+                height: 140px;
+                padding: 10px;
+            }
+            .spinbox-container input[type="number"] {
+                width: 45px;
+            }
+            #filterButton {
+                font-size: 16px;
+                padding: 12px;
+            }
+            .result-item {
+                padding: 12px;
+            }
+            .small-character-img {
+                width: 50px;
+                height: 50px;
+            }
         }
     </style>
 </head>
 <body>
     <h1>캐릭터 필터</h1>
     <div class="character-grid" id="characterGrid"></div>
-    <!-- 가격 필터 섹션 제거 -->
-    <!--
-    <div class="price-filter">
-        <label for="minPrice">최소 가격:</label>
-        <input type="number" id="minPrice" min="0" value="0">
-        <label for="maxPrice">최대 가격:</label>
-        <input type="number" id="maxPrice" min="0" value="1000000">
-    </div>
-    -->
     <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
@@ -338,7 +418,7 @@
                     const price = priceMatch ? priceMatch[1] : '가격 정보 없음';
                     const count = priceMatch ? priceMatch[2] : '0';
                     
-                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
+                    resultItem.innerHTML = `<strong>${characters}</strong> <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
 
                     // 물품 내용 파싱 및 이미지 추가
                     const itemsDiv = document.createElement('div');
@@ -371,7 +451,7 @@
         }
         
         function copyToClipboard(element) {
-            const characters = element.childNodes[0].textContent.trim();
+            const characters = element.querySelector('strong').textContent.trim();
             const price = element.querySelector('.price').textContent.trim();
             const count = element.querySelector('.count').textContent.trim();
         
@@ -406,8 +486,6 @@
                 
                 // Google Analytics 이벤트 전송 (가격 관련 데이터 제거)
                 gtag('event', 'apply_filter', {
-                    // 'min_price': document.getElementById('minPrice').value,
-                    // 'max_price': document.getElementById('maxPrice').value,
                     'selected_characters': getSelectedCharacters()
                 });
             }, 500);
