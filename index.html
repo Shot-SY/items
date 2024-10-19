@@ -6,15 +6,10 @@
     <title>캐릭터 필터</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-37K1C9W7BK');
-    </script>
     <style>
         /* 기본 스타일링 (다크 테마 적용) */
         body {
@@ -25,7 +20,53 @@
             padding: 30px 20px;
             color: #e0e0e0;
             position: relative; /* 패턴 배경 적용을 위해 position 추가 */
+            overflow: hidden; /* 파티클 효과가 스크롤 없이 배경에 머무르도록 */
         }
+
+        /* Particles.js 배경 */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* 로딩 스크린 스타일 */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(18, 18, 18, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #loadingScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner {
+            border: 8px solid rgba(255, 255, 255, 0.1);
+            border-top: 8px solid #00e6ff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         h1 {
             text-align: center;
             margin-bottom: 30px;
@@ -54,6 +95,8 @@
             height: 160px;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            background-image: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png'); /* 패턴 추가 */
+            background-size: cover;
         }
         .character-box.selected {
             background-color: rgba(0, 123, 255, 0.8);
@@ -233,7 +276,7 @@
             height: 100%;
             background: url('https://www.transparenttextures.com/patterns/geometry.png') repeat;
             opacity: 0.04;
-            z-index: -1;
+            z-index: -2; /* 파티클보다 뒤에 배치 */
         }
         /* 반응형 디자인 */
         @media (max-width: 768px) {
@@ -265,8 +308,23 @@
             }
         }
     </style>
+    <script>
+        // Google Analytics 설정
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-37K1C9W7BK');
+    </script>
 </head>
 <body>
+    <!-- Particles.js 배경 -->
+    <div id="particles-js"></div>
+
+    <!-- 로딩 스크린 -->
+    <div id="loadingScreen">
+        <div class="spinner"></div>
+    </div>
+
     <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
     <button id="filterButton">필터 적용</button>
@@ -275,6 +333,81 @@
     <div id="copyMessage">복사되었습니다</div>
 
     <script>
+        // Particles.js 설정
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 100,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": ["#FF5733", "#FF33F6", "#33FFCE", "#335BFF", "#8D33FF"]
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    }
+                },
+                "opacity": {
+                    "value": 0.7,
+                    "random": true,
+                    "anim": {
+                        "enable": false
+                    }
+                },
+                "size": {
+                    "value": 4,
+                    "random": true,
+                    "anim": {
+                        "enable": false
+                    }
+                },
+                "line_linked": {
+                    "enable": false
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "attract": {
+                        "enable": false
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": {
+                        "distance": 100,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+
         const characters = [
             ["ervin", "어빈"], ["gerd", "게르드"], ["myle", "마일"], ["thomas", "토마스"], 
             ["shannon", "섀넌"], ["hwiri", "휘리"], ["guse", "구스"], ["elenoa", "엘레노아"], 
@@ -376,8 +509,10 @@
                 });
 
                 console.log('데이터 로드됨:', sortedData, luaData);
+                hideLoadingScreen(); // 데이터 로드 완료 시 로딩 화면 숨김
             }).catch(error => {
                 console.error('데이터 로딩 오류:', error);
+                hideLoadingScreen(); // 오류 발생 시에도 로딩 화면 숨김
             });
         }
 
@@ -504,6 +639,7 @@
         }
 
         document.getElementById('filterButton').addEventListener('click', () => {
+            showLoadingScreen(); // 필터 적용 시 로딩 화면 표시
             loadData();
             setTimeout(() => {
                 filterData();
@@ -515,7 +651,16 @@
             }, 500);
         });
 
-        // 초기 데이터 로드
+        function showLoadingScreen() {
+            document.getElementById('loadingScreen').classList.remove('hidden');
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingScreen').classList.add('hidden');
+        }
+
+        // 초기 데이터 로드 시 로딩 화면 표시
+        showLoadingScreen();
         loadData();
     </script>
 </body>
