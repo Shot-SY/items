@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캐릭터 필터</title>
-    <!-- Google tag (gtag.js) -->
+    <!-- Google Tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -13,129 +13,290 @@
 
       gtag('config', 'G-37K1C9W7BK');
     </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --font-family: 'Noto Sans KR', sans-serif;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Malgun Gothic', sans-serif;
-            max-width: 1000px;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        .character-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .character-box {
-            border: 1px solid #ddd;
-            padding: 5px;
+
+        header {
             text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: var(--primary-color);
+        }
+
+        .filters {
             display: flex;
             flex-direction: column;
-            align-items: center;
-        }
-        .character-img {
-            width: 74px;
-            height: 85px;
-            object-fit: cover;
-            margin-bottom: 5px;
-        }
-        .character-name {
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-        #filterButton {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 20px 0;
-            font-size: 16px;
-        }
-        #results {
-            border: 1px solid #ccc;
-            padding: 10px;
-            height: 800px;
-            overflow-y: auto;
-        }
-        .price-filter {
+            gap: 20px;
             margin-bottom: 20px;
         }
-        .price-filter input {
-            width: 100px;
-            margin-right: 10px;
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
         }
-        .character-box input[type="number"] {
-            width: 40px;
-            margin-top: 5px;
-        }
-        .result-item {
-            margin-bottom: 15px;
+
+        .character-box {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             padding: 10px;
-            border-bottom: 2px solid #ddd;
-            background-color: #f9f9f9;
+            text-align: center;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
         }
+
+        .character-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .character-img {
+            width: 100px;
+            height: 115px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .character-name {
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .character-box input[type="checkbox"] {
+            transform: scale(1.2);
+            margin-bottom: 5px;
+        }
+
+        .character-box input[type="number"] {
+            width: 50px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+            transition: border-color var(--transition-speed);
+        }
+
+        .character-box input[type="number"]:disabled {
+            background-color: #e9ecef;
+        }
+
+        .price-filter {
+            background-color: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .price-inputs {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .input-group label {
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color var(--transition-speed);
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        #filterButton {
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+        }
+
+        #filterButton:hover {
+            background-color: #0056b3; /* 더 진한 색상으로 변경 */
+            transform: translateY(-2px);
+        }
+
+        #copyInstruction {
+            font-style: italic;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        #results {
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: background-color var(--transition-speed);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
         .result-item:hover {
-            background-color: #f0f0f0;
+            background-color: #f1f1f1;
+            cursor: pointer;
         }
+
         .result-item .price {
             font-weight: bold;
-            color: #007bff;
+            color: var(--primary-color);
         }
+
         .result-item .count {
-            color: #28a745;
+            color: var(--success-color);
         }
+
+        .item-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .small-character-img {
+            width: 60px;
+            height: 80px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .character-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 80px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: center;
+            padding: 5px;
+        }
+
         #copyMessage {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #333;
+            background-color: rgba(0,0,0,0.8);
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 24px;
+            border-radius: 6px;
             display: none;
+            z-index: 1000;
+            font-size: 14px;
         }
-        #copyInstruction {
-            margin-bottom: 10px;
-            font-style: italic;
-            color: #666;
-        }
-        .item-images {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 10px;
-            padding: 5px;
-            background-color: #fff;
-            border: 1px solid #eee;
-            border-radius: 5px;
-        }
-        .small-character-img {
-            width: 65px;
-            height: 70px;
-            object-fit: cover;
-        }
-        .character-text {
-            font-size: 12px;
-            background-color: #f0f0f0;
-            padding: 2px 5px;
-            border-radius: 3px;
+
+        @media (max-width: 768px) {
+            .price-filter {
+                padding: 10px;
+            }
+
+            .character-img {
+                width: 80px;
+                height: 95px;
+            }
+
+            .small-character-img, .character-text {
+                width: 50px;
+                height: 65px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>캐릭터 필터</h1>
-    <div class="character-grid" id="characterGrid"></div>
-    <div class="price-filter">
-        <label for="minPrice">최소 가격:</label>
-        <input type="number" id="minPrice" min="0" value="0">
-        <label for="maxPrice">최대 가격:</label>
-        <input type="number" id="maxPrice" min="0" value="1000000">
+    <div class="container">
+        <header>
+            <h1>캐릭터 필터</h1>
+        </header>
+        <section class="filters">
+            <div class="character-grid" id="characterGrid"></div>
+            <div class="price-filter">
+                <div class="price-inputs">
+                    <div class="input-group">
+                        <label for="minPrice">최소 가격:</label>
+                        <input type="number" id="minPrice" min="0" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="maxPrice">최대 가격:</label>
+                        <input type="number" id="maxPrice" min="0" value="1000000">
+                    </div>
+                </div>
+                <button id="filterButton">필터 적용</button>
+            </div>
+        </section>
+        <section id="copyInstruction">물품을 클릭하면 복사됩니다</section>
+        <main id="results"></main>
+        <div id="copyMessage">복사되었습니다</div>
     </div>
-    <button id="filterButton">필터 적용</button>
-    <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
-    <div id="results"></div>
-    <div id="copyMessage">복사되었습니다</div>
 
     <script>
         const characters = [
@@ -246,11 +407,11 @@
                 charCount[name] = (charCount[name] || 0) + count;
             });
 
-            return characters.every(([engName]) => {
+            return characters.every(([engName, korName]) => {
                 const checkbox = document.getElementById(engName);
                 if (checkbox.checked) {
                     const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
-                    const actualCount = charCount[engName.slice(0, 2)] || 0;
+                    const actualCount = charCount[korName.slice(0, 2)] || 0;
                     return actualCount >= requiredCount;
                 }
                 return true;
@@ -274,42 +435,67 @@
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
-        
+
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
-        
+
             sortedKeys.forEach(key => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'result-item';
                 
                 const sortedDataValue = sortedData[key];
                 if (sortedDataValue) {
-                    const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
-                    const [, price, count] = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
+                    const [charactersStr, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
+                    const priceMatch = priceAndCount.match(/([\d,]+)\s*\(([^)]+)\)/);
+                    const price = priceMatch ? priceMatch[1] : '0';
+                    const count = priceMatch ? priceMatch[2] : '0';
                     
-                    resultItem.innerHTML = `${characters} <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
-        
+                    resultItem.innerHTML = `
+                        <div>${charactersStr}</div>
+                        <div class="price">${price.replace(/,/g, ',')}원</div>
+                        <div class="count">(${count.trim()})</div>
+                    `;
+
                     // 물품 내용 파싱 및 이미지 추가
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
-                    const items = characters.split(' ');
+                    const items = charactersStr.split(' ');
                     items.forEach(item => {
-                        const [name, count] = item.match(/([가-힣]+)(\d*)/).slice(1);
-                        const repeatCount = count ? parseInt(count) : 1;
-                        for (let i = 0; i < repeatCount; i++) {
-                            const imgOrText = document.createElement(characters.includes(name) ? 'img' : 'span');
-                            if (imgOrText.tagName === 'IMG') {
-                                imgOrText.src = `cropped_characters/${name}.png`;
-                                imgOrText.alt = name;
-                                imgOrText.className = 'small-character-img';
-                            } else {
-                                imgOrText.textContent = name;
-                                imgOrText.className = 'character-text';
+                        const match = item.match(/([가-힣]+)(\d*)/);
+                        if (match) {
+                            const name = match[1];
+                            const count = match[2] ? parseInt(match[2]) : 1;
+                            for (let i = 0; i < count; i++) {
+                                const imgPath = `cropped_characters/${name}.png`;
+                                const img = document.createElement('img');
+                                img.src = imgPath;
+                                img.alt = name;
+                                img.className = 'small-character-img';
+                                img.onerror = () => {
+                                    const span = document.createElement('span');
+                                    span.className = 'character-text';
+                                    span.textContent = name;
+                                    itemsDiv.appendChild(span);
+                                };
+                                img.onload = () => {
+                                    itemsDiv.appendChild(img);
+                                };
+                                // Preload image to check if it exists
+                                const imgPreload = new Image();
+                                imgPreload.src = imgPath;
+                                imgPreload.onload = () => {
+                                    itemsDiv.appendChild(img);
+                                };
+                                imgPreload.onerror = () => {
+                                    const span = document.createElement('span');
+                                    span.className = 'character-text';
+                                    span.textContent = name;
+                                    itemsDiv.appendChild(span);
+                                };
                             }
-                            itemsDiv.appendChild(imgOrText);
                         }
                     });
                     resultItem.appendChild(itemsDiv);
-        
+
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
@@ -317,12 +503,12 @@
                 
                 resultsDiv.appendChild(resultItem);
             });
-        
+
             document.getElementById('copyInstruction').style.display = 'block';
         }
-        
+
         function copyToClipboard(element) {
-            const characters = element.childNodes[0].textContent.trim();
+            const characters = element.children[0].textContent.trim();
             const price = element.querySelector('.price').textContent.trim();
             const count = element.querySelector('.count').textContent.trim();
         
@@ -334,7 +520,7 @@
                 console.error('복사 실패: ', err);
             });
         }
-        
+
         function showCopyMessage() {
             const message = document.getElementById('copyMessage');
             message.style.display = 'block';
