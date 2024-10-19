@@ -6,6 +6,8 @@
     <title>캐릭터 필터</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
     <script>
@@ -16,23 +18,24 @@
       gtag('config', 'G-37K1C9W7BK');
     </script>
     <style>
-        /* 기본 스타일링 */
+        /* 기본 스타일링 - 다크 테마 적용 */
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #121212;
             max-width: 1200px;
             margin: 0 auto;
             padding: 30px 20px;
-            color: #333;
+            color: #f0f0f0;
             position: relative; /* 패턴 배경 적용을 위해 position 추가 */
+            overflow: hidden; /* 파티클이 overflow 되지 않도록 설정 */
         }
         h1 {
             text-align: center;
             margin-bottom: 30px;
             font-family: 'Poppins', sans-serif;
             font-size: 2.5em;
-            color: #007bff;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            color: #00d1ff;
+            text-shadow: 0 0 10px rgba(0, 209, 255, 0.7);
         }
         .character-grid {
             display: grid;
@@ -41,8 +44,8 @@
             margin-bottom: 30px;
         }
         .character-box {
-            background: #fff;
-            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 15px;
             text-align: center;
             display: flex;
@@ -53,16 +56,16 @@
             position: relative;
             height: 160px;
             border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 209, 255, 0.5);
         }
         .character-box.selected {
-            background-color: #d0ebff;
-            box-shadow: 0 8px 16px rgba(0, 123, 255, 0.2);
+            background-color: rgba(0, 123, 255, 0.3);
+            box-shadow: 0 8px 16px rgba(0, 123, 255, 0.6), 0 0 15px rgba(0, 123, 255, 0.7);
             transform: translateY(-5px);
         }
         .character-box:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 209, 255, 0.7);
         }
         .character-img {
             width: 80px;
@@ -79,7 +82,8 @@
             font-size: 14px;
             margin-bottom: 10px;
             font-weight: 600;
-            color: #333;
+            color: #f0f0f0;
+            text-shadow: 0 0 5px rgba(0, 209, 255, 0.7);
         }
         .spinbox-container {
             width: 80%;
@@ -98,16 +102,19 @@
         .spinbox-container input[type="number"] {
             width: 50px;
             padding: 5px;
-            border: 1px solid #ccc;
+            border: none;
             border-radius: 8px;
             text-align: center;
             font-size: 14px;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #f0f0f0;
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
         .spinbox-container input[type="number"]:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            background-color: rgba(0, 123, 255, 0.4);
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.7);
             outline: none;
+            color: #ffffff;
         }
         #filterButton {
             display: flex;
@@ -118,28 +125,29 @@
             margin: 25px 0;
             font-size: 18px;
             cursor: pointer;
-            background: linear-gradient(45deg, #007bff, #00c6ff);
+            background: linear-gradient(45deg, #00d1ff, #007bff);
             color: white;
             border: none;
             border-radius: 30px;
-            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4), 0 0 10px rgba(0, 209, 255, 0.6);
             transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
+            text-shadow: 0 0 5px rgba(0, 209, 255, 0.7);
         }
         #filterButton:hover {
-            background: linear-gradient(45deg, #00c6ff, #007bff);
-            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.6);
+            background: linear-gradient(45deg, #007bff, #00d1ff);
+            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.6), 0 0 15px rgba(0, 209, 255, 0.8);
             transform: translateY(-3px);
         }
         #filterButton:active {
             transform: translateY(0);
-            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4), 0 0 10px rgba(0, 209, 255, 0.6);
         }
         #copyInstruction {
             margin-bottom: 15px;
             font-style: italic;
-            color: #666;
+            color: #ccc;
             text-align: center;
         }
         #copyMessage {
@@ -161,24 +169,24 @@
             padding: 20px;
             height: 800px;
             overflow-y: auto;
-            background-color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 10px rgba(0, 123, 255, 0.5);
         }
         .result-item {
             margin-bottom: 20px;
             padding: 15px;
-            background-color: #f9f9f9;
+            background: rgba(255, 255, 255, 0.1);
             cursor: pointer;
             transition: background-color 0.3s, box-shadow 0.3s;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 10px rgba(0, 123, 255, 0.5);
             display: flex;
             flex-direction: column; /* 유지 */
         }
         .result-item:hover {
-            background-color: #e3f2fd;
-            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+            background-color: rgba(227, 242, 253, 0.2);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.6), 0 0 15px rgba(0, 209, 255, 0.7);
         }
         /* 새로 추가된 텍스트 컨테이너 스타일 */
         .result-text {
@@ -190,14 +198,17 @@
         }
         .result-text strong {
             font-size: 1em;
-            color: #333;
+            color: #f0f0f0;
+            text-shadow: 0 0 5px rgba(0, 209, 255, 0.7);
         }
         .result-text .price {
-            color: #007bff;
+            color: #00d1ff;
             font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 209, 255, 0.7);
         }
         .result-text .count {
             color: #28a745;
+            text-shadow: 0 0 5px rgba(40, 167, 69, 0.7);
         }
         .item-images {
             display: flex;
@@ -205,8 +216,8 @@
             gap: 8px;
             margin-top: 10px;
             padding: 5px;
-            background-color: #fff;
-            border: 1px solid #eee;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
         }
         .small-character-img {
@@ -214,16 +225,15 @@
             height: 80px;
             object-fit: contain;
             border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 209, 255, 0.7);
         }
-        body::before {
-            content: "";
-            position: absolute;
+        /* 파티클 배경을 위한 스타일 */
+        #particles-js {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/geometry.png') repeat;
-            opacity: 0.04;
             z-index: -1;
         }
         /* 반응형 디자인 */
@@ -258,6 +268,9 @@
     </style>
 </head>
 <body>
+    <!-- 파티클 배경을 위한 컨테이너 -->
+    <div id="particles-js"></div>
+
     <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
     <button id="filterButton">필터 적용</button>
@@ -266,6 +279,79 @@
     <div id="copyMessage">복사되었습니다</div>
 
     <script>
+        // 파티클 설정
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": {
+                        "enable": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false
+                    }
+                },
+                "line_linked": {
+                    "enable": false
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": {
+                        "distance": 100,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+
         const characters = [
             ["ervin", "어빈"], ["gerd", "게르드"], ["myle", "마일"], ["thomas", "토마스"], 
             ["shannon", "섀넌"], ["hwiri", "휘리"], ["guse", "구스"], ["elenoa", "엘레노아"], 
@@ -323,6 +409,15 @@
             // 스핀박스 클릭 시 이벤트 전파 방지 (선택 상태 변경 방지)
             spinbox.addEventListener('click', (event) => {
                 event.stopPropagation();
+            });
+
+            // 스핀박스 값 변경 시 sortedData 업데이트
+            spinbox.addEventListener('input', () => {
+                if (spinbox.value > 0) {
+                    charBox.classList.add('selected');
+                } else {
+                    charBox.classList.remove('selected');
+                }
             });
         });
 
