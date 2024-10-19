@@ -35,6 +35,7 @@
             align-items: center;
             cursor: pointer; /* 클릭 가능함을 나타내는 커서 */
             transition: background-color 0.3s, border-color 0.3s;
+            position: relative; /* 스핀박스 위치 조정을 위해 추가 */
         }
         .character-box.selected {
             background-color: #e0f7fa;
@@ -52,9 +53,12 @@
         }
         .spinbox-container {
             width: 100%;
-            display: flex;
+            display: none; /* 기본적으로 숨김 */
             justify-content: center;
             margin-top: 5px;
+        }
+        .character-box.selected .spinbox-container {
+            display: flex; /* 선택 시 표시 */
         }
         .spinbox-container input[type="number"] {
             width: 60px;
@@ -196,7 +200,16 @@
             characterGrid.appendChild(charBox);
 
             // 박스 클릭 시 선택 상태 토글
-            charBox.addEventListener('click', () => toggleSelection(charBox));
+            charBox.addEventListener('click', (event) => {
+                // 스핀박스 클릭 시 이벤트 전파 방지
+                if (event.target.tagName.toLowerCase() === 'input') return;
+                toggleSelection(charBox);
+            });
+
+            // 스핀박스 클릭 시 이벤트 전파 방지 (선택 상태 변경 방지)
+            spinbox.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
         });
 
         function toggleSelection(charBox) {
