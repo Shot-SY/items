@@ -223,21 +223,31 @@
             box-shadow: var(--box-shadow);
             transition: background-color 0.3s;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
 
         .result-item:hover {
             background-color: var(--hover-color);
         }
 
+        .result-item .main-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .result-item .main-info span {
+            margin-right: 10px;
+        }
+
         .result-item .price {
             font-weight: bold;
             color: var(--primary-color);
-            margin-left: 10px;
         }
 
         .result-item .count {
             color: var(--secondary-color);
-            margin-left: 5px;
         }
 
         @media (max-width: 600px) {
@@ -393,7 +403,7 @@
                 const checkbox = document.getElementById(engName);
                 if (checkbox.checked) {
                     const requiredCount = parseInt(document.getElementById(`${engName}-spin`).value);
-                    const actualCount = charCount[korName.slice(0, 2)] || 0;
+                    const actualCount = charCount[engName.slice(0, 2)] || 0; // 수정된 부분
                     return actualCount >= requiredCount;
                 }
                 return true;
@@ -426,7 +436,7 @@
                 
                 const sortedDataValue = sortedData[key];
                 if (sortedDataValue) {
-                    const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
+                    const [charactersStr, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
                     const priceMatch = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
                     let price = '', count = '';
                     if (priceMatch) {
@@ -434,20 +444,33 @@
                         count = priceMatch[2];
                     }
                     
-                    resultItem.innerHTML = `<span>${characters}</span> <span class="price">${price}</span> <span class="count">(${count.trim()})</span>`;
-        
+                    // 메인 정보
+                    const mainInfo = document.createElement('div');
+                    mainInfo.className = 'main-info';
+                    const charactersSpan = document.createElement('span');
+                    charactersSpan.textContent = charactersStr;
+                    const priceSpan = document.createElement('span');
+                    priceSpan.className = 'price';
+                    priceSpan.textContent = price;
+                    const countSpan = document.createElement('span');
+                    countSpan.className = 'count';
+                    countSpan.textContent = `(${count.trim()})`;
+                    mainInfo.appendChild(charactersSpan);
+                    mainInfo.appendChild(priceSpan);
+                    mainInfo.appendChild(countSpan);
+                    resultItem.appendChild(mainInfo);
+
                     // 물품 내용 파싱 및 이미지 추가
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
-                    const items = characters.split(' ');
+                    const items = charactersStr.split(' ');
                     items.forEach(item => {
                         const match = item.match(/([가-힣]+)(\d*)/);
                         if (match) {
                             const name = match[1];
                             const count = match[2] ? parseInt(match[2]) : 1;
                             for (let i = 0; i < count; i++) {
-                                const isCharacter = characters.includes(name);
-                                if (isCharacter) {
+                                if (characters.some(([eng, kor]) => kor === name)) {
                                     const img = document.createElement('img');
                                     img.src = `cropped_characters/${name}.png`;
                                     img.alt = name;
@@ -463,7 +486,7 @@
                         }
                     });
                     resultItem.appendChild(itemsDiv);
-        
+
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
@@ -476,7 +499,7 @@
         }
         
         function copyToClipboard(element) {
-            const characters = element.querySelector('span').textContent.trim();
+            const characters = element.querySelector('.main-info span').textContent.trim();
             const price = element.querySelector('.price').textContent.trim();
             const count = element.querySelector('.count').textContent.trim();
         
