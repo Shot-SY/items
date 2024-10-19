@@ -15,6 +15,8 @@
 
       gtag('config', 'G-37K1C9W7BK');
     </script>
+    <!-- tsParticles 라이브러리 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
     <style>
         /* 검정색 베이스 다크 테마 스타일링 */
         body {
@@ -25,6 +27,7 @@
             padding: 30px 20px;
             color: #e0e0e0; /* 밝은 회색 텍스트 */
             position: relative; /* 패턴 배경 적용을 위해 position 추가 */
+            overflow: hidden; /* 파티클이 넘치지 않도록 */
         }
         h1 {
             text-align: center;
@@ -33,15 +36,19 @@
             font-size: 2.5em;
             color: #ff4081; /* 핑크 포인트 컬러 */
             text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
         }
         .character-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
         }
         .character-box {
-            background: #1a1a1a; /* 어두운 회색으로 약간의 구분감 */
+            background: rgba(26, 26, 26, 0.8); /* 반투명 어두운 회색 */
             border: none;
             padding: 15px;
             text-align: center;
@@ -54,9 +61,10 @@
             height: 160px;
             border-radius: 15px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px); /* 배경 블러 효과 */
         }
         .character-box.selected {
-            background-color: #ff4081; /* 선택 시 핑크색 배경 */
+            background-color: rgba(255, 64, 129, 0.9); /* 선택 시 반투명 핑크색 배경 */
             box-shadow: 0 8px 20px rgba(255, 64, 129, 0.8);
             transform: translateY(-5px);
         }
@@ -142,6 +150,8 @@
             transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
+            position: relative;
+            z-index: 1;
         }
         #filterButton:active {
             transform: translateY(0);
@@ -152,6 +162,8 @@
             font-style: italic;
             color: #bbb;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
         #copyMessage {
             position: fixed;
@@ -166,20 +178,23 @@
             opacity: 0.95;
             font-family: 'Poppins', sans-serif;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
         }
         #results {
             border: none;
             padding: 20px;
             height: 800px;
             overflow-y: auto;
-            background-color: #1a1a1a; /* 어두운 회색 배경 */
+            background-color: rgba(26, 26, 26, 0.8); /* 반투명 어두운 회색 배경 */
             border-radius: 15px;
             box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
         }
         .result-item {
             margin-bottom: 20px;
             padding: 15px;
-            background-color: #2a2a2a;
+            background-color: rgba(42, 42, 42, 0.8);
             cursor: pointer;
             transition: background-color 0.3s, box-shadow 0.3s;
             border-radius: 10px;
@@ -256,9 +271,23 @@
                 gap: 5px; /* 작은 화면에서는 간격 줄임 */
             }
         }
+
+        /* tsParticles 캔버스 스타일링 */
+        #tsparticles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none; /* 파티클과의 상호작용 방지 */
+        }
     </style>
 </head>
 <body>
+    <!-- tsParticles 컨테이너 -->
+    <div id="tsparticles"></div>
+
     <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
     <button id="filterButton">필터 적용</button>
@@ -267,6 +296,56 @@
     <div id="copyMessage">복사되었습니다</div>
 
     <script>
+        // tsParticles 초기화
+        tsParticles.load("tsparticles", {
+            particles: {
+                number: {
+                    value: 50,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                shape: {
+                    type: "star",
+                    stroke: {
+                        width: 0,
+                        color: "#fff"
+                    }
+                },
+                size: {
+                    value: 4,
+                    random: { enable: true, minimumValue: 2 }
+                },
+                move: {
+                    enable: true,
+                    speed: 1,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out"
+                },
+                color: {
+                    value: ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#4B0082", "#8F00FF"]
+                },
+                opacity: {
+                    value: 0.8,
+                    random: false
+                }
+            },
+            interactivity: {
+                events: {
+                    onhover: {
+                        enable: false
+                    },
+                    onclick: {
+                        enable: false
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
         const characters = [
             ["ervin", "어빈"], ["gerd", "게르드"], ["myle", "마일"], ["thomas", "토마스"], 
             ["shannon", "섀넌"], ["hwiri", "휘리"], ["guse", "구스"], ["elenoa", "엘레노아"], 
