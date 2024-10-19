@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캐릭터 필터</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Google Tag Manager -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -17,106 +17,57 @@
     </script>
     <!-- Particle.js for background effect -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <!-- Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- GSAP for advanced animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <style>
-        /* CSS Variables for theming */
+        /* CSS Variables for easy theming */
         :root {
             --primary-color: #ff6ec7;
-            --secondary-color: #7873f5;
-            --accent-color: #04e762;
-            --background-color: #1e1e1e;
+            --secondary-color: #48c6ef;
+            --accent-color: #f6f9fc;
+            --background-gradient: linear-gradient(135deg, #1f4037, #99f2c8);
+            --card-gradient: linear-gradient(135deg, #f06, #48c6ef);
+            --button-gradient: linear-gradient(135deg, #ff6ec7, #48c6ef, #f6f9fc);
+            --background-color: #121212;
             --card-bg: rgba(255, 255, 255, 0.1);
             --text-color: #ffffff;
-            --shadow-color: rgba(0, 0, 0, 0.5);
-            --transition-speed: 0.4s;
-            --font-primary: 'Orbitron', sans-serif;
+            --shadow-color: rgba(0, 0, 0, 0.7);
+            --transition-speed: 0.3s;
+            --font-primary: 'Montserrat', sans-serif;
             --font-secondary: 'Roboto', sans-serif;
-            --border-radius: 15px;
         }
 
-        /* Light Theme Variables */
-        [data-theme="light"] {
-            --primary-color: #ff4081;
-            --secondary-color: #3f51b5;
-            --accent-color: #4caf50;
-            --background-color: #f0f2f5;
-            --card-bg: rgba(255, 255, 255, 0.8);
-            --text-color: #333333;
-            --shadow-color: rgba(0, 0, 0, 0.2);
+        /* Reset 기본 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         /* 기본 스타일링 */
         body {
             font-family: var(--font-secondary);
-            background-color: var(--background-color);
+            background: var(--background-gradient);
             margin: 0;
             padding: 0;
             color: var(--text-color);
             position: relative;
             overflow-x: hidden;
-            transition: background-color var(--transition-speed), color var(--transition-speed);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
         }
 
         h1 {
             text-align: center;
-            margin: 40px 0 20px 0;
+            margin: 40px 20px 20px 20px;
             font-family: var(--font-primary);
             font-size: 3em;
-            color: var(--primary-color);
-            text-shadow: 2px 2px 10px var(--shadow-color);
-            transition: color var(--transition-speed);
-        }
-
-        /* 테마 전환 스위치 */
-        .theme-switch {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        .theme-switch input {
-            display: none;
-        }
-
-        .slider {
-            width: 50px;
-            height: 24px;
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            position: relative;
-            transition: background var(--transition-speed);
-            box-shadow: 0 2px 4px var(--shadow-color);
-        }
-
-        .slider::before {
-            content: "";
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: var(--text-color);
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: transform var(--transition-speed);
-            box-shadow: 0 2px 4px var(--shadow-color);
-        }
-
-        input:checked + .slider::before {
-            transform: translateX(26px);
-        }
-
-        input:checked + .slider {
-            background: var(--primary-color);
-        }
-
-        .theme-switch span {
-            margin-left: 10px;
-            font-size: 1em;
+            color: var(--accent-color);
+            text-shadow: 2px 2px 15px var(--shadow-color);
+            animation: fadeInDown 1s ease-out;
         }
 
         .character-grid {
@@ -124,12 +75,14 @@
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 25px;
             padding: 0 20px;
+            width: 100%;
+            max-width: 1200px;
             margin-bottom: 40px;
-            perspective: 1000px;
+            animation: fadeIn 1s ease-out;
         }
 
         .character-box {
-            background: var(--card-bg);
+            background: var(--card-gradient);
             border: none;
             padding: 20px;
             text-align: center;
@@ -137,14 +90,14 @@
             flex-direction: column;
             align-items: center;
             cursor: pointer;
-            transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed), background var(--transition-speed);
             position: relative;
             height: 220px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 8px 16px var(--shadow-color);
+            border-radius: 20px;
+            box-shadow: 0 12px 24px var(--shadow-color);
             overflow: hidden;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
+            backdrop-filter: blur(10px);
+            background-clip: border-box;
         }
 
         .character-box::before {
@@ -154,11 +107,10 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, var(--primary-color) 25%, transparent 25%);
-            background-size: 50px 50px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 25%, transparent 25%);
+            background-size: 80px 80px;
             opacity: 0.1;
             transition: transform var(--transition-speed);
-            z-index: 1;
         }
 
         .character-box:hover::before {
@@ -166,39 +118,44 @@
         }
 
         .character-box.selected {
-            background-color: var(--secondary-color);
-            box-shadow: 0 12px 24px var(--shadow-color);
-            transform: translateY(-10px) rotateY(10deg);
+            background: var(--secondary-color);
+            box-shadow: 0 20px 40px var(--shadow-color);
+            transform: translateY(-15px) scale(1.05);
         }
 
         .character-box:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 12px 24px var(--shadow-color);
+            transform: scale(1.07) translateY(-7px);
+            box-shadow: 0 20px 40px var(--shadow-color);
         }
 
         .character-img {
             width: 100px;
-            height: 130px;
+            height: 120px;
             object-fit: cover;
             margin-bottom: 15px;
-            border-radius: 20px;
+            border-radius: 15px;
             transition: transform var(--transition-speed);
-            z-index: 2;
-            transform: translateZ(30px);
+            animation: float 3s ease-in-out infinite;
         }
 
         .character-box:hover .character-img {
-            transform: rotate(10deg) translateZ(30px) translateY(-10px);
+            transform: rotate(10deg) translateY(-10px);
         }
 
         .character-name {
             font-size: 1.2em;
             margin-bottom: 15px;
-            font-weight: 600;
-            color: var(--text-color);
-            text-shadow: 1px 1px 5px var(--shadow-color);
-            z-index: 2;
-            transition: color var(--transition-speed);
+            font-weight: 700;
+            color: var(--accent-color);
+            text-shadow: 1px 1px 10px var(--shadow-color);
+            animation: slideInUp 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .character-box.selected .character-name {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .spinbox-container {
@@ -209,7 +166,6 @@
             justify-content: center;
             margin-top: -10px;
             transform: translateY(-20px);
-            z-index: 2;
         }
 
         .character-box.selected .spinbox-container {
@@ -220,7 +176,7 @@
 
         .spinbox-container input[type="number"] {
             width: 50px;
-            padding: 8px;
+            padding: 6px;
             border: none;
             border-radius: 12px;
             text-align: center;
@@ -238,7 +194,6 @@
             outline: none;
         }
 
-        /* 인터랙티브 버튼 */
         #filterButton {
             display: flex;
             align-items: center;
@@ -248,12 +203,13 @@
             padding: 15px 25px;
             font-size: 1.2em;
             cursor: pointer;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--button-gradient);
+            background-size: 200% 200%;
             color: var(--text-color);
             border: none;
-            border-radius: var(--border-radius);
-            box-shadow: 0 6px 12px var(--shadow-color);
-            transition: background var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
+            border-radius: 30px;
+            box-shadow: 0 10px 20px var(--shadow-color);
+            transition: background-position var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
             font-family: var(--font-primary);
             font-weight: bold;
             position: relative;
@@ -263,44 +219,41 @@
         #filterButton::after {
             content: "";
             position: absolute;
-            top: 0;
+            top: -50%;
             left: -50%;
             width: 200%;
-            height: 100%;
+            height: 200%;
             background: rgba(255, 255, 255, 0.1);
-            transform: skewX(-45deg) translateX(0);
-            transition: transform 0.6s;
-        }
-
-        #filterButton:hover::after {
-            transform: skewX(-45deg) translateX(100%);
+            transform: rotate(45deg) translate(-50%, -50%);
+            transition: transform 0.5s;
         }
 
         #filterButton:hover {
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-            box-shadow: 0 8px 16px var(--shadow-color);
-            transform: translateY(-3px);
+            background-position: right center;
+            box-shadow: 0 15px 30px var(--shadow-color);
+            transform: translateY(-5px);
         }
 
         #filterButton:active {
             transform: translateY(0);
-            box-shadow: 0 6px 12px var(--shadow-color);
+            box-shadow: 0 10px 20px var(--shadow-color);
         }
 
         #copyInstruction {
             margin: 20px auto;
             font-style: italic;
-            color: #bbb;
+            color: #ddd;
             text-align: center;
             width: 80%;
+            animation: fadeInUp 1s ease-out;
         }
 
         #copyMessage {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
+            background: var(--button-gradient);
             color: var(--text-color);
             padding: 12px 25px;
             border-radius: 25px;
@@ -312,62 +265,38 @@
             z-index: 1000;
         }
 
-        @keyframes fadeInOut {
-            0% { opacity: 0; }
-            10% { opacity: 0.95; }
-            90% { opacity: 0.95; }
-            100% { opacity: 0; }
-        }
-
         #results {
             border: none;
             padding: 25px;
+            width: 90%;
+            max-width: 1200px;
             height: 800px;
             overflow-y: auto;
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             box-shadow: inset 0 0 15px var(--shadow-color);
             margin: 0 20px 40px 20px;
-            transition: background var(--transition-speed), box-shadow var(--transition-speed);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease-out;
         }
 
         .result-item {
             margin-bottom: 25px;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
             cursor: pointer;
             transition: background var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 8px var(--shadow-color);
+            border-radius: 12px;
+            box-shadow: 0 6px 12px var(--shadow-color);
             display: flex;
             flex-direction: column;
             backdrop-filter: blur(5px);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .result-item::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, var(--primary-color), transparent);
-            transform: skewX(-45deg) translateX(0);
-            transition: transform 0.6s;
-            z-index: 1;
-        }
-
-        .result-item:hover::before {
-            transform: skewX(-45deg) translateX(100%);
         }
 
         .result-item:hover {
             background: var(--primary-color);
-            box-shadow: 0 6px 12px var(--shadow-color);
+            box-shadow: 0 10px 20px var(--shadow-color);
             transform: translateY(-5px);
-            color: var(--text-color);
         }
 
         .result-text {
@@ -376,23 +305,31 @@
             align-items: flex-start;
             gap: 8px;
             flex-wrap: wrap;
-            position: relative;
-            z-index: 2;
+            animation: slideInLeft 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .result-item:hover .result-text {
+            opacity: 1;
+            transform: translateX(0);
         }
 
         .result-text strong {
             font-size: 1.2em;
-            color: var(--text-color);
-            transition: color var(--transition-speed);
+            color: var(--accent-color);
+            text-shadow: 1px 1px 5px var(--shadow-color);
         }
 
         .result-text .price {
             color: var(--accent-color);
             font-weight: bold;
+            font-size: 1em;
         }
 
         .result-text .count {
             color: #4caf50;
+            font-size: 0.9em;
         }
 
         .item-images {
@@ -401,12 +338,10 @@
             gap: 10px;
             margin-top: 15px;
             padding: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             border: 1px solid #333;
             border-radius: 10px;
             backdrop-filter: blur(5px);
-            position: relative;
-            z-index: 2;
         }
 
         .small-character-img {
@@ -415,6 +350,7 @@
             object-fit: contain;
             border-radius: 8px;
             transition: transform var(--transition-speed);
+            animation: floatSmall 4s ease-in-out infinite;
         }
 
         .small-character-img:hover {
@@ -431,12 +367,12 @@
                 gap: 20px;
             }
             .character-box {
-                height: 200px;
+                height: 180px;
                 padding: 15px;
             }
             .character-img {
                 width: 90px;
-                height: 110px;
+                height: 100px;
                 margin-bottom: 12px;
             }
             .spinbox-container input[type="number"] {
@@ -467,12 +403,12 @@
                 gap: 18px;
             }
             .character-box {
-                height: 180px;
+                height: 160px;
                 padding: 12px;
             }
             .character-img {
                 width: 80px;
-                height: 100px;
+                height: 90px;
                 margin-bottom: 10px;
             }
             .spinbox-container input[type="number"] {
@@ -494,6 +430,79 @@
             }
         }
 
+        /* 애니메이션 키프레임 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 0.95; }
+            90% { opacity: 0.95; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes floatSmall {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
         /* Particle.js container */
         #particles-js {
             position: fixed;
@@ -509,43 +518,33 @@
     <!-- Particle Background -->
     <div id="particles-js"></div>
 
-    <!-- 테마 전환 스위치 -->
-    <div class="theme-switch">
-        <input type="checkbox" id="themeToggle">
-        <label for="themeToggle" class="slider"></label>
-        <span><i class="fas fa-adjust"></i></span>
-    </div>
-
     <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
-    <button id="filterButton"><i class="fas fa-filter"></i> 필터 적용</button>
+    <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
-    <div id="copyMessage"><i class="fas fa-check-circle"></i> 복사되었습니다</div>
+    <div id="copyMessage">복사되었습니다</div>
 
     <script>
-        // Initialize particles.js with enhanced settings
+        // Initialize particles.js with enhanced colorful particles
         particlesJS("particles-js",
         {
             "particles": {
                 "number": {
-                    "value": 100,
+                    "value": 120,
                     "density": {
                         "enable": true,
                         "value_area": 800
                     }
                 },
                 "color": {
-                    "value": ["#ff6ec7", "#7873f5", "#04e762"]
+                    "value": ["#ff6ec7", "#48c6ef", "#f6f9fc", "#ff8a00", "#e52e71"]
                 },
                 "shape": {
-                    "type": "star",
+                    "type": "circle",
                     "stroke": {
                         "width": 0,
                         "color": "#000000"
-                    },
-                    "polygon": {
-                        "nb_sides": 5
                     },
                 },
                 "opacity": {
@@ -557,11 +556,15 @@
                     "random": true
                 },
                 "line_linked": {
-                    "enable": false
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
                 },
                 "move": {
                     "enable": true,
-                    "speed": 3,
+                    "speed": 5,
                     "direction": "none",
                     "random": false,
                     "straight": false,
@@ -586,7 +589,7 @@
                     "grab": {
                         "distance": 200,
                         "line_linked": {
-                            "opacity": 0.5
+                            "opacity": 0.7
                         }
                     },
                     "bubble": {
@@ -597,7 +600,7 @@
                         "speed": 3
                     },
                     "repulse": {
-                        "distance": 100,
+                        "distance": 200,
                         "duration": 0.4
                     },
                     "push": {
@@ -610,6 +613,11 @@
             },
             "retina_detect": true
         });
+
+        // GSAP Animations for entrance
+        gsap.from("h1", { duration: 1, y: -50, opacity: 0, ease: "bounce.out" });
+        gsap.from(".character-box", { duration: 1, opacity: 0, y: 50, stagger: 0.2, delay: 0.5 });
+        gsap.from("#filterButton", { duration: 1, scale: 0, opacity: 0, delay: 1.5, ease: "back.out(1.7)" });
 
         const characters = [
             ["ervin", "어빈"], ["gerd", "게르드"], ["myle", "마일"], ["thomas", "토마스"], 
@@ -625,7 +633,7 @@
 
         // 캐릭터 박스 생성 및 이벤트 리스너 추가
         const characterGrid = document.getElementById('characterGrid');
-        characters.forEach(([engName, korName]) => {
+        characters.forEach(([engName, korName], index) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
             charBox.dataset.engName = engName; // 나중에 쉽게 접근하기 위해 데이터 속성 추가
@@ -853,27 +861,6 @@
 
         // 초기 데이터 로드
         loadData();
-
-        // 테마 전환 스위치 기능
-        const themeToggle = document.getElementById('themeToggle');
-        const currentTheme = localStorage.getItem('theme') || 'dark';
-        if (currentTheme === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
-            themeToggle.checked = true;
-        } else {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            themeToggle.checked = false;
-        }
-
-        themeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                document.documentElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        });
     </script>
 </body>
 </html>
