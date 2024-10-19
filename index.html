@@ -15,10 +15,8 @@
 
       gtag('config', 'G-37K1C9W7BK');
     </script>
-    <!-- tsParticles CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.6.0/tsparticles.bundle.min.js"></script>
     <style>
-        /* 기존 스타일 ... */
+        /* 검정색 베이스 다크 테마 스타일링 */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #000000; /* 완전한 검정색 배경 */
@@ -27,7 +25,6 @@
             padding: 30px 20px;
             color: #e0e0e0; /* 밝은 회색 텍스트 */
             position: relative; /* 패턴 배경 적용을 위해 position 추가 */
-            overflow: hidden; /* 파티클이 넘치지 않도록 설정 */
         }
         h1 {
             text-align: center;
@@ -210,16 +207,6 @@
             z-index: -1;
         }
 
-        /* 파티클 컨테이너 스타일 */
-        #tsparticles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* 기존 콘텐츠 뒤에 배치 */
-        }
-
         /* 결과 텍스트의 세부 스타일링 */
         .result-text {
             display: flex;
@@ -272,9 +259,6 @@
     </style>
 </head>
 <body>
-    <!-- 파티클 컨테이너 -->
-    <div id="tsparticles"></div>
-
     <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
     <button id="filterButton">필터 적용</button>
@@ -529,115 +513,6 @@
 
         // 초기 데이터 로드
         loadData();
-    </script>
-
-    <!-- tsParticles 초기화 스크립트 -->
-    <script>
-        tsParticles.load("tsparticles", {
-            background: {
-                color: {
-                    value: "#000000" // 기존 배경색과 동일하게 설정
-                },
-            },
-            fpsLimit: 60,
-            particles: {
-                number: {
-                    value: 150, // 파티클 수 증가
-                    density: {
-                        enable: true,
-                        value_area: 800
-                    }
-                },
-                color: {
-                    value: ["#ff4081", "#f50057", "#00e676", "#ff9800"] // 다양한 색상
-                },
-                shape: {
-                    type: "circle", // 파티클 형태
-                },
-                opacity: {
-                    value: 0.6,
-                    random: true,
-                    anim: {
-                        enable: true,
-                        speed: 0.5,
-                        opacity_min: 0.3,
-                        sync: false
-                    }
-                },
-                size: {
-                    value: 3,
-                    random: true,
-                    anim: {
-                        enable: false,
-                        speed: 40,
-                        size_min: 0.1,
-                        sync: false
-                    }
-                },
-                move: {
-                    enable: true,
-                    speed: 1.5, // 이동 속도 조절
-                    direction: "none",
-                    random: false,
-                    straight: false,
-                    outModes: {
-                        default: "out"
-                    },
-                    attract: {
-                        enable: false,
-                        rotateX: 600,
-                        rotateY: 1200
-                    }
-                },
-                links: {
-                    enable: true,
-                    distance: 120,
-                    color: "#ffffff",
-                    opacity: 0.3,
-                    width: 1
-                }
-            },
-            interactivity: {
-                detect_on: "canvas",
-                events: {
-                    onhover: {
-                        enable: true,
-                        mode: "repulse" // 마우스 호버 시 파티클 밀어내기
-                    },
-                    onclick: {
-                        enable: true,
-                        mode: "push" // 클릭 시 파티클 추가
-                    },
-                    resize: true
-                },
-                modes: {
-                    grab: {
-                        distance: 400,
-                        links: {
-                            opacity: 1
-                        }
-                    },
-                    bubble: {
-                        distance: 400,
-                        size: 40,
-                        duration: 2,
-                        opacity: 8,
-                        speed: 3
-                    },
-                    repulse: {
-                        distance: 150,
-                        duration: 0.4
-                    },
-                    push: {
-                        particles_nb: 4
-                    },
-                    remove: {
-                        particles_nb: 2
-                    }
-                }
-            },
-            detectRetina: true
-        });
     </script>
 </body>
 </html>
