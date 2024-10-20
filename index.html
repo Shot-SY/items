@@ -20,20 +20,19 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #121212; /* 수정된 배경색 */
+            background-color: #121212;
             max-width: 1200px;
             margin: 0 auto;
             padding: 30px 20px;
-            color: #e0e0e0; /* 밝은 회색 텍스트 */
-            position: relative; /* 패턴 배경 적용을 위해 position 추가 */
-            /* overflow: hidden; */ /* 스크롤 차단 제거 */
+            color: #e0e0e0;
+            position: relative;
         }
         h1 {
             text-align: center;
             margin-bottom: 30px;
             font-family: 'Poppins', sans-serif;
             font-size: 2.5em;
-            color: #ff4081; /* 핑크 포인트 컬러 */
+            color: #ff4081;
             text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.2);
             position: relative;
             z-index: 1;
@@ -47,10 +46,9 @@
             z-index: 1;
         }
         .character-box {
-            /* 기존 배경에 패턴 추가 */
             background: 
-                url('https://www.transparenttextures.com/patterns/gplay.png'), /* 추가된 패턴 */
-                rgba(26, 26, 26, 0.35); /* 기존 반투명 어두운 회색 */
+                url('https://www.transparenttextures.com/patterns/gplay.png'),
+                rgba(26, 26, 26, 0.35);
             background-repeat: repeat;
             background-size: cover;
             border: none;
@@ -65,14 +63,13 @@
             height: 160px;
             border-radius: 15px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px); /* 배경 블러 효과 */
+            backdrop-filter: blur(5px);
         }
         .character-box.selected {
-            background-color: rgba(255, 64, 129, 0.9); /* 선택 시 반투명 핑크색 배경 */
+            background-color: rgba(255, 64, 129, 0.9);
             box-shadow: 0 8px 20px rgba(255, 64, 129, 0.8);
             transform: translateY(-5px);
         }
-        /* 호버 스타일을 호버 지원 디바이스에만 적용 */
         @media (hover: hover) and (pointer: fine) {
             .character-box:hover {
                 transform: scale(1.05);
@@ -104,7 +101,7 @@
             font-size: 14px;
             margin-bottom: 10px;
             font-weight: 600;
-            color: #ffffff; /* 흰색 텍스트 */
+            color: #ffffff;
         }
         .spinbox-container {
             width: 80%;
@@ -188,9 +185,9 @@
             border: none;
             padding: 20px;
             height: 800px;
-            max-height: 800px; /* 최대 높이 설정하여 필요 시 스크롤 */
+            max-height: 800px;
             overflow-y: auto;
-            background-color: rgba(26, 26, 26, 0.8); /* 반투명 어두운 회색 배경 */
+            background-color: rgba(26, 26, 26, 0.35);
             border-radius: 15px;
             box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
             position: relative;
@@ -227,7 +224,6 @@
             z-index: -1;
         }
 
-        /* 추가된 패턴용 ::after */
         .character-box::after {
             content: "";
             position: absolute;
@@ -236,7 +232,7 @@
             width: 100%;
             height: 100%;
             background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
-            opacity: 0.2; /* 패턴의 투명도 조절 */
+            opacity: 0.2;
             border-radius: 15px;
             pointer-events: none; /* 패턴 클릭 방지 */
             z-index: 0; /* 이미지 및 텍스트 뒤에 배치 */
@@ -518,7 +514,6 @@
             });
         }
 
-        // getPrice 함수는 가격 순 정렬에 필요하므로 유지합니다.
         function getPrice(key) {
             const priceMatch = sortedData[key]?.match(/=\s*([\d,]+)/);
             return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : -1;
@@ -613,7 +608,6 @@
         }
 
         document.getElementById('filterButton').addEventListener('click', () => {
-            // 1. 필터 버튼 클릭 시 먼저 결과 섹션으로 스크롤
             const resultsSection = document.getElementById('results');
             resultsSection.scrollIntoView({ behavior: 'smooth' });
 
@@ -621,7 +615,6 @@
             loadData().then(() => {
                 filterData();
 
-                // Google Analytics 이벤트 전송 (가격 관련 데이터 제거)
                 gtag('event', 'apply_filter', {
                     'selected_characters': getSelectedCharacters()
                 });
