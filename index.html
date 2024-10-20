@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캐릭터 필터</title>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -15,10 +13,8 @@
 
       gtag('config', 'G-37K1C9W7BK');
     </script>
-    <!-- tsParticles 라이브러리 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
     <style>
-        /* 기존 스타일 유지 */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #121212;
@@ -27,7 +23,7 @@
             padding: 30px 20px;
             color: #e0e0e0;
             position: relative;
-            overflow-y: scroll; /* 항상 스크롤바 영역 예약 */
+            overflow-y: scroll;
         }
         h1 {
             text-align: center;
@@ -237,17 +233,15 @@
             background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
             opacity: 0.2;
             border-radius: 15px;
-            pointer-events: none; /* 패턴 클릭 방지 */
-            z-index: 0; /* 이미지 및 텍스트 뒤에 배치 */
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* .character-box 내부 요소가 패턴 위에 표시되도록 설정 */
         .character-box > * {
             position: relative;
             z-index: 1;
         }
 
-        /* 결과 텍스트의 세부 스타일링 */
         .result-text {
             display: flex;
             flex-wrap: wrap;
@@ -255,19 +249,18 @@
             margin-bottom: 10px;
         }
         .result-text .item {
-            color: #ffffff; /* 물품: 흰색 */
+            color: #ffffff;
             font-weight: 700;
         }
         .result-text .price {
-            color: #00e676; /* 가격: 연두색 */
+            color: #00e676;
             font-weight: 600;
         }
         .result-text .count {
-            color: #ff9800; /* 번호: 주황색 */
+            color: #ff9800;
             font-weight: 500;
         }
 
-        /* 반응형 디자인 */
         @media (max-width: 768px) {
             .character-grid {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -288,16 +281,15 @@
                 padding: 12px;
             }
             .small-character-img {
-                width: 60px; /* 작은 화면에서는 약간 줄임 */
-                height: 60px; /* 작은 화면에서는 약간 줄임 */
+                width: 60px;
+                height: 60px;
                 object-fit: contain;
             }
             .result-text {
-                gap: 5px; /* 작은 화면에서는 간격 줄임 */
+                gap: 5px;
             }
         }
 
-        /* tsParticles 캔버스 스타일링 */
         #tsparticles {
             position: fixed;
             top: 0;
@@ -305,32 +297,30 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            pointer-events: none; /* 파티클과의 상호작용 방지 */
+            pointer-events: none;
         }
 
-        /* 로딩 스크린 스타일링 */
         #loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(18, 18, 18, 0.95); /* 반투명 검정 배경 */
+            background-color: rgba(18, 18, 18, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            z-index: 2000; /* 모든 요소 위에 표시 */
+            z-index: 2000;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
         #loader.hidden {
             opacity: 0;
             visibility: hidden;
         }
-        /* 스피너 애니메이션 */
         .spinner {
-            border: 8px solid #f3f3f3; /* 회색 */
-            border-top: 8px solid #ff4081; /* 핑크색 */
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #ff4081;
             border-radius: 50%;
             width: 60px;
             height: 60px;
@@ -342,25 +332,13 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        /* 로딩 텍스트 제거 */
-        /* .loading-text {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.2em;
-            color: #ff4081;
-            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.2);
-        } */
     </style>
 </head>
 <body>
-    <!-- 로딩 스크린 -->
     <div id="loader">
         <div class="spinner"></div>
-        <!-- 로딩 중 텍스트 제거 -->
-        <!-- <div class="loading-text">로딩 중...</div> -->
     </div>
 
-    <!-- tsParticles 컨테이너 -->
     <div id="tsparticles"></div>
 
     <h1>영웅전설: 가가브 트릴로지</h1>
@@ -371,20 +349,14 @@
     <div id="copyMessage">복사되었습니다</div>
 
     <script>
-        // 모든 리소스가 로드되었을 때 로딩 스크린 숨기기
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
             loader.classList.add('hidden');
-            // 약간의 지연 후 로딩 스크린 제거 (부드러운 전환을 위해)
             setTimeout(() => {
                 loader.style.display = 'none';
             }, 500);
         });
 
-        // 초기 로딩 상태에서 스크롤을 방지하지 않음
-        // body에 항상 overflow-y: scroll; 설정됨
-
-        // tsParticles 초기화
         tsParticles.load("tsparticles", {
             particles: {
                 number: {
@@ -446,12 +418,11 @@
         let sortedData = {};
         let luaData = {};
 
-        // 캐릭터 박스 생성 및 이벤트 리스너 추가
         const characterGrid = document.getElementById('characterGrid');
         characters.forEach(([engName, korName]) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
-            charBox.dataset.engName = engName; // 나중에 쉽게 접근하기 위해 데이터 속성 추가
+            charBox.dataset.engName = engName;
 
             const img = document.createElement('img');
             img.src = `cropped_characters/${korName}.png`;
@@ -462,7 +433,6 @@
             nameSpan.className = 'character-name';
             nameSpan.textContent = korName;
 
-            // 스핀박스 컨테이너 생성
             const spinboxContainer = document.createElement('div');
             spinboxContainer.className = 'spinbox-container';
 
@@ -472,7 +442,7 @@
             spinbox.min = 0;
             spinbox.max = 9;
             spinbox.value = 0;
-            spinbox.disabled = true; // 초기에는 비활성화
+            spinbox.disabled = true;
 
             spinboxContainer.appendChild(spinbox);
 
@@ -481,17 +451,13 @@
             charBox.appendChild(spinboxContainer);
             characterGrid.appendChild(charBox);
 
-            // 박스 클릭 시 선택 상태 토글
             charBox.addEventListener('click', (event) => {
-                // 스핀박스 클릭 시 이벤트 전파 방지
                 if (event.target.tagName.toLowerCase() === 'input') return;
                 toggleSelection(charBox);
             });
 
-            // 스핀박스 클릭 시 이벤트 전파 방지 (선택 상태 변경 방지)
             spinbox.addEventListener('click', (event) => {
                 event.stopPropagation();
-                // 스핀박스 활성화/비활성화
                 if (!charBox.classList.contains('selected')) {
                     charBox.classList.add('selected');
                     spinbox.disabled = false;
@@ -512,7 +478,7 @@
                 charBox.classList.add('selected');
                 const spinbox = charBox.querySelector('input[type="number"]');
                 spinbox.disabled = false;
-                spinbox.value = 1; // 기본값 설정
+                spinbox.value = 1;
             }
         }
 
@@ -522,7 +488,6 @@
                 fetch(`sorted_data_with_keys.txt?t=${timestamp}`).then(response => response.text()),
                 fetch(`data.lua?t=${timestamp}`).then(response => response.text())
             ]).then(([sortedDataText, luaDataText]) => {
-                // sorted_data_with_keys.txt 처리
                 sortedData = {};
                 const sortedLines = sortedDataText.split('\n');
                 sortedLines.forEach(line => {
@@ -532,7 +497,6 @@
                     }
                 });
 
-                // data.lua 처리 (간단한 파싱)
                 luaData = {};
                 const dataLines = luaDataText.split('\n');
                 dataLines.forEach(line => {
@@ -589,7 +553,6 @@
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
         
-            // 가격 순으로 정렬 (내림차순)
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
         
             sortedKeys.forEach(key => {
@@ -603,7 +566,6 @@
                     const price = priceMatch ? priceMatch[1] : '가격 정보 없음';
                     const count = priceMatch ? priceMatch[2] : '0';
                     
-                    // 텍스트 그룹화
                     const resultText = document.createElement('div');
                     resultText.className = 'result-text';
                     resultText.innerHTML = `
@@ -614,7 +576,6 @@
                     
                     resultItem.appendChild(resultText);
 
-                    // 물품 내용 파싱 및 이미지 추가
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
                     const items = characters.split(' ');
@@ -624,7 +585,7 @@
                         const [_, name, cnt] = match;
                         const repeatCount = cnt ? parseInt(cnt) : 1;
                         for (let i = 0; i < repeatCount; i++) {
-                            const imgOrText = document.createElement('img'); // 이미지로만 처리
+                            const imgOrText = document.createElement('img');
                             imgOrText.src = `cropped_characters/${name}.png`;
                             imgOrText.alt = name;
                             imgOrText.className = 'small-character-img';
@@ -677,17 +638,11 @@
             const resultsSection = document.getElementById('results');
             resultsSection.scrollIntoView({ behavior: 'smooth' });
 
-            // 2. 데이터 로드 및 필터링
             loadData().then(() => {
                 filterData();
-
-                gtag('event', 'apply_filter', {
-                    'selected_characters': getSelectedCharacters()
-                });
             });
         });
 
-        // 초기 데이터 로드
         loadData();
     </script>
 </body>
