@@ -641,6 +641,9 @@
 
             loadData().then(() => {
                 filterData();
+                gtag('event', 'apply_filter', {
+                    'selected_characters': getSelectedCharacters()
+                });
             });
         });
 
