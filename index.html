@@ -18,6 +18,7 @@
     <!-- tsParticles 라이브러리 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
     <style>
+        /* 기존 스타일링 유지 */
         /* 검정색 베이스 다크 테마 스타일링 */
         body {
             font-family: 'Roboto', sans-serif;
@@ -423,7 +424,7 @@
 
         function loadData() {
             const timestamp = new Date().getTime();
-            Promise.all([
+            return Promise.all([
                 fetch(`sorted_data_with_keys.txt?t=${timestamp}`).then(response => response.text()),
                 fetch(`data.lua?t=${timestamp}`).then(response => response.text())
             ]).then(([sortedDataText, luaDataText]) => {
@@ -463,10 +464,6 @@
                 }
             }
             displayResults(filteredData);
-
-            // 필터 적용 후 결과 섹션으로 스크롤
-            const resultsSection = document.getElementById('results');
-            resultsSection.scrollIntoView({ behavior: 'smooth' });
         }
 
         function checkConditions(chars) {
@@ -584,15 +581,19 @@
         }
 
         document.getElementById('filterButton').addEventListener('click', () => {
-            loadData();
-            setTimeout(() => {
+            // 1. 필터 버튼 클릭 시 먼저 결과 섹션으로 스크롤
+            const resultsSection = document.getElementById('results');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+
+            // 2. 데이터 로드 및 필터링
+            loadData().then(() => {
                 filterData();
-                
+
                 // Google Analytics 이벤트 전송 (가격 관련 데이터 제거)
                 gtag('event', 'apply_filter', {
                     'selected_characters': getSelectedCharacters()
                 });
-            }, 500);
+            });
         });
 
         // 초기 데이터 로드
