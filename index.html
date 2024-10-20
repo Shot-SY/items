@@ -52,7 +52,7 @@
             /* 기존 배경에 패턴 추가 */
             background: 
                 url('https://www.transparenttextures.com/patterns/gplay.png'), /* 추가된 패턴 */
-                rgba(26, 26, 26, 0.5); /* 기존 반투명 어두운 회색 */
+                rgba(26, 26, 26, 0.35); /* 기존 반투명 어두운 회색 */
             background-repeat: repeat;
             background-size: cover;
             border: none;
@@ -62,7 +62,7 @@
             flex-direction: column;
             align-items: center;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
             position: relative;
             height: 160px;
             border-radius: 15px;
@@ -70,10 +70,8 @@
             backdrop-filter: blur(5px); /* 배경 블러 효과 */
         }
         .character-box.selected {
-            /* background-color 제거 */
-            /* border 추가로 선택 상태 표시 */
-            border: 2px solid #ff4081; /* 분홍색 테두리 */
-            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.8); /* 기존 box-shadow 유지 또는 조정 */
+            background-color: rgba(255, 64, 129, 0.9); /* 선택 시 반투명 핑크색 배경 */
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.8);
             transform: translateY(-5px);
         }
         /* 호버 스타일을 호버 지원 디바이스에만 적용 */
@@ -229,6 +227,27 @@
             background: url('https://www.transparenttextures.com/patterns/geometry-dark.png') repeat;
             opacity: 0.04;
             z-index: -1;
+        }
+
+        /* 추가된 패턴용 ::after */
+        .character-box::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
+            opacity: 0.2; /* 패턴의 투명도 조절 */
+            border-radius: 15px;
+            pointer-events: none; /* 패턴 클릭 방지 */
+            z-index: 0; /* 이미지 및 텍스트 뒤에 배치 */
+        }
+
+        /* .character-box 내부 요소가 패턴 위에 표시되도록 설정 */
+        .character-box > * {
+            position: relative;
+            z-index: 1;
         }
 
         /* 결과 텍스트의 세부 스타일링 */
