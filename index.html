@@ -316,12 +316,12 @@
                     }
                 },
                 size: {
-                    value: 4,
-                    random: { enable: true, minimumValue: 2 }
+                    value: 3,
+                    random: { enable: true, minimumValue: 1 }
                 },
                 move: {
                     enable: true,
-                    speed: 1,
+                    speed: 2,
                     direction: "none",
                     random: false,
                     straight: false,
@@ -585,17 +585,15 @@
             const resultsSection = document.getElementById('results');
             resultsSection.scrollIntoView({ behavior: 'smooth' });
 
-            // 2. 데이터 로드 및 필터링을 약간 지연시켜 스크롤 애니메이션 방해 방지
-            setTimeout(() => {
-                loadData().then(() => {
-                    filterData();
+            // 2. 데이터 로드 및 필터링
+            loadData().then(() => {
+                filterData();
 
-                    // Google Analytics 이벤트 전송 (가격 관련 데이터 제거)
-                    gtag('event', 'apply_filter', {
-                        'selected_characters': getSelectedCharacters()
-                    });
+                // Google Analytics 이벤트 전송 (가격 관련 데이터 제거)
+                gtag('event', 'apply_filter', {
+                    'selected_characters': getSelectedCharacters()
                 });
-            }, 300); // 지연 시간 (밀리초). 필요에 따라 조정할 수 있습니다.
+            });
         });
 
         // 초기 데이터 로드
