@@ -19,10 +19,10 @@
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
     <style>
         /* 기존 스타일링 유지 */
-        /* 검정색 베이스 다크 테마 스타일링 */
+        /* 배경색을 완전한 검정색에서 약간 회색(#121212)으로 변경 */
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #000000; /* 완전한 검정색 배경 */
+            background-color: #121212; /* 수정된 배경색 */
             max-width: 1200px;
             margin: 0 auto;
             padding: 30px 20px;
@@ -49,7 +49,12 @@
             z-index: 1;
         }
         .character-box {
-            background: rgba(26, 26, 26, 0.8); /* 반투명 어두운 회색 */
+            /* 기존 배경에 패턴 추가 */
+            background: 
+                url('https://www.transparenttextures.com/patterns/gplay.png'), /* 추가된 패턴 */
+                rgba(26, 26, 26, 0.8); /* 기존 반투명 어두운 회색 */
+            background-repeat: repeat;
+            background-size: cover;
             border: none;
             padding: 15px;
             text-align: center;
@@ -222,6 +227,27 @@
             background: url('https://www.transparenttextures.com/patterns/geometry-dark.png') repeat;
             opacity: 0.04;
             z-index: -1;
+        }
+
+        /* 추가된 패턴용 ::after */
+        .character-box::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
+            opacity: 0.2; /* 패턴의 투명도 조절 */
+            border-radius: 15px;
+            pointer-events: none; /* 패턴 클릭 방지 */
+            z-index: 0; /* 이미지 및 텍스트 뒤에 배치 */
+        }
+
+        /* .character-box 내부 요소가 패턴 위에 표시되도록 설정 */
+        .character-box > * {
+            position: relative;
+            z-index: 1;
         }
 
         /* 결과 텍스트의 세부 스타일링 */
@@ -405,6 +431,14 @@
             // 스핀박스 클릭 시 이벤트 전파 방지 (선택 상태 변경 방지)
             spinbox.addEventListener('click', (event) => {
                 event.stopPropagation();
+                // 스핀박스 활성화/비활성화
+                if (!charBox.classList.contains('selected')) {
+                    charBox.classList.add('selected');
+                    spinbox.disabled = false;
+                    if (spinbox.value === '0') {
+                        spinbox.value = '1';
+                    }
+                }
             });
         });
 
