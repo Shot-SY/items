@@ -378,7 +378,7 @@ return {
   ["A120"] = "er1ge1my1hw1gu4el1im2ai1ar1pa3lu1mi1",
   ["A1F8"] = "ge1hw2gu1el1mu1ai1sa2ga1va1mi1",
   ["A1NJ"] = "my1hw3gu2im1ai1ar2ga2ro1",
-  ["11C"] = "er1my1th1sh1hw2gu1el1im1mu1ai1ar1ra1va2lu1ro1",
+  ["11C"] = "er1ge1my1th1sh1hw2gu1el1im1mu1ai1ar1pa1ra1va2lu1ro1",
   ["A1MX"] = "ge1th1sh1hw2gu1im1sa1",
   ["A14S"] = "ge2sh1hw1gu3el1im2mu1sa1ga1ra2va1pa2lu1ma1",
   ["A1DN"] = "ge1sh1gu1el1mu1ra4ma1ro1",
