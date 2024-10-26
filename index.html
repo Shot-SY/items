@@ -532,12 +532,19 @@
                 const count = parseInt(char[2]);
                 charCount[name] = (charCount[name] || 0) + count;
             });
-
+        
             return characters.every(([engName, korName]) => {
                 const charBox = Array.from(document.getElementsByClassName('character-box')).find(box => box.dataset.engName === engName);
                 if (charBox && charBox.classList.contains('selected')) {
                     const spinbox = charBox.querySelector('input[type="number"]');
                     const requiredCount = parseInt(spinbox.value);
+                    
+                    // 수량이 0인 경우, 해당 캐릭터가 포함되어 있으면 false 반환
+                    if (requiredCount === 0) {
+                        return !(charCount[engName.slice(0, 2)] > 0);
+                    }
+                    
+                    // 0이 아닌 경우는 기존과 동일하게 처리
                     const actualCount = charCount[engName.slice(0, 2)] || 0;
                     return actualCount >= requiredCount;
                 }
