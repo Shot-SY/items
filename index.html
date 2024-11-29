@@ -508,6 +508,12 @@
                 });
 
                 console.log('데이터 로드됨:', sortedData, luaData);
+
+                // 페이지 최초 로드 시에만 필터 적용
+                if (!window.initialFilterApplied) {
+                    filterData();
+                    window.initialFilterApplied = true;
+                }
             }).catch(error => {
                 console.error('데이터 로딩 오류:', error);
             });
