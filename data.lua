@@ -288,8 +288,7 @@ return {
   ["A1E0"] = "ge1hw4jy1gu3im1sh1al1st1lo2mu1ai3ar4ra2lu2ma3mi2",
   ["A1JL"] = "ge1hw6jy1gu1im1el5sh4al1st1lo3mu3sa2ar1va1pa2lu1ma1mi1ro1vo3",
   ["17G"] = "er2hw4jy1gu4im3el3sh2al1mu1sa4ar1ga1ra1va4pa2ma2mi2ro1vo2",
-  ["A1ER"] = "er1hw4jy3gu3im2sh3mu2ai3sa2ga3ra4va1ma3mi1ro2vo1",
-  ["A16A"] = "er1th1hw6jy1gu2im1el2sh4lo1mu5ai1sa2ar1ga6ra3va2pa2lu1ma3mi1ro1",
+    ["A16A"] = "er1th1hw6jy1gu2im1el2sh4lo1mu5ai1sa2ar1ga6ra3va2pa2lu1ma3mi1ro1",
   ["A1GY"] = "my1th1hw6jy2gu2im3el3sh2mu1ai2sa1ar2ga5ra1pa2lu1mi1ro1vo2",
   ["17X"] = "my1th1hw6jy1gu5im1el1sh2al1mu1ai1sa1ga1ra2pa3ma1mi2ro2vo2",
   ["A1JZ"] = "th1hw4jy1gu2im2el3sh2al1st1sa4ar2ga2ra3va1ma1mi1ro2vo1",
@@ -356,5 +355,4 @@ return {
   ["14P"] = "er1my2th2hw3jy4gu2im1el2sh3st1lo3mu4ai1sa2ar1ga1pa1lu2ma2mi2ro1vo2",
   ["A17T"] = "er3my1ge1hw3jy1gu4im1el1sh1st2ai2sa1ga3ra2va5pa2lu4ma2mi2ro1vo2",
   ["1BB"] = "er1hw3jy1gu3el1sh4mu3ar1ga2ra1va1lu2ma2mi2ro2",
-  ["19D"] = "er2ge3hw4jy1gu2im2el3sh1st1lo1ai2sa1ar1ga1ra3va1pa3lu3ma2ro1vo1",
-}
+  }
