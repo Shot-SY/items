@@ -564,6 +564,17 @@
             return priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : -1;
         }
 
+        function formatPrice(price) {
+            // 콤마 제거 후 숫자로 변환
+            const num = parseInt(price.replace(/,/g, ''));
+            
+            // 만 단위로 변환 (1만 = 10000)
+            const man = num / 10000;
+            
+            // 소수점 첫째 자리까지 표시하고 만을 붙임
+            return man.toFixed(1) + '만';
+        }
+        
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
@@ -578,7 +589,7 @@
                 if (sortedDataValue) {
                     const [characters, priceAndCount] = sortedDataValue.split('=').map(s => s.trim());
                     const priceMatch = priceAndCount.match(/(\S+)\s*\(([^)]+)\)/);
-                    const price = priceMatch ? priceMatch[1] : '가격 정보 없음';
+                    const price = priceMatch ? formatPrice(priceMatch[1]) : '가격 정보 없음'; // 여기서 formatPrice 함수 사용
                     const count = priceMatch ? priceMatch[2] : '0';
                     
                     const resultText = document.createElement('div');
