@@ -211,22 +211,6 @@
             object-fit: contain;
             border-radius: 8px;
         }
-        .text-box {
-            width: 74px;
-            height: 80px;
-            padding: 10px;
-            margin: 0 5px;
-            background-color: rgba(42, 42, 42, 0.8);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 14px;
-            text-align: center;
-            line-height: 1.3;
-        }
 
         body::before {
             content: "";
@@ -651,10 +635,12 @@
                     `;
                     
                     resultItem.appendChild(resultText);
-
+        
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
                     const items = characters.split(' ');
+                    
+                    // 캐릭터 이미지 추가
                     items.forEach(item => {
                         const match = item.match(/([가-힣]+)(\d*)/);
                         if (!match) return;
@@ -668,22 +654,19 @@
                             itemsDiv.appendChild(imgOrText);
                         }
                     });
-                    // 추가 텍스트박스들
-                    const additionalTexts = [
-                        '태테르\n22개',
-                        '달증\n28개',
-                        '랭크업\n50개',
-                        '뽑기권\n250+장'
-                    ];
-                    
-                    additionalTexts.forEach(text => {
-                        const textBox = document.createElement('div');
-                        textBox.className = 'text-box';
-                        textBox.innerText = text;
-                        itemsDiv.appendChild(textBox);
+        
+                    // 추가 이미지 3개 추가
+                    const additionalImages = ['태초의에테르.png', '달인의증거.png', '랭크업상자.png'];
+                    additionalImages.forEach(imgName => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = `cropped_characters/${imgName}`;
+                        imgElement.alt = imgName.replace('.png', '');
+                        imgElement.className = 'small-character-img';
+                        itemsDiv.appendChild(imgElement);
                     });
+        
                     resultItem.appendChild(itemsDiv);
-
+        
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
@@ -691,7 +674,7 @@
                 
                 resultsDiv.appendChild(resultItem);
             });
-
+        
             document.getElementById('copyInstruction').style.display = 'block';
         }
         
