@@ -333,6 +333,41 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .item-box {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(255, 64, 129, 0.2), rgba(255, 64, 129, 0.1));
+            border-radius: 10px;
+            margin: 0 5px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(255, 64, 129, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        .item-box .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ff4081;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        
+        .item-box .count {
+            font-size: 12px;
+            color: #ffffff;
+            text-align: center;
+        }
+        
+        .item-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -654,17 +689,32 @@
                             itemsDiv.appendChild(imgOrText);
                         }
                     });
-        
-                    // 추가 이미지 3개 추가
-                    const additionalImages = ['태초의에테르.png', '달인의증거.png', '랭크업상자.png'];
-                    additionalImages.forEach(imgName => {
-                        const imgElement = document.createElement('img');
-                        imgElement.src = `cropped_characters/${imgName}`;
-                        imgElement.alt = imgName.replace('.png', '');
-                        imgElement.className = 'small-character-img';
-                        itemsDiv.appendChild(imgElement);
+                    
+                    // 추가 아이템 박스들 추가
+                    const additionalItems = [
+                        { title: '태초의에테르', count: '22개' },
+                        { title: '달인의증거', count: '28개' },
+                        { title: '랭크업상자', count: '50개' },
+                        { title: '뽑기권', count: '250+장' }
+                    ];
+                    
+                    additionalItems.forEach(item => {
+                        const itemBox = document.createElement('div');
+                        itemBox.className = 'item-box';
+                        
+                        const titleSpan = document.createElement('span');
+                        titleSpan.className = 'title';
+                        titleSpan.textContent = item.title;
+                        
+                        const countSpan = document.createElement('span');
+                        countSpan.className = 'count';
+                        countSpan.textContent = item.count;
+                        
+                        itemBox.appendChild(titleSpan);
+                        itemBox.appendChild(countSpan);
+                        itemsDiv.appendChild(itemBox);
                     });
-        
+                    
                     resultItem.appendChild(itemsDiv);
         
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
