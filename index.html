@@ -638,34 +638,35 @@
         
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
-                    
-                    // 먼저 모든 캐릭터 이미지 추가
                     const items = characters.split(' ');
+                    
+                    // 캐릭터 이미지 추가
                     items.forEach(item => {
                         const match = item.match(/([가-힣]+)(\d*)/);
                         if (!match) return;
                         const [_, name, cnt] = match;
                         const repeatCount = cnt ? parseInt(cnt) : 1;
                         for (let i = 0; i < repeatCount; i++) {
-                            const imgChar = document.createElement('img');
-                            imgChar.src = `cropped_characters/${name}.png`;
-                            imgChar.alt = name;
-                            imgChar.className = 'small-character-img';
-                            itemsDiv.appendChild(imgChar);
+                            const imgOrText = document.createElement('img');
+                            imgOrText.src = `cropped_characters/${name}.png`;
+                            imgOrText.alt = name;
+                            imgOrText.className = 'small-character-img';
+                            itemsDiv.appendChild(imgOrText);
                         }
                     });
         
-                    // 세 개의 고정 이미지 추가
+                    // 추가 이미지 3개 추가
                     const additionalImages = ['_태초의에테르.png', '_달인의증거.png', '_랭크업상자.png'];
                     additionalImages.forEach(imgName => {
-                        const img = document.createElement('img');
-                        img.src = `cropped_characters/${imgName}`;
-                        img.alt = imgName.replace('.png', '');
-                        img.className = 'small-character-img';
-                        itemsDiv.appendChild(img);
+                        const imgElement = document.createElement('img');
+                        imgElement.src = `cropped_characters/${imgName}`;
+                        imgElement.alt = imgName.replace('.png', '');
+                        imgElement.className = 'small-character-img';
+                        itemsDiv.appendChild(imgElement);
                     });
         
                     resultItem.appendChild(itemsDiv);
+        
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
