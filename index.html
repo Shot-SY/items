@@ -635,9 +635,11 @@
                     `;
                     
                     resultItem.appendChild(resultText);
-
+        
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
+                    
+                    // 먼저 모든 캐릭터 이미지 추가
                     const items = characters.split(' ');
                     items.forEach(item => {
                         const match = item.match(/([가-힣]+)(\d*)/);
@@ -645,15 +647,25 @@
                         const [_, name, cnt] = match;
                         const repeatCount = cnt ? parseInt(cnt) : 1;
                         for (let i = 0; i < repeatCount; i++) {
-                            const imgOrText = document.createElement('img');
-                            imgOrText.src = `cropped_characters/${name}.png`;
-                            imgOrText.alt = name;
-                            imgOrText.className = 'small-character-img';
-                            itemsDiv.appendChild(imgOrText);
+                            const imgChar = document.createElement('img');
+                            imgChar.src = `cropped_characters/${name}.png`;
+                            imgChar.alt = name;
+                            imgChar.className = 'small-character-img';
+                            itemsDiv.appendChild(imgChar);
                         }
                     });
+        
+                    // 세 개의 고정 이미지 추가
+                    const additionalImages = ['_태초의에테르.png', '_달인의증거.png', '_랭크업상자.png'];
+                    additionalImages.forEach(imgName => {
+                        const img = document.createElement('img');
+                        img.src = `cropped_characters/${imgName}`;
+                        img.alt = imgName.replace('.png', '');
+                        img.className = 'small-character-img';
+                        itemsDiv.appendChild(img);
+                    });
+        
                     resultItem.appendChild(itemsDiv);
-
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
@@ -661,7 +673,7 @@
                 
                 resultsDiv.appendChild(resultItem);
             });
-
+        
             document.getElementById('copyInstruction').style.display = 'block';
         }
         
