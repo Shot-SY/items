@@ -190,9 +190,26 @@
             border-radius: 15px;
             box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
             position: relative;
-            /* backdrop-filter: blur(5px); */
             z-index: 1;
+            transition: all 0.4s ease-out;
+            transform-origin: center;
         }
+        
+        .filter-effect {
+            animation: filterApplied 0.4s ease-out;
+        }
+        
+        @keyframes filterApplied {
+            0% {
+                opacity: 0.5;
+                transform: scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         .result-item {
             margin-bottom: 20px;
             padding: 15px;
@@ -676,6 +693,11 @@
         
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
+            
+            // 이펙트 클래스 제거 및 리플로우 트리거
+            resultsDiv.classList.remove('filter-effect');
+            void resultsDiv.offsetWidth;
+            
             resultsDiv.innerHTML = '';
         
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
@@ -747,6 +769,9 @@
                 resultsDiv.appendChild(resultItem);
             });
         
+            // 이펙트 클래스 추가
+            resultsDiv.classList.add('filter-effect');
+        
             document.getElementById('copyInstruction').style.display = 'block';
         }
         
@@ -781,13 +806,18 @@
 
         document.getElementById('filterButton').addEventListener('click', () => {
             const resultsSection = document.getElementById('results');
-            resultsSection.scrollIntoView({ behavior: 'smooth' });
-
+            
+            // 스크롤 이동을 이펙트 적용 후로 지연
             loadData().then(() => {
                 filterData();
                 gtag('event', 'apply_filter', {
                     'selected_characters': getSelectedCharacters()
                 });
+                
+                // 애니메이션이 시작된 후 스크롤
+                setTimeout(() => {
+                    resultsSection.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
             }).catch(error => {
                 console.error('필터 적용 에러:', error);
             });
