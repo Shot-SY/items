@@ -329,6 +329,48 @@
             margin-bottom: 20px;
         }
 
+        .item-box {
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border-radius: 5px;
+            margin: 0 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .item-title {
+            color: #ff4081;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .item-count {
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .item-box {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .item-title {
+                font-size: 12px;
+            }
+            
+            .item-count {
+                font-size: 10px;
+            }
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -638,9 +680,9 @@
         
                     const itemsDiv = document.createElement('div');
                     itemsDiv.className = 'item-images';
-                    const items = characters.split(' ');
                     
                     // 캐릭터 이미지 추가
+                    const items = characters.split(' ');
                     items.forEach(item => {
                         const match = item.match(/([가-힣]+)(\d*)/);
                         if (!match) return;
@@ -655,18 +697,25 @@
                         }
                     });
         
-                    // 추가 이미지 3개 추가
-                    const additionalImages = ['태초의에테르.png', '달인의증거.png', '랭크업상자.png'];
-                    additionalImages.forEach(imgName => {
-                        const imgElement = document.createElement('img');
-                        imgElement.src = `cropped_characters/${imgName}`;
-                        imgElement.alt = imgName.replace('.png', '');
-                        imgElement.className = 'small-character-img';
-                        itemsDiv.appendChild(imgElement);
+                    // 추가 아이템 텍스트 박스들
+                    const additionalItems = [
+                        { title: '태테르', count: '22개' },
+                        { title: '달증', count: '28개' },
+                        { title: '랭크업', count: '50개' },
+                        { title: '뽑기권', count: '250+장' }
+                    ];
+        
+                    additionalItems.forEach(item => {
+                        const itemBox = document.createElement('div');
+                        itemBox.className = 'item-box';
+                        itemBox.innerHTML = `
+                            <div class="item-title">${item.title}</div>
+                            <div class="item-count">${item.count}</div>
+                        `;
+                        itemsDiv.appendChild(itemBox);
                     });
         
                     resultItem.appendChild(itemsDiv);
-        
                     resultItem.addEventListener('click', () => copyToClipboard(resultItem));
                 } else {
                     resultItem.textContent = filteredData[key];
