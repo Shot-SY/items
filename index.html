@@ -676,6 +676,7 @@
         
         function displayResults(filteredData) {
             const resultsDiv = document.getElementById('results');
+            resultsDiv.scrollTop = 0;
             resultsDiv.innerHTML = '';
         
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
