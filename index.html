@@ -193,17 +193,6 @@
             /* backdrop-filter: blur(5px); */
             z-index: 1;
         }
-        
-        @keyframes fadeSlideIn { /* 추가 */
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
         .result-item {
             margin-bottom: 20px;
             padding: 15px;
@@ -214,10 +203,6 @@
             box-shadow: 0 2px 8px rgba(255, 64, 129, 0.2);
             display: flex;
             flex-direction: column;
-            opacity: 0; /* 추가 */
-            transform: translateY(20px); /* 추가 */
-            animation: fadeSlideIn 0.5s ease forwards; /* 추가 */
-            animation-delay: calc(var(--index) * 0.1s); /* 추가 */
         }
 
         .small-character-img {
@@ -695,10 +680,9 @@
         
             const sortedKeys = Object.keys(filteredData).sort((a, b) => getPrice(b) - getPrice(a));
         
-            sortedKeys.forEach((key, index) => {
+            sortedKeys.forEach(key => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'result-item';
-                resultItem.style.setProperty('--index', index); // 애니메이션 딜레이를 위한 인덱스 설정
                 
                 const sortedDataValue = sortedData[key];
                 if (sortedDataValue) {
