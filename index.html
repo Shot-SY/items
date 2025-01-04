@@ -333,8 +333,6 @@
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 5px; /* 이미지들 사이의 간격 추가 */
-            margin: 5px 0; /* 위아래 여백 추가 */
         }
 
         .item-box {
@@ -376,9 +374,6 @@
             
             .item-count {
                 font-size: 10px;
-            }
-            .item-images {
-                gap: 4px; /* 모바일에서는 간격을 좀 더 좁게 */
             }
         }
 
@@ -717,27 +712,12 @@
                         if (!match) return;
                         const [_, name, cnt] = match;
                         const repeatCount = cnt ? parseInt(cnt) : 1;
-                        
-                        // 캐릭터 이미지 추가
-                        const imgOrText = document.createElement('img');
-                        imgOrText.src = `cropped_characters/${name}.png`;
-                        imgOrText.alt = name;
-                        imgOrText.className = 'small-character-img';
-                        itemsDiv.appendChild(imgOrText);
-                        
-                        // 캐릭터 개수에 따른 추가 이미지
-                        if (repeatCount > 1) {
-                            const countImg = document.createElement('img');
-                            countImg.src = `cropped_characters/${repeatCount}.png`;
-                            countImg.alt = `${repeatCount}`;
-                            countImg.className = 'small-character-img';
-                            itemsDiv.appendChild(countImg);
-                        } else if (repeatCount === 1) {
-                            const countImg = document.createElement('img');
-                            countImg.src = `cropped_characters/1.png`;
-                            countImg.alt = "1";
-                            countImg.className = 'small-character-img';
-                            itemsDiv.appendChild(countImg);
+                        for (let i = 0; i < repeatCount; i++) {
+                            const imgOrText = document.createElement('img');
+                            imgOrText.src = `cropped_characters/${name}.png`;
+                            imgOrText.alt = name;
+                            imgOrText.className = 'small-character-img';
+                            itemsDiv.appendChild(imgOrText);
                         }
                     });
         
