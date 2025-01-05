@@ -612,15 +612,24 @@
 
         function checkConditions(chars) {
             const count = {};
+            let selectedCharTotal = 0;
+            
             chars.forEach(c => { 
                 const name = c.slice(0,2); 
                 const num = parseInt(c[2]); 
-                count[name] = (count[name]||0)+num; 
+                count[name] = (count[name]||0)+num;
             });
             
-            const totalCount = Object.values(count).reduce((sum, curr) => sum + curr, 0);
+            const selectedChars = [...document.getElementsByClassName('character-box')].filter(b => b.classList.contains('selected'));
+            selectedChars.forEach(box => {
+                const engName = box.dataset.engName.slice(0,2);
+                if (count[engName]) {
+                    selectedCharTotal += count[engName];
+                }
+            });
+            
             const minTotalCount = parseInt(document.getElementById('totalCountFilter').value) || 0;
-            if (totalCount < minTotalCount) return false;
+            if (selectedCharTotal < minTotalCount) return false;
             
             return characters.every(([eng, kor]) => {
                 const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
