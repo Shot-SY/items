@@ -394,6 +394,78 @@
                 transform: translate(-50%, -50%) scale(0.8);
             }
         }
+        .filter-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .total-count-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .total-count-filter input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        .help-icon {
+            cursor: pointer;
+            color: #ff4081;
+            font-size: 18px;
+            position: relative;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            white-space: nowrap;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 100;
+            pointer-events: none;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .help-icon:hover .tooltip {
+                visibility: visible;
+                opacity: 1;
+            }
+        }
+        .tooltip.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        @media (max-width: 768px) {
+            .tooltip {
+                width: max-content;
+                max-width: 280px;
+                white-space: normal;
+                text-align: center;
+                font-size: 13px;
+                line-height: 1.4;
+            }
+        }
     </style>
 </head>
 <body>
@@ -403,6 +475,15 @@
     <div id="tsparticles"></div>
     <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
+    <div class="filter-controls">
+        <div class="total-count-filter">
+            <input type="number" id="totalCountFilter" min="0" value="0">
+            <div class="help-icon" id="helpIcon">
+                ?
+                <div class="tooltip" id="filterTooltip">선택한 캐릭터들의 개수 총합이 이 값 이상인 물품만 표시됩니다</div>
+            </div>
+        </div>
+    </div>
     <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
@@ -531,7 +612,16 @@
 
         function checkConditions(chars) {
             const count = {};
-            chars.forEach(c => { const name = c.slice(0,2); const num = parseInt(c[2]); count[name] = (count[name]||0)+num; });
+            chars.forEach(c => { 
+                const name = c.slice(0,2); 
+                const num = parseInt(c[2]); 
+                count[name] = (count[name]||0)+num; 
+            });
+            
+            const totalCount = Object.values(count).reduce((sum, curr) => sum + curr, 0);
+            const minTotalCount = parseInt(document.getElementById('totalCountFilter').value) || 0;
+            if (totalCount < minTotalCount) return false;
+            
             return characters.every(([eng, kor]) => {
                 const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
                 if(box && box.classList.contains('selected')){
@@ -625,6 +715,36 @@
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
             loadData().then(() => { filterData(); gtag('event','apply_filter',{'selected_characters':getSelectedCharacters()}); })
                      .catch(error => { console.error('필터 적용 에러:', error); });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const helpIcon = document.getElementById('helpIcon');
+            const tooltip = document.getElementById('filterTooltip');
+            let isTooltipActive = false;
+        
+            helpIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                isTooltipActive = !isTooltipActive;
+                if (isTooltipActive) {
+                    tooltip.classList.add('active');
+                } else {
+                    tooltip.classList.remove('active');
+                }
+            });
+        
+            document.addEventListener('click', function(e) {
+                if (isTooltipActive && !helpIcon.contains(e.target)) {
+                    tooltip.classList.remove('active');
+                    isTooltipActive = false;
+                }
+            });
+        
+            document.addEventListener('scroll', function() {
+                if (isTooltipActive) {
+                    tooltip.classList.remove('active');
+                    isTooltipActive = false;
+                }
+            });
         });
     </script>
 </body>
