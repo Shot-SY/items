@@ -159,12 +159,12 @@
             font-style: italic;
             color: #ffccbc; /* 색상 변경 */
             text-align: center;
-            font-size: 1.2em; /* 폰트 크기 증가 */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* 그림자 추가 */
+            font-size: 1.4em; /* 폰트 크기 증가 */
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.7); /* 그림자 강화 */
             position: relative;
             z-index: 1;
         }
-        /* 기존 copyMessage 스타일 제거 및 새로운 copyPopup 스타일 추가 */
+        /* 기존 copyMessage 제거 및 새로운 copyPopup 스타일 추가 */
         /* #copyMessage {
             position: fixed;
             bottom: 30px;
@@ -188,7 +188,7 @@
             transform: translate(-50%, -50%) scale(0.8);
             background-color: rgba(255,64,129,0.95);
             color: #fff;
-            padding: 20px 30px;
+            padding: 20px 40px;
             border-radius: 10px;
             display: none;
             opacity: 0;
@@ -196,12 +196,36 @@
             font-size: 1.2em;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             z-index: 1000;
-            transition: all 0.3s ease-in-out;
+            transition: all 0.5s ease-in-out;
+            animation: fadeInScale 0.5s forwards;
+        }
+        /* 애니메이션 키프레임 */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        @keyframes fadeOutScale {
+            from {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
         }
         #copyPopup.show {
             display: block;
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
+            animation: fadeInScale 0.5s forwards;
+        }
+        #copyPopup.hide {
+            animation: fadeOutScale 0.5s forwards;
         }
         /* 결과 영역 스타일 */
         #results {
@@ -608,9 +632,14 @@
         }
 
         function showCopyMessage(){
-            const msg = document.getElementById('copyPopup');
-            msg.classList.add('show');
-            setTimeout(() => { msg.classList.remove('show'); }, 2000);
+            const popup = document.getElementById('copyPopup');
+            popup.classList.remove('hide');
+            popup.classList.add('show');
+            // 2초 후에 사라지도록 설정
+            setTimeout(() => {
+                popup.classList.remove('show');
+                popup.classList.add('hide');
+            }, 2000);
         }
 
         function getSelectedCharacters(){
