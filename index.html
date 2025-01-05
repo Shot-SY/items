@@ -93,9 +93,9 @@
             transition: transform 0.3s;
         }
         .character-name {
-            font-size: 14px;
+            font-size: 16px; /* 증가된 폰트 크기 */
             margin-bottom: 10px;
-            font-weight: 600;
+            font-weight: 700; /* 증가된 폰트 두께 */
             color: #fff;
         }
         .spinbox-container {
@@ -153,81 +153,40 @@
             transform: translateY(0);
             box-shadow: 0 4px 16px rgba(255,64,129,0.6);
         }
-        /* 수정된 copyInstruction 스타일 */
         #copyInstruction {
             margin-bottom: 15px;
             font-style: italic;
-            color: #ffccbc; /* 색상 변경 */
+            color: #ff4081; /* 대비 색상으로 변경 */
             text-align: center;
-            font-size: 1.4em; /* 폰트 크기 증가 */
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.7); /* 그림자 강화 */
+            font-size: 1.2em; /* 폰트 크기 증가 */
+            font-weight: 600; /* 폰트 두께 증가 */
             position: relative;
             z-index: 1;
         }
-        /* 기존 copyMessage 제거 및 새로운 copyPopup 스타일 추가 */
-        /* #copyMessage {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255,64,129,0.9);
-            color: #fff;
-            padding: 12px 25px;
-            border-radius: 25px;
-            display: none;
-            opacity: 0.95;
-            font-family: 'Poppins', sans-serif;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 1000;
-        } */
-        /* 새로운 팝업 스타일 */
-        #copyPopup {
+        /* 새로운 중앙 팝업 스타일 */
+        #copyMessage {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.8);
-            background-color: rgba(255,64,129,0.95);
+            background-color: rgba(0,0,0,0.8);
             color: #fff;
-            padding: 20px 40px;
-            border-radius: 10px;
+            padding: 20px 30px;
+            border-radius: 12px;
             display: none;
             opacity: 0;
             font-family: 'Poppins', sans-serif;
-            font-size: 1.2em;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            font-size: 1.1em;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
             z-index: 1000;
-            transition: all 0.5s ease-in-out;
-            animation: fadeInScale 0.5s forwards;
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        /* 애니메이션 키프레임 */
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-        @keyframes fadeOutScale {
-            from {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-            to {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-        }
-        #copyPopup.show {
+        /* 애니메이션 클래스 */
+        #copyMessage.show {
             display: block;
-            animation: fadeInScale 0.5s forwards;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
-        #copyPopup.hide {
-            animation: fadeOutScale 0.5s forwards;
-        }
-        /* 결과 영역 스타일 */
         #results {
             padding: 20px;
             height: 800px;
@@ -328,9 +287,12 @@
             .result-text {
                 gap: 5px;
             }
-            /* copyInstruction 폰트 크기 조정 */
             #copyInstruction {
-                font-size: 1em;
+                font-size: 1em; /* 모바일에서 폰트 크기 조정 */
+            }
+            #copyMessage {
+                font-size: 1em; /* 모바일에서 폰트 크기 조정 */
+                padding: 15px 20px;
             }
         }
         #tsparticles {
@@ -414,6 +376,27 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* 애니메이션 키프레임 추가 */
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        @keyframes fadeOutScale {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
     </style>
 </head>
 <body>
@@ -426,10 +409,7 @@
     <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
-    <!-- 기존 copyMessage 제거 -->
-    <!-- <div id="copyMessage">복사되었습니다</div> -->
-    <!-- 새로운 중앙 팝업 추가 -->
-    <div id="copyPopup">복사되었습니다</div>
+    <div id="copyMessage">복사되었습니다</div>
     <script>
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
@@ -632,13 +612,11 @@
         }
 
         function showCopyMessage(){
-            const popup = document.getElementById('copyPopup');
-            popup.classList.remove('hide');
-            popup.classList.add('show');
-            // 2초 후에 사라지도록 설정
-            setTimeout(() => {
-                popup.classList.remove('show');
-                popup.classList.add('hide');
+            const msg = document.getElementById('copyMessage');
+            msg.classList.add('show');
+            // 애니메이션 종료 후 숨김
+            setTimeout(() => { 
+                msg.classList.remove('show');
             }, 2000);
         }
 
