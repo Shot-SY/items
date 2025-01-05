@@ -155,26 +155,37 @@
         }
         #copyInstruction {
             margin-bottom: 15px;
-            font-style: italic;
-            color: #bbb;
+            color: #ff4081;
             text-align: center;
             position: relative;
             z-index: 1;
+            font-weight: 600;
+            font-size: 1.1em;
+            padding: 10px;
+            background: rgba(255, 64, 129, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 64, 129, 0.2);
         }
-        #copyMessage {
+        .copy-popup {
             position: fixed;
-            bottom: 30px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255,64,129,0.9);
-            color: #fff;
-            padding: 12px 25px;
-            border-radius: 25px;
-            display: none;
-            opacity: 0.95;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 64, 129, 0.95);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
             font-family: 'Poppins', sans-serif;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 1000;
+            font-weight: 600;
+            font-size: 1.2em;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .copy-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
         }
         #results {
             padding: 20px;
@@ -370,7 +381,7 @@
     <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
-    <div id="copyMessage">복사되었습니다</div>
+    <div class="copy-popup" id="copyPopup">복사되었습니다!</div>
     <script>
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
@@ -383,211 +394,4 @@
                      });
         });
 
-        tsParticles.load("tsparticles", {
-            particles: {
-                number: { value: 50, density: { enable: true, value_area: 800 }},
-                shape: { type: "star", stroke: { width: 0, color: "#fff" }},
-                size: { value: 3, random: { enable: true, minimumValue: 1 }},
-                move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out" },
-                color: { value: ["#FF0000","#FF7F00","#FFFF00","#00FF00","#0000FF","#4B0082","#8F00FF"] },
-                opacity: { value: 0.8, random: false }
-            },
-            interactivity: { events: { onhover: { enable: false }, onclick: { enable: false } }},
-            retina_detect: true
-        });
-
-        const characters = [
-            ["ervin","어빈"],["myle","마일"],["gerd","게르드"],["thomas","토마스"],
-            ["hwiri","휘리"],["guse","구스"],
-            ["bomuna","봄우나"],["jyoanna","죠안나"],["lody","로디"],["elenoa","엘레노아"],["shannon","섀넌"],
-            ["stella","스텔라"],["altos","알토스"],["muse","뮤즈"],["rachel","레이첼"],["imel","아이멜"],
-            ["duol","듀올"],["sdigma","스티그마"],["aida","아이다"],["sarah","사라"],["aria","아리아"],
-            ["luthis","루티스"],["rookius","루키어스"],["volgade","볼게이드"],["mitchell","미첼"],
-            ["gawain","가웨인"],["varius","베리어스"],["palman","팔만"],["madram","매드람"]
-        ];
-
-        let sortedData = {}, luaData = {};
-        const characterGrid = document.getElementById('characterGrid');
-        characters.forEach(([eng, kor]) => {
-            const charBox = document.createElement('div');
-            charBox.className = 'character-box';
-            charBox.dataset.engName = eng;
-
-            const img = document.createElement('img');
-            img.src = `cropped_characters/${kor}.png`;
-            img.alt = kor;
-            img.className = 'character-img';
-
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'character-name';
-            nameSpan.textContent = kor;
-
-            const spinboxContainer = document.createElement('div');
-            spinboxContainer.className = 'spinbox-container';
-
-            const spinbox = document.createElement('input');
-            spinbox.type = 'number';
-            spinbox.id = `${eng}-spin`;
-            spinbox.min = 0;
-            spinbox.max = 8;
-            spinbox.value = 0;
-            spinbox.disabled = true;
-
-            spinboxContainer.appendChild(spinbox);
-            charBox.append(img, nameSpan, spinboxContainer);
-            characterGrid.appendChild(charBox);
-
-            charBox.addEventListener('click', (e) => { if(e.target.tagName.toLowerCase() !== 'input') toggleSelection(charBox); });
-            spinbox.addEventListener('click', (e) => { 
-                e.stopPropagation();
-                if(!charBox.classList.contains('selected')) {
-                    charBox.classList.add('selected');
-                    spinbox.disabled = false;
-                    if(spinbox.value === '0') spinbox.value = '1';
-                }
-            });
-        });
-
-        function toggleSelection(charBox) {
-            const spinbox = charBox.querySelector('input[type="number"]');
-            if(charBox.classList.toggle('selected')) {
-                spinbox.disabled = false;
-                spinbox.value = spinbox.value === '0' ? '1' : spinbox.value;
-            } else {
-                spinbox.disabled = true;
-                spinbox.value = 0;
-            }
-        }
-
-        function loadData() {
-            const ts = new Date().getTime();
-            return Promise.all([
-                fetch(`sorted_data_with_keys.txt?t=${ts}`).then(r => r.text()),
-                fetch(`data.lua?t=${ts}`).then(r => r.text())
-            ]).then(([sortedText, luaText]) => {
-                sortedData = {};
-                sortedText.split('\n').forEach(line => { const [k,...v] = line.split(' '); if(k && v.length) sortedData[k]=v.join(' '); });
-                luaData = {};
-                luaText.split('\n').forEach(line => { const m = line.match(/\["(.+)"\]\s*=\s*"(.+)"/); if(m) luaData[m[1]] = m[2]; });
-                console.log('데이터 로드됨:', sortedData, luaData);
-            }).catch(error => { console.error('데이터 로딩 오류:', error); });
-        }
-
-        function filterData() {
-            const filtered = {};
-            for(const [k, v] of Object.entries(luaData)) {
-                const chars = v.match(/.{1,3}/g)||[];
-                if(checkConditions(chars)) filtered[k] = v;
-            }
-            const sortedKeys = Object.keys(filtered).sort((a,b) => getPrice(b)-getPrice(a));
-            const final = {}; let prefix = null, keep = true;
-            sortedKeys.forEach((k, i) => {
-                if(!k.includes('_')) { final[k]=filtered[k]; prefix=null; keep=true; }
-                else {
-                    const p = k.split('_')[0];
-                    if(p !== prefix) { final[k]=filtered[k]; prefix=p; keep=true; }
-                    else if(keep) { keep=false; }
-                    else { const next = sortedKeys[i+1]; const np = next && next.includes('_') ? next.split('_')[0] : null; if(np !== p) keep=true; }
-                }
-            });
-            displayResults(final);
-        }
-
-        function checkConditions(chars) {
-            const count = {};
-            chars.forEach(c => { const name = c.slice(0,2); const num = parseInt(c[2]); count[name] = (count[name]||0)+num; });
-            return characters.every(([eng, kor]) => {
-                const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
-                if(box && box.classList.contains('selected')){
-                    const val = parseInt(box.querySelector('input').value);
-                    if(val === 0) return !(count[eng.slice(0,2)] > 0);
-                    return (count[eng.slice(0,2)] || 0) >= val;
-                }
-                return true;
-            });
-        }
-
-        function getPrice(k) {
-            const m = sortedData[k]?.match(/=\s*([\d,]+)/);
-            return m ? parseInt(m[1].replace(/,/g,'')) : -1;
-        }
-
-        function displayResults(data) {
-            const res = document.getElementById('results');
-            res.scrollTop = 0; res.innerHTML = '';
-            const sorted = Object.keys(data).sort((a,b) => getPrice(b)-getPrice(a));
-            sorted.forEach(k => {
-                const item = document.createElement('div');
-                item.className = 'result-item';
-                const val = sortedData[k];
-                if(val){
-                    const [chars, priceCount] = val.split('=').map(s => s.trim());
-                    const pm = priceCount.match(/(\S+)\s*\(([^)]+)\)/);
-                    const price = pm ? pm[1] : '가격 정보 없음';
-                    const count = pm ? pm[2] : '0';
-                    const txt = document.createElement('div');
-                    txt.className = 'result-text';
-                    txt.innerHTML = `<span class="item">${chars}</span><span class="price">${price}</span><span class="count"> (${count}) </span>`;
-                    item.appendChild(txt);
-                    const imgs = document.createElement('div');
-                    imgs.className = 'item-images';
-                    chars.split(' ').forEach(it => {
-                        const m = it.match(/([가-힣]+)(\d*)/);
-                        if(m){
-                            const [_, name, cnt] = m;
-                            const rep = cnt ? parseInt(cnt) : 1;
-                            for(let i=0;i<rep;i++){
-                                const img = document.createElement('img');
-                                img.src = `cropped_characters/${name}.png`;
-                                img.alt = name;
-                                img.className = 'small-character-img';
-                                imgs.appendChild(img);
-                            }
-                        }
-                    });
-                    [
-                        { title: '태테르', count: '22개' },
-                        { title: '달증', count: '28개' },
-                        { title: '랭크업', count: '50상자' },
-                        { title: '뽑기권', count: '250+장' }
-                    ].forEach(it => {
-                        const box = document.createElement('div');
-                        box.className = 'item-box';
-                        box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
-                        imgs.appendChild(box);
-                    });
-                    item.appendChild(imgs);
-                    item.addEventListener('click', () => copyToClipboard(item));
-                } else { item.textContent = data[k]; }
-                res.appendChild(item);
-            });
-            document.getElementById('copyInstruction').style.display = 'block';
-        }
-
-        function copyToClipboard(el) {
-            const chars = el.querySelector('.result-text .item').textContent.trim();
-            const price = el.querySelector('.result-text .price').textContent.trim();
-            const count = el.querySelector('.result-text .count').textContent.trim();
-            const text = `${chars} ${price} ${count}`;
-            navigator.clipboard.writeText(text).then(() => showCopyMessage(), err => console.error('복사 실패: ', err));
-        }
-
-        function showCopyMessage(){
-            const msg = document.getElementById('copyMessage');
-            msg.style.display = 'block';
-            setTimeout(() => { msg.style.display = 'none'; }, 2000);
-        }
-
-        function getSelectedCharacters(){
-            return [...document.getElementsByClassName('character-box')].filter(b => b.classList.contains('selected'))
-                     .map(b => `${b.dataset.engName}:${b.querySelector('input').value}`).join(',');
-        }
-
-        document.getElementById('filterButton').addEventListener('click', () => {
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-            loadData().then(() => { filterData(); gtag('event','apply_filter',{'selected_characters':getSelectedCharacters()}); })
-                     .catch(error => { console.error('필터 적용 에러:', error); });
-        });
-    </script>
-</body>
-</html>
+        tsParticles.load("tspar
