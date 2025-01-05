@@ -637,9 +637,7 @@
             return characters.every(([eng, kor]) => {
                 const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
                 if(box && box.classList.contains('selected')){
-                    const val = parseInt(box.querySelector('input').value);
-                    if(val === 0) return !(count[eng.slice(0,2)] > 0);
-                    return (count[eng.slice(0,2)] || 0) >= val;
+                    return (count[eng.slice(0,2)] || 0) >= parseInt(box.querySelector('input').value);
                 }
                 return true;
             });
