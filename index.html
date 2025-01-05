@@ -93,9 +93,9 @@
             transition: transform 0.3s;
         }
         .character-name {
-            font-size: 16px; /* 증가된 폰트 크기 */
+            font-size: 16px;
             margin-bottom: 10px;
-            font-weight: 700; /* 증가된 폰트 두께 */
+            font-weight: 700;
             color: #fff;
         }
         .spinbox-container {
@@ -156,14 +156,13 @@
         #copyInstruction {
             margin-bottom: 15px;
             font-style: italic;
-            color: #ff4081; /* 대비 색상으로 변경 */
+            color: #ff4081;
             text-align: center;
-            font-size: 1.2em; /* 폰트 크기 증가 */
-            font-weight: 600; /* 폰트 두께 증가 */
+            font-size: 1.2em;
+            font-weight: 600;
             position: relative;
             z-index: 1;
         }
-        /* 새로운 중앙 팝업 스타일 */
         #copyMessage {
             position: fixed;
             top: 50%;
@@ -181,7 +180,6 @@
             z-index: 1000;
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        /* 애니메이션 클래스 */
         #copyMessage.show {
             display: block;
             opacity: 1;
@@ -288,10 +286,10 @@
                 gap: 5px;
             }
             #copyInstruction {
-                font-size: 1em; /* 모바일에서 폰트 크기 조정 */
+                font-size: 1em;
             }
             #copyMessage {
-                font-size: 1em; /* 모바일에서 폰트 크기 조정 */
+                font-size: 1em;
                 padding: 15px 20px;
             }
         }
@@ -376,7 +374,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* 애니메이션 키프레임 추가 */
         @keyframes fadeInScale {
             0% {
                 opacity: 0;
@@ -614,7 +611,6 @@
         function showCopyMessage(){
             const msg = document.getElementById('copyMessage');
             msg.classList.add('show');
-            // 애니메이션 종료 후 숨김
             setTimeout(() => { 
                 msg.classList.remove('show');
             }, 2000);
