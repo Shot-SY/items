@@ -719,8 +719,13 @@
         }
 
         function getSelectedCharacters(){
-            return [...document.getElementsByClassName('character-box')].filter(b => b.classList.contains('selected'))
-                     .map(b => `${b.dataset.engName}:${b.querySelector('input').value}`).join(',');
+            const selectedChars = [...document.getElementsByClassName('character-box')]
+                .filter(b => b.classList.contains('selected'))
+                .map(b => `${b.dataset.engName}:${b.querySelector('input').value}`)
+                .join(',');
+            
+            const totalCount = document.getElementById('totalCountFilter').value || '0';
+            return `${selectedChars} - ${totalCount}`;
         }
 
         document.getElementById('filterButton').addEventListener('click', () => {
