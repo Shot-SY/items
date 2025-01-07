@@ -638,7 +638,6 @@
 
         function filterData() {
             const resultsDiv = document.getElementById('results');
-            const scrollPosition = resultsDiv.scrollTop;
             
             resultsDiv.classList.add('filtering');
             
@@ -661,7 +660,6 @@
                 });
                 
                 displayResults(final);
-                resultsDiv.scrollTop = scrollPosition;
                 
                 setTimeout(() => {
                     resultsDiv.classList.remove('filtering');
