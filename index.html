@@ -648,15 +648,33 @@
                     if(checkConditions(chars)) filtered[k] = v;
                 }
                 const sortedKeys = Object.keys(filtered).sort((a,b) => getPrice(b)-getPrice(a));
-                const final = {}; let prefix = null, keep = true;
-                sortedKeys.forEach((k, i) => {
-                    if(!k.includes('_')) { final[k]=filtered[k]; prefix=null; keep=true; }
-                    else {
-                        const p = k.split('_')[0];
-                        if(p !== prefix) { final[k]=filtered[k]; prefix=p; keep=true; }
-                        else if(keep) { keep=false; }
-                        else { const next = sortedKeys[i+1]; const np = next && next.includes('_') ? next.split('_')[0] : null; if(np !== p) keep=true; }
+                const final = {}; 
+                let excludeKeys = new Set();
+        
+                sortedKeys.forEach((currentKey, i) => {
+                    if (excludeKeys.has(currentKey)) return;
+        
+                    if (!currentKey.includes('_')) {
+                        final[currentKey] = filtered[currentKey];
+                        return;
                     }
+        
+                    const currentPrefix = currentKey.split('_')[0];
+                    const similarPrefixes = new Set();
+        
+                    for (let j = 1; j <= 7 && i + j < sortedKeys.length; j++) {
+                        const nextKey = sortedKeys[i + j];
+                        if (nextKey.includes('_')) {
+                            const nextPrefix = nextKey.split('_')[0];
+                            if (nextPrefix === currentPrefix) {
+                                similarPrefixes.add(nextKey);
+                            }
+                        }
+                    }
+        
+                    similarPrefixes.forEach(key => excludeKeys.add(key));
+        
+                    final[currentKey] = filtered[currentKey];
                 });
                 
                 displayResults(final);
