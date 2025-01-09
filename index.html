@@ -662,7 +662,7 @@
                     const currentPrefix = currentKey.split('_')[0];
                     const similarPrefixes = new Set();
         
-                    for (let j = 1; j <= 7 && i + j < sortedKeys.length; j++) {
+                    for (let j = 1; j <= 2 && i + j < sortedKeys.length; j++) {
                         const nextKey = sortedKeys[i + j];
                         if (nextKey.includes('_')) {
                             const nextPrefix = nextKey.split('_')[0];
