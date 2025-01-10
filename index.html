@@ -12,7 +12,7 @@
       gtag('js', new Date());
       gtag('config', 'G-37K1C9W7BK');
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+    <!-- tsParticles 스크립트 제거됨 -->
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -302,15 +302,7 @@
                 padding: 15px 20px;
             }
         }
-        #tsparticles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
+        /* #tsparticles 관련 CSS 제거됨 */
         #loader {
             position: fixed;
             top: 0;
@@ -517,7 +509,7 @@
     <div id="loader">
         <div class="spinner"></div>
     </div>
-    <div id="tsparticles"></div>
+    <!-- <div id="tsparticles"></div> 파티클 컨테이너 삭제됨 -->
     <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
     <div class="filter-controls">
@@ -546,18 +538,7 @@
                      });
         });
 
-        tsParticles.load("tsparticles", {
-            particles: {
-                number: { value: 50, density: { enable: true, value_area: 800 }},
-                shape: { type: "star", stroke: { width: 0, color: "#fff" }},
-                size: { value: 3, random: { enable: true, minimumValue: 1 }},
-                move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out" },
-                color: { value: ["#FF0000","#FF7F00","#FFFF00","#00FF00","#0000FF","#4B0082","#8F00FF"] },
-                opacity: { value: 0.8, random: false }
-            },
-            interactivity: { events: { onhover: { enable: false }, onclick: { enable: false } }},
-            retina_detect: true
-        });
+        // tsParticles.load("tsparticles", { ... }); 파티클 초기화 코드 제거됨
 
         const characters = [
             ["ervin","어빈"],["myle","마일"],["gerd","게르드"],["thomas","토마스"],
