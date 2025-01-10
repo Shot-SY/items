@@ -537,7 +537,7 @@
     <script>
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
-            loadData().then(ta).then(() => new Promise(r => setTimeout(r, 500)))
+            loadData().then(filterData).then(() => new Promise(r => setTimeout(r, 500)))
                      .then(() => { loader.classList.add('hidden'); setTimeout(() => loader.style.display = 'none', 500); })
                      .catch(error => {
                          console.error('초기 필터 적용 에러:', error);
