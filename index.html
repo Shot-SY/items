@@ -689,7 +689,7 @@
                         final[currentKey] = filtered[currentKey];
                         
                         const currentPrefix = currentKey.split('_')[0];
-                        for (let j = i + 1; j < Math.min(i + 8, sortedKeys.length); j++) {
+                        for (let j = i + 1; j < Math.min(i + 7, sortedKeys.length); j++) {
                             const nextKey = sortedKeys[j];
                             if (nextKey.includes('_') && nextKey.split('_')[0] === currentPrefix) {
                                 excludeKeys.add(nextKey);
