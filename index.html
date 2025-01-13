@@ -650,53 +650,9 @@
                 const sortedKeys = Object.keys(filtered).sort((a,b) => getPrice(b)-getPrice(a));
                 const final = {};
                 
-                const selectedChars = [...document.getElementsByClassName('character-box')]
-                    .filter(b => b.classList.contains('selected'))
-                    .map(b => b.dataset.engName);
-                
-                const specialChars = ['ervin', 'myle', 'thomas'];
-                const selectedSpecialChars = selectedChars.filter(char => specialChars.includes(char));
-                
-                if (selectedSpecialChars.length === 1) {
-                    const selectedChar = selectedSpecialChars[0];
-                    let validNumbers;
-                    
-                    if (selectedChar === 'ervin') validNumbers = ['1'];
-                    else if (selectedChar === 'myle') validNumbers = ['2'];
-                    else if (selectedChar === 'thomas') validNumbers = ['3'];
-                    
-                    sortedKeys.forEach(key => {
-                        if (!key.includes('_')) {
-                            final[key] = filtered[key];
-                        } else {
-                            const number = key.split('_')[1];
-                            if (validNumbers.includes(number)) {
-                                final[key] = filtered[key];
-                            }
-                        }
-                    });
-                } else {
-                    const excludeKeys = new Set();
-                    
-                    sortedKeys.forEach((currentKey, i) => {
-                        if (excludeKeys.has(currentKey)) return;
-                        
-                        if (!currentKey.includes('_')) {
-                            final[currentKey] = filtered[currentKey];
-                            return;
-                        }
-                        
-                        final[currentKey] = filtered[currentKey];
-                        
-                        const currentPrefix = currentKey.split('_')[0];
-                        for (let j = i + 1; j < Math.min(i + 7, sortedKeys.length); j++) {
-                            const nextKey = sortedKeys[j];
-                            if (nextKey.includes('_') && nextKey.split('_')[0] === currentPrefix) {
-                                excludeKeys.add(nextKey);
-                            }
-                        }
-                    });
-                }
+                sortedKeys.forEach(key => {
+                    final[key] = filtered[key];
+                });
                 
                 displayResults(final);
                 resultsDiv.classList.remove('filtering');
