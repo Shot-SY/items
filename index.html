@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>캐릭터 필터 - 예산 필터 적용</title>
+    <title>캐릭터 필터</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
     <script>
@@ -129,62 +129,6 @@
             outline: none;
             background-color: #2a2a2a;
         }
-        /* 예산 필터 박스 (총합 대신 사용할 영역) */
-        .budget-box {
-            background: url('https://www.transparenttextures.com/patterns/gplay.png'), rgba(26,26,26,0.2);
-            background-repeat: repeat;
-            background-size: cover;
-            border: none;
-            padding: 15px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
-            position: relative;
-            height: 160px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1;
-            margin-bottom: 30px;
-        }
-        .budget-box.active {
-            background-color: rgba(255,64,129,0.9);
-            box-shadow: 0 8px 20px rgba(255,64,129,0.8);
-            transform: translateY(-5px);
-        }
-        .budget-label {
-            font-size: 16px;
-            margin-bottom: 10px;
-            font-weight: 700;
-            color: #fff;
-        }
-        .budget-input {
-            width: 80%;
-            display: none;
-            justify-content: center;
-            margin-top: -5px;
-            transform: translateY(-10px);
-        }
-        .budget-input input[type="number"] {
-            width: 60px;
-            padding: 5px;
-            border: 1px solid #555;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 14px;
-            background-color: #1e1e1e;
-            color: #e0e0e0;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .budget-input input[type="number"]:focus {
-            border-color: #ff4081;
-            box-shadow: 0 0 5px rgba(255,64,129,0.5);
-            outline: none;
-            background-color: #2a2a2a;
-        }
         #filterButton {
             display: flex;
             align-items: center;
@@ -289,7 +233,7 @@
             opacity: 0.04;
             z-index: -1;
         }
-        .character-box::after, .budget-box::after {
+        .character-box::after {
             content: "";
             position: absolute;
             top: 0;
@@ -302,7 +246,7 @@
             pointer-events: none;
             z-index: 0;
         }
-        .character-box > *, .budget-box > * {
+        .character-box > * {
             position: relative;
             z-index: 1;
         }
@@ -320,7 +264,7 @@
             color: #00e676;
             font-weight: 600;
         }
-        .result-text .sum {
+        .result-text .count {
             color: #ff9800;
             font-weight: 500;
         }
@@ -329,12 +273,11 @@
                 grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
                 gap: 15px;
             }
-            .character-box, .budget-box {
+            .character-box {
                 height: 140px;
                 padding: 10px;
             }
-            .spinbox-container input[type="number"],
-            .budget-input input[type="number"] {
+            .spinbox-container input[type="number"] {
                 width: 45px;
             }
             #filterButton {
@@ -424,6 +367,18 @@
             font-size: 12px;
             font-weight: 500;
         }
+        @media (max-width: 768px) {
+            .item-box {
+                width: 47px;
+                height: 47px;
+            }
+            .item-title {
+                font-size: 12px;
+            }
+            .item-count {
+                font-size: 10px;
+            }
+        }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -448,6 +403,44 @@
                 transform: translate(-50%, -50%) scale(0.8);
             }
         }
+        .filter-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .total-count-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 64, 129, 0.05);
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 64, 129, 0.2);
+        }
+        
+        .total-count-filter input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid rgba(255, 64, 129, 0.3);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .total-count-filter input[type="number"]:focus {
+            border-color: #ff4081;
+            box-shadow: 0 0 10px rgba(255, 64, 129, 0.2);
+            outline: none;
+        }
+        
         .help-icon {
             cursor: help;
             color: #ff4081;
@@ -463,16 +456,19 @@
             justify-content: center;
             transition: all 0.3s ease;
         }
+        
         .help-icon:hover {
             background: rgba(255, 64, 129, 0.2);
             transform: scale(1.1);
             box-shadow: 0 0 10px rgba(255, 64, 129, 0.3);
         }
+        
         .filter-label {
             color: #e0e0e0;
             font-size: 14px;
             font-weight: 500;
         }
+        
         .tooltip {
             position: absolute;
             bottom: 130%;
@@ -492,6 +488,7 @@
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
+        
         .tooltip::after {
             content: '';
             position: absolute;
@@ -502,11 +499,13 @@
             border-style: solid;
             border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
         }
+        
         .help-icon:hover .tooltip {
             visibility: visible;
             opacity: 1;
             bottom: 140%;
         }
+        
         .tooltip.active {
             visibility: visible;
             opacity: 1;
@@ -520,26 +519,18 @@
     </div>
     <div id="tsparticles"></div>
     <h1>영웅전설: 가가브 트릴로지</h1>
-    
-    <!-- 캐릭터 그리드 -->
     <div class="character-grid" id="characterGrid"></div>
-    
-    <!-- 예산 필터 박스 (클릭 시 활성화) -->
-    <div class="budget-box" id="budgetBox">
-        <span class="budget-label">예산 {가격}</span>
-        <div class="budget-input">
-            <input type="number" id="budgetFilter" min="0" value="0">
-        </div>
-        <div class="help-icon" id="helpIcon" role="button" aria-label="도움말">
-            ?
-            <div class="tooltip" id="filterTooltip">
-              설정한 예산에 근접하는 (±1.3배) 아이템을 추천합니다.<br>
-              예산 입력 후 추천 버튼을 눌러 확인하세요.
+    <div class="filter-controls">
+        <div class="total-count-filter">
+            <span class="filter-label">총합:</span>
+            <input type="number" id="totalCountFilter" min="0" value="0">
+            <div class="help-icon" id="helpIcon" role="button" aria-label="도움말">
+                ?
+                <div class="tooltip" id="filterTooltip">&nbsp;&nbsp;선택한 캐릭터들의 개수 총합이 이 값 이상인 물품만 검색합니다<br>&nbsp;&nbsp;선택한 캐릭터들을 각각의 개수에 상관없이 최대한 많이 챙길 때 유용합니다<br>&nbsp;&nbsp;원하는 캐릭터들을 최대한 선택하고(개수 1 추천), 총합을 5~30 내로 설정해보세요</div>
             </div>
         </div>
     </div>
-    
-    <button id="filterButton">추천 적용</button>
+    <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">물품을 클릭하면 복사됩니다</div>
     <div id="results"></div>
     <div id="copyMessage">복사되었습니다</div>
@@ -631,39 +622,6 @@
             }
         }
 
-        // 예산 필터 박스 클릭 시 활성화 처리
-        const budgetBox = document.getElementById('budgetBox');
-        budgetBox.addEventListener('click', () => {
-            // 토글 스타일 (활성화 상태로 변경)
-            if(!budgetBox.classList.contains('active')){
-                budgetBox.classList.add('active');
-                // 모든 캐릭터박스 초기화
-                document.querySelectorAll('.character-box.selected').forEach(box => {
-                    box.classList.remove('selected');
-                    const spin = box.querySelector('input');
-                    spin.disabled = true;
-                    spin.value = 0;
-                });
-                // 미리 정해진 캐릭터 자동 선택 (휘리, 구스, 봄우나, 죠안나, 로디, 엘레노아, 섀넌, 대라엘, 스텔라, 알토스, 듀올, 레이첼)
-                const autoSelect = ["hwiri","guse","bomuna","jyoanna","lody","elenoa","shannon","daerael","stella","altos","duol","rachel"];
-                autoSelect.forEach(eng => {
-                    const box = document.querySelector(`.character-box[data-eng-name="${eng}"]`);
-                    if(box){
-                        box.classList.add('selected');
-                        const spinbox = box.querySelector('input');
-                        spinbox.disabled = false;
-                        spinbox.value = 0;
-                    }
-                });
-                // 예산 입력란 보이기
-                budgetBox.querySelector('.budget-input').style.display = 'flex';
-            } else {
-                // 이미 활성화 된 상태에서 다시 클릭하면 비활성화 처리 (선택해제하지는 않고 단지 입력창을 숨김)
-                budgetBox.classList.remove('active');
-                budgetBox.querySelector('.budget-input').style.display = 'none';
-            }
-        });
-
         function loadData() {
             const ts = new Date().getTime();
             return Promise.all([
@@ -671,78 +629,97 @@
                 fetch(`data.lua?t=${ts}`).then(r => r.text())
             ]).then(([sortedText, luaText]) => {
                 sortedData = {};
-                sortedText.split('\n').forEach(line => { 
-                    const [k,...v] = line.split(' ');
-                    if(k && v.length) sortedData[k]=v.join(' ');
-                });
+                sortedText.split('\n').forEach(line => { const [k,...v] = line.split(' '); if(k && v.length) sortedData[k]=v.join(' '); });
                 luaData = {};
-                luaText.split('\n').forEach(line => { 
-                    const m = line.match(/\["(.+)"\]\s*=\s*"(.+)"/);
-                    if(m) luaData[m[1]] = m[2];
-                });
+                luaText.split('\n').forEach(line => { const m = line.match(/\["(.+)"\]\s*=\s*"(.+)"/); if(m) luaData[m[1]] = m[2]; });
                 console.log('데이터 로드됨:', sortedData, luaData);
             }).catch(error => { console.error('데이터 로딩 오류:', error); });
         }
 
-        // checkConditions는 각 아이템의 캐릭터 총합을 계산하여 반환 (두 자리 약어 기준)
-        function checkConditions(chars) {
-            const count = {};
-            chars.forEach(c => { 
-                const name = c.slice(0,2); 
-                const num = parseInt(c[2]); 
-                count[name] = (count[name] || 0) + num;
-            });
-            let selectedSum = 0;
-            const selectedChars = [...document.getElementsByClassName('character-box')]
-                .filter(b => b.classList.contains('selected'));
-            selectedChars.forEach(box => {
-                const engAbbr = box.dataset.engName.slice(0,2);
-                selectedSum += (count[engAbbr] || 0);
-            });
-            return selectedSum;
-        }
-
-        // filterData()는 예산값과 가격 범위(±1.3배)를 체크한 후,
-        // 각 아이템의 선택된 캐릭터 총합을 구해 높은 순서로 정렬합니다.
         function filterData() {
             const resultsDiv = document.getElementById('results');
             resultsDiv.classList.add('filtering');
+            
             setTimeout(() => {
-                const budget = parseFloat(document.getElementById('budgetFilter').value) || 0;
-                const items = [];
+                const filtered = {};
                 for(const [k, v] of Object.entries(luaData)) {
-                    const chars = v.match(/.{1,3}/g) || [];
-                    const sum = checkConditions(chars);
-                    const price = getPrice(k);
-                    // 예산이 입력된 경우 가격 범위 내인지 체크 (budget/1.3 ~ budget*1.3)
-                    if(budget > 0 && (price < (budget/1.3) || price > (budget*1.3))) continue;
-                    items.push({ key: k, sum, v });
+                    const chars = v.match(/.{1,3}/g)||[];
+                    if(checkConditions(chars)) filtered[k] = v;
                 }
-                // 총합(sum)이 높은 순으로 정렬
-                items.sort((a,b) => b.sum - a.sum);
+                
+                const sortedKeys = Object.keys(filtered).sort((a,b) => getPrice(b)-getPrice(a));
                 const final = {};
-                items.forEach(item => {
-                    final[item.key] = { data: item.v, sum: item.sum };
+                
+                sortedKeys.forEach(key => {
+                    final[key] = filtered[key];
                 });
+                
                 displayResults(final);
                 resultsDiv.classList.remove('filtering');
             }, 200);
         }
 
-        // getPrice()는 sortedData에서 가격 정보를 파싱합니다.
+        function checkConditions(chars) {
+            const count = {};
+            let selectedCharTotal = 0;
+            
+            chars.forEach(c => { 
+                const name = c.slice(0,2); 
+                const num = parseInt(c[2]); 
+                count[name] = (count[name]||0)+num;
+            });
+            
+            const minTotalCount = parseInt(document.getElementById('totalCountFilter').value) || 0;
+            const selectedChars = [...document.getElementsByClassName('character-box')]
+                .filter(b => b.classList.contains('selected'));
+            
+            if (minTotalCount > 0) {
+                selectedChars.forEach(box => {
+                    const engName = box.dataset.engName.slice(0,2);
+                    if (count[engName]) {
+                        selectedCharTotal += count[engName];
+                    }
+                });
+                
+                if (selectedCharTotal < minTotalCount) return false;
+                
+                return characters.every(([eng, kor]) => {
+                    const box = [...document.getElementsByClassName('character-box')]
+                        .find(b => b.dataset.engName === eng);
+                    if(box && box.classList.contains('selected')){
+                        const spinValue = parseInt(box.querySelector('input').value);
+                        const requiredValue = spinValue === 1 ? 0 : spinValue;
+                        return (count[eng.slice(0,2)] || 0) >= requiredValue;
+                    }
+                    return true;
+                });
+            } else {
+                return characters.every(([eng, kor]) => {
+                    const box = [...document.getElementsByClassName('character-box')]
+                        .find(b => b.dataset.engName === eng);
+                    if(box && box.classList.contains('selected')){
+                        return (count[eng.slice(0,2)] || 0) >= 
+                            parseInt(box.querySelector('input').value);
+                    }
+                    return true;
+                });
+            }
+        }
+
         function getPrice(k) {
             const m = sortedData[k]?.match(/=\s*([\d,]+)/);
             return m ? parseInt(m[1].replace(/,/g,'')) : -1;
         }
 
-        // displayResults()에서는 각 결과 항목에 아이템의 선택 총합(sum)을 함께 보여줍니다.
         function displayResults(data) {
             const res = document.getElementById('results');
             res.scrollTop = 0;
+            
             res.innerHTML = '<div class="content-container"></div>';
             const container = res.querySelector('.content-container');
-            // 기존 sortedData 기준 가격 내림차순 정렬 대신, 이미 정렬된 final 객체의 순서대로 출력
-            Object.keys(data).forEach(k => {
+            
+            const sorted = Object.keys(data).sort((a,b) => getPrice(b)-getPrice(a));
+            sorted.forEach(k => {
                 const item = document.createElement('div');
                 item.className = 'result-item';
                 const val = sortedData[k];
@@ -750,13 +727,10 @@
                     const [chars, priceCount] = val.split('=').map(s => s.trim());
                     const pm = priceCount.match(/(\S+)\s*\(([^)]+)\)/);
                     const price = pm ? pm[1] : '가격 정보 없음';
+                    const count = pm ? pm[2] : '0';
                     const txt = document.createElement('div');
                     txt.className = 'result-text';
-                    // item의 선택 총합을 data 객체에서 sum으로 전달
-                    const sum = data[k].sum;
-                    txt.innerHTML = `<span class="item">${chars}</span>
-                                     <span class="price">${price}</span>
-                                     <span class="sum">&nbsp;&nbsp;&nbsp;(${sum})</span>`;
+                    txt.innerHTML = `<span class="item">${chars}</span><span class="price">${price}</span><span class="count">&nbsp;&nbsp;&nbsp;(${count})</span>`;
                     item.appendChild(txt);
                     const imgs = document.createElement('div');
                     imgs.className = 'item-images';
@@ -788,7 +762,7 @@
                     item.appendChild(imgs);
                     item.addEventListener('click', () => copyToClipboard(item));
                 } else { 
-                    item.textContent = data[k].data; 
+                    item.textContent = data[k]; 
                 }
                 container.appendChild(item);
             });
@@ -798,8 +772,8 @@
         function copyToClipboard(el) {
             const chars = el.querySelector('.result-text .item').textContent.trim();
             const price = el.querySelector('.result-text .price').textContent.trim();
-            const sum = el.querySelector('.result-text .sum').textContent.trim();
-            const text = `${chars} ${price} ${sum}`;
+            const count = el.querySelector('.result-text .count').textContent.trim();
+            const text = `${chars} ${price} ${count}`;
             navigator.clipboard.writeText(text).then(() => showCopyMessage(), err => console.error('복사 실패: ', err));
         }
 
@@ -811,25 +785,22 @@
             }, 2000);
         }
 
-        document.getElementById('filterButton').addEventListener('click', () => {
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-            loadData().then(() => { 
-                filterData(); 
-                // 예산 필터 적용 시 현재 선택된 캐릭터 정보도 함께 전송합니다.
-                gtag('event','apply_filter',{'selected_characters': getSelectedCharacters()}); 
-            })
-            .catch(error => { console.error('필터 적용 에러:', error); });
-        });
-        
         function getSelectedCharacters(){
             const selectedChars = [...document.getElementsByClassName('character-box')]
                 .filter(b => b.classList.contains('selected'))
                 .map(b => `${b.dataset.engName}:${b.querySelector('input').value}`)
                 .join(',');
-            const budgetValue = document.getElementById('budgetFilter').value || '0';
-            return `${selectedChars} - 예산:${budgetValue}`;
+            
+            const totalCount = document.getElementById('totalCountFilter').value || '0';
+            return `${selectedChars} - ${totalCount}`;
         }
 
+        document.getElementById('filterButton').addEventListener('click', () => {
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            loadData().then(() => { filterData(); gtag('event','apply_filter',{'selected_characters':getSelectedCharacters()}); })
+                     .catch(error => { console.error('필터 적용 에러:', error); });
+        });
+        
         document.addEventListener('DOMContentLoaded', function() {
             const helpIcon = document.getElementById('helpIcon');
             const tooltip = document.getElementById('filterTooltip');
