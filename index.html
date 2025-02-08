@@ -403,7 +403,74 @@
                 transform: translate(-50%, -50%) scale(0.8);
             }
         }
-        
+        /* 예산 박스 스타일 */
+        #budgetContainer {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .budget-box {
+            background: url('https://www.transparenttextures.com/patterns/gplay.png'), rgba(26,26,26,0.2);
+            background-repeat: repeat;
+            background-size: cover;
+            border: none;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            position: relative;
+            height: 160px;
+            width: 120px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+        .budget-box.selected {
+            background-color: rgba(255,64,129,0.9);
+            box-shadow: 0 8px 20px rgba(255,64,129,0.8);
+            transform: translateY(-5px);
+        }
+        .budget-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .budget-input-container {
+            width: 80%;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.3s, opacity 0.3s, transform 0.3s;
+            justify-content: center;
+            margin-top: -5px;
+            transform: translateY(-10px);
+        }
+        .budget-box.selected .budget-input-container {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .budget-input-container input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .budget-input-container input[type="number"]:focus {
+            border-color: #ff4081;
+            box-shadow: 0 0 5px rgba(255,64,129,0.5);
+            outline: none;
+            background-color: #2a2a2a;
+        }
     </style>
 </head>
 <body>
@@ -413,6 +480,14 @@
     <div id="tsparticles"></div>
     <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
+    <div id="budgetContainer">
+        <div class="budget-box" id="budgetBox">
+            <span class="budget-text">예산</span>
+            <div class="budget-input-container">
+                <input type="number" id="budgetInput" min="1" step="1" disabled />
+            </div>
+        </div>
+    </div>
     <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">전계정 전설픽업 0회 상태입니다</div>
     <div id="results"></div>
@@ -454,6 +529,9 @@
 
         let sortedData = {}, luaData = {};
         const characterGrid = document.getElementById('characterGrid');
+        const budgetBox = document.getElementById('budgetBox');
+        const budgetInput = document.getElementById('budgetInput');
+
         characters.forEach(([eng, kor]) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
@@ -494,6 +572,27 @@
             });
         });
 
+        budgetBox.addEventListener('click', (e) => {
+            if(e.target.tagName.toLowerCase() !== 'input') toggleBudgetSelection(budgetBox);
+        });
+        
+        budgetInput.addEventListener('click', (e) => { 
+            e.stopPropagation();
+            if(!budgetBox.classList.contains('selected')) {
+                budgetBox.classList.add('selected');
+                budgetInput.disabled = false;
+            }
+        });
+
+        function toggleBudgetSelection(budgetBox) {
+            if(budgetBox.classList.toggle('selected')) {
+                budgetInput.disabled = false;
+            } else {
+                budgetInput.disabled = true;
+                budgetInput.value = '';
+            }
+        }
+
         function toggleSelection(charBox) {
             const spinbox = charBox.querySelector('input[type="number"]');
             if(charBox.classList.toggle('selected')) {
@@ -524,10 +623,33 @@
             resultsDiv.classList.add('filtering');
             
             setTimeout(() => {
-                const filtered = {};
+                let filtered = {};
                 for(const [k, v] of Object.entries(luaData)) {
                     const chars = v.match(/.{1,3}/g)||[];
                     if(checkConditions(chars)) filtered[k] = v;
+                }
+
+                // 예산 필터링
+                const budgetSelected = budgetBox.classList.contains('selected');
+                let budgetValue = null;
+                if (budgetSelected) {
+                    budgetValue = parseFloat(budgetInput.value);
+                    if (isNaN(budgetValue) || budgetValue <= 0) {
+                        alert('올바른 예산 값을 입력해주세요.');
+                        budgetBox.classList.remove('selected');
+                        budgetInput.disabled = true;
+                        budgetInput.value = '';
+                    } else {
+                        const minPrice = budgetValue * 0.7;
+                        const maxPrice = budgetValue * 1.3;
+
+                        filtered = Object.fromEntries(
+                            Object.entries(filtered).filter(([key, val]) => {
+                                const price = getPrice(key);
+                                return price >= minPrice && price <= maxPrice;
+                            })
+                        );
+                    }
                 }
                 
                 const sortedKeys = Object.keys(filtered).sort((a,b) => getPrice(b)-getPrice(a));
