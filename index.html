@@ -410,66 +410,64 @@
             margin-bottom: 30px;
         }
         .budget-box {
-            background: url('https://www.transparenttextures.com/patterns/gplay.png'), rgba(26,26,26,0.2);
-            background-repeat: repeat;
-            background-size: cover;
-            border: none;
-            padding: 15px;
-            text-align: center;
+            width: 300px; /* 너비 증가 */
+            height: 60px; /* 높이 감소 */
+            padding: 10px 20px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row; /* 가로 배치로 변경 */
+            justify-content: space-between;
             align-items: center;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
-            position: relative;
-            height: 160px;
-            width: 120px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1;
+            margin-bottom: 20px;
         }
-        .budget-box.selected {
-            background-color: rgba(255,64,129,0.9);
-            box-shadow: 0 8px 20px rgba(255,64,129,0.8);
-            transform: translateY(-5px);
-        }
+        
         .budget-text {
-            font-size: 16px;
-            margin-bottom: 10px;
-            font-weight: 700;
-            color: #fff;
+            font-size: 18px;
+            margin: 0;
+            transition: all 0.3s ease;
+            white-space: nowrap;
         }
+        
         .budget-input-container {
-            width: 80%;
-            visibility: hidden;
-            opacity: 0;
-            transition: visibility 0.3s, opacity 0.3s, transform 0.3s;
-            justify-content: center;
-            margin-top: -5px;
-            transform: translateY(-10px);
-        }
-        .budget-box.selected .budget-input-container {
+            display: flex;
+            align-items: center;
             visibility: visible;
             opacity: 1;
-            transform: translateY(0);
+            transform: none;
+            margin: 0;
+            transition: all 0.3s ease;
         }
+        
         .budget-input-container input[type="number"] {
-            width: 80px;
-            padding: 5px;
-            border: 1px solid #555;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 14px;
-            background-color: #1e1e1e;
-            color: #e0e0e0;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            width: 120px;
+            padding: 8px 12px;
+            font-size: 16px;
+            margin-left: 10px;
         }
-        .budget-input-container input[type="number"]:focus {
-            border-color: #ff4081;
-            box-shadow: 0 0 5px rgba(255,64,129,0.5);
-            outline: none;
-            background-color: #2a2a2a;
+        
+        /* 원 표시 추가 */
+        .budget-input-container::after {
+            content: "원";
+            color: #fff;
+            margin-left: 8px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .budget-box {
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .budget-text {
+                font-size: 16px;
+            }
+            
+            .budget-input-container input[type="number"] {
+                width: 100px;
+                padding: 6px 10px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -482,9 +480,9 @@
     <div class="character-grid" id="characterGrid"></div>
     <div id="budgetContainer">
         <div class="budget-box" id="budgetBox">
-            <span class="budget-text">예산</span>
+            <span class="budget-text">예산에 따른 추천 계정 보기</span>
             <div class="budget-input-container">
-                <input type="number" id="budgetInput" min="1" step="1" disabled />
+                <input type="number" id="budgetInput" min="1" step="1000" placeholder="예산 입력" disabled />
             </div>
         </div>
     </div>
@@ -592,6 +590,7 @@
 
         function toggleBudgetSelection(budgetBox) {
             const isActivating = !budgetBox.classList.contains('selected');
+            const budgetText = budgetBox.querySelector('.budget-text');
             
             // 모든 캐릭터 박스 초기화
             [...document.getElementsByClassName('character-box')].forEach(box => {
@@ -605,6 +604,8 @@
                 // 예산 박스 활성화
                 budgetBox.classList.add('selected');
                 budgetInput.disabled = false;
+                budgetText.textContent = '예산:';
+                budgetInput.focus();
         
                 // tierCharacters에 해당하는 캐릭터들 자동 선택
                 tierCharacters.forEach(([eng, kor]) => {
@@ -622,6 +623,7 @@
                 budgetBox.classList.remove('selected');
                 budgetInput.disabled = true;
                 budgetInput.value = '';
+                budgetText.textContent = '예산에 따른 추천 계정 보기';
             }
         }
 
