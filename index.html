@@ -648,34 +648,33 @@
                     const selectedCodes = [...document.querySelectorAll('.character-box.selected')]
                         .map(b => b.dataset.engName.slice(0, 2));
                     
-                    const entriesWithSums = Object.entries(filtered).map(([key, val]) => {
-                        const chars = val.match(/.{1,3}/g) || [];
-                        const count = {};
-                        chars.forEach(c => {
-                            const code = c.slice(0, 2);
-                            const num = parseInt(c[2] || 0, 10);
-                            count[code] = (count[code] || 0) + num;
-                        });
-                        
-                        return {
-                            key,
-                            sum: selectedCodes.reduce((acc, code) => acc + (count[code] || 0), 0),
-                            price: getPrice(key)
-                        };
-                    });
-        
-                    // 총합이 많은 순서로 정렬, 같으면 가격순
-                    sortedKeys = entriesWithSums
-                        .sort((a, b) => b.sum - a.sum || b.price - a.price)
+                    sortedKeys = Object.entries(filtered)
+                        .map(([key, val]) => {
+                            const chars = val.match(/.{1,3}/g) || [];
+                            const count = {};
+                            chars.forEach(c => {
+                                const code = c.slice(0, 2);
+                                const num = parseInt(c[2] || 1, 10);
+                                count[code] = (count[code] || 0) + num;
+                            });
+                            
+                            return {
+                                key,
+                                sum: selectedCodes.reduce((acc, code) => acc + (count[code] || 0), 0),
+                                price: parseInt(val.match(/=\s*([\d,]+)/)[1].replace(/,/g, ''))
+                            };
+                        })
+                        .sort((a, b) => b.sum - a.sum || b.price - a.price)  // 가격도 내림차순으로 변경
                         .map(e => e.key);
                 } else {
-                    // 가격순 정렬 로직 수정
-                    sortedKeys = Object.entries(filtered).map(([key, _]) => ({
-                        key,
-                        price: getPrice(key)
-                    }))
-                    .sort((a, b) => b.price - a.price)
-                    .map(entry => entry.key);
+                    // 단순 가격순 정렬 (내림차순)
+                    sortedKeys = Object.entries(filtered)
+                        .map(([key, val]) => ({
+                            key,
+                            price: parseInt(val.match(/=\s*([\d,]+)/)[1].replace(/,/g, ''))
+                        }))
+                        .sort((a, b) => b.price - a.price)  // 내림차순으로 변경
+                        .map(e => e.key);
                 }
         
                 const final = {};
