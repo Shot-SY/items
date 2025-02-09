@@ -409,49 +409,44 @@
             justify-content: center;
             margin-bottom: 30px;
         }
+
         .budget-box {
             width: 300px;
             height: 60px;
             padding: 10px 20px;
             display: flex;
             flex-direction: row;
-            justify-content: center; /* 중앙 정렬로 변경 */
+            justify-content: center;
             align-items: center;
             margin-bottom: 20px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .budget-box:hover {
-            background-color: rgba(255,64,129,0.2);
-            transform: translateY(-2px);
+            border-color: rgba(255,64,129,0.4);
         }
         
         .budget-text {
             font-size: 18px;
             margin: 0;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             white-space: nowrap;
-            color: #fff;
-            cursor: pointer; /* 커서 추가 */
-            padding: 8px 16px; /* 클릭 영역 확보 */
-            border-radius: 8px; /* 호버 효과용 */
-            background: transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .budget-box:hover .budget-text {
-            background: rgba(255,255,255,0.1);
-        }
-        
-        .budget-input-wrapper {
-            display: none; /* 기본적으로 숨김 */
-            align-items: center;
-            opacity: 0;
-            transition: all 0.3s ease;
+            color: #e0e0e0;
         }
         
         .budget-box.selected {
-            justify-content: space-between; /* 활성화 시 양쪽 정렬 */
+            justify-content: space-between;
+            border-color: rgba(255,64,129,0.6);
+            background-color: rgba(255,64,129,0.1);
+        }
+        
+        .budget-input-wrapper {
+            display: none;
+            align-items: center;
+            opacity: 0;
+            transition: all 0.2s ease;
         }
         
         .budget-box.selected .budget-input-wrapper {
@@ -462,7 +457,6 @@
         .budget-input-container {
             display: flex;
             align-items: center;
-            margin-left: 10px;
         }
         
         .budget-input-container input[type="number"] {
@@ -473,20 +467,18 @@
             border: 1px solid rgba(255,255,255,0.2);
             background-color: rgba(0,0,0,0.2);
             color: #fff;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         
         .budget-input-container input[type="number"]:focus {
             border-color: #ff4081;
-            background-color: rgba(0,0,0,0.4);
             outline: none;
         }
         
         .budget-unit {
-            color: #fff;
+            color: #e0e0e0;
             margin-left: 8px;
             font-size: 16px;
-            font-weight: 500;
         }
         
         @media (max-width: 768px) {
