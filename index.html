@@ -948,16 +948,33 @@
         }
 
         function getSelectedCharacters(){
-            return [...document.getElementsByClassName('character-box')]
+            let result = '';
+            const budgetBox = document.getElementById('budgetBox');
+            const budgetInput = document.getElementById('budgetInput');
+            
+            if(budgetBox.classList.contains('selected') && budgetInput.value) {
+                result = `${budgetInput.value} - `;
+            }
+            
+            result += [...document.getElementsByClassName('character-box')]
                 .filter(b => b.classList.contains('selected'))
                 .map(b => `${b.dataset.engName}:${b.querySelector('input').value}`)
                 .join(',');
+            
+            return result;
         }
-
+        
         document.getElementById('filterButton').addEventListener('click', () => {
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-            loadData().then(() => { filterData(); gtag('event','apply_filter',{'selected_characters':getSelectedCharacters()}); })
-                     .catch(error => { console.error('필터 적용 에러:', error); });
+            loadData().then(() => { 
+                filterData(); 
+                gtag('event', 'apply_filter', {
+                    'selected_characters': getSelectedCharacters()
+                });
+            })
+            .catch(error => { 
+                console.error('필터 적용 에러:', error); 
+            });
         });
         
     </script>
