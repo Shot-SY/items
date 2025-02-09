@@ -12,6 +12,32 @@
       gtag('js', new Date());
       gtag('config', 'G-37K1C9W7BK');
     </script>
+    <script>
+        let lastActivityTime = Date.now();
+
+        function updateLastActivity() {
+            const currentTime = Date.now();
+            const inactiveTime = currentTime - lastActivityTime;
+            const twoHours = 7200000;
+            
+            if (inactiveTime >= twoHours) {
+                location.reload(true);
+            }
+            
+            lastActivityTime = currentTime;
+        }
+
+        const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+        activityEvents.forEach(event => {
+            document.addEventListener(event, updateLastActivity);
+        });
+
+        window.addEventListener('focus', updateLastActivity);
+
+        window.addEventListener('load', () => {
+            lastActivityTime = Date.now();
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
     <style>
         body {
