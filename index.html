@@ -591,13 +591,8 @@
         });
 
         function toggleBudgetSelection(budgetBox) {
-            const wasSelected = budgetBox.classList.contains('selected');
-            resetAllCharacters();
-            
-            budgetBox.classList.toggle('selected');
-            if (!wasSelected) {
+            if(budgetBox.classList.toggle('selected')) {
                 budgetInput.disabled = false;
-                selectTierCharacters();
             } else {
                 budgetInput.disabled = true;
                 budgetInput.value = '';
@@ -639,45 +634,33 @@
                     const chars = v.match(/.{1,3}/g)||[];
                     if(checkConditions(chars)) filtered[k] = v;
                 }
-        
+
+                // 예산 필터링
                 const budgetSelected = budgetBox.classList.contains('selected');
-                let sortedKeys;
-        
+                let budgetValue = null;
                 if (budgetSelected) {
-                    // 선택된 캐릭터들의 총합으로 정렬
-                    const selectedCodes = [...document.querySelectorAll('.character-box.selected')]
-                        .map(b => b.dataset.engName.slice(0, 2));
-                    
-                    sortedKeys = Object.entries(filtered)
-                        .map(([key, val]) => {
-                            const chars = val.match(/.{1,3}/g) || [];
-                            const count = {};
-                            chars.forEach(c => {
-                                const code = c.slice(0, 2);
-                                const num = parseInt(c[2] || 1, 10);
-                                count[code] = (count[code] || 0) + num;
-                            });
-                            
-                            return {
-                                key,
-                                sum: selectedCodes.reduce((acc, code) => acc + (count[code] || 0), 0),
-                                price: parseInt(val.match(/=\s*([\d,]+)/)[1].replace(/,/g, ''))
-                            };
-                        })
-                        .sort((a, b) => b.sum - a.sum || b.price - a.price)  // 가격도 내림차순으로 변경
-                        .map(e => e.key);
-                } else {
-                    // 단순 가격순 정렬 (내림차순)
-                    sortedKeys = Object.entries(filtered)
-                        .map(([key, val]) => ({
-                            key,
-                            price: parseInt(val.match(/=\s*([\d,]+)/)[1].replace(/,/g, ''))
-                        }))
-                        .sort((a, b) => b.price - a.price)  // 내림차순으로 변경
-                        .map(e => e.key);
+                    budgetValue = parseFloat(budgetInput.value);
+                    if (isNaN(budgetValue) || budgetValue <= 0) {
+                        alert('올바른 예산 값을 입력해주세요.');
+                        budgetBox.classList.remove('selected');
+                        budgetInput.disabled = true;
+                        budgetInput.value = '';
+                    } else {
+                        const minPrice = budgetValue * 0.7;
+                        const maxPrice = budgetValue * 1.3;
+
+                        filtered = Object.fromEntries(
+                            Object.entries(filtered).filter(([key, val]) => {
+                                const price = getPrice(key);
+                                return price >= minPrice && price <= maxPrice;
+                            })
+                        );
+                    }
                 }
-        
+                
+                const sortedKeys = Object.keys(filtered).sort((a,b) => getPrice(b)-getPrice(a));
                 const final = {};
+                
                 sortedKeys.forEach(key => {
                     final[key] = filtered[key];
                 });
@@ -719,61 +702,54 @@
             res.innerHTML = '<div class="content-container"></div>';
             const container = res.querySelector('.content-container');
             
-            Object.entries(data).forEach(([k, v]) => {
+            const sorted = Object.keys(data).sort((a,b) => getPrice(b)-getPrice(a));
+            sorted.forEach(k => {
                 const item = document.createElement('div');
                 item.className = 'result-item';
-                
-                // sortedData 대신 luaData의 값을 사용
-                const chars = v.match(/.{1,3}/g)||[];
-                const formattedChars = chars.map(c => {
-                    const code = c.slice(0,2);
-                    const num = c[2] || '';
-                    const korName = characters.find(([eng]) => eng.slice(0,2) === code)?.[1];
-                    return korName ? (num ? `${korName}${num}` : korName) : '';
-                }).filter(Boolean).join(' ');
-                
-                const price = getPrice(k);
-                const count = sortedData[k]?.match(/\(([^)]+)\)/)?.[1] || '0';
-                
-                const txt = document.createElement('div');
-                txt.className = 'result-text';
-                txt.innerHTML = `<span class="item">${formattedChars}</span><span class="price">${price.toLocaleString()}원</span><span class="count">&nbsp;&nbsp;&nbsp;(${count})</span>`;
-                item.appendChild(txt);
-                
-                const imgs = document.createElement('div');
-                imgs.className = 'item-images';
-                formattedChars.split(' ').forEach(it => {
-                    const m = it.match(/([가-힣]+)(\d*)/);
-                    if(m){
-                        const [_, name, cnt] = m;
-                        const rep = cnt ? parseInt(cnt) : 1;
-                        for(let i=0;i<rep;i++){
-                            const img = document.createElement('img');
-                            img.src = `cropped_characters/${name}.png`;
-                            img.alt = name;
-                            img.className = 'small-character-img';
-                            imgs.appendChild(img);
+                const val = sortedData[k];
+                if(val){
+                    const [chars, priceCount] = val.split('=').map(s => s.trim());
+                    const pm = priceCount.match(/(\S+)\s*\(([^)]+)\)/);
+                    const price = pm ? pm[1] : '가격 정보 없음';
+                    const count = pm ? pm[2] : '0';
+                    const txt = document.createElement('div');
+                    txt.className = 'result-text';
+                    txt.innerHTML = `<span class="item">${chars}</span><span class="price">${price}</span><span class="count">&nbsp;&nbsp;&nbsp;(${count})</span>`;
+                    item.appendChild(txt);
+                    const imgs = document.createElement('div');
+                    imgs.className = 'item-images';
+                    chars.split(' ').forEach(it => {
+                        const m = it.match(/([가-힣]+)(\d*)/);
+                        if(m){
+                            const [_, name, cnt] = m;
+                            const rep = cnt ? parseInt(cnt) : 1;
+                            for(let i=0;i<rep;i++){
+                                const img = document.createElement('img');
+                                img.src = `cropped_characters/${name}.png`;
+                                img.alt = name;
+                                img.className = 'small-character-img';
+                                imgs.appendChild(img);
+                            }
                         }
-                    }
-                });
-                
-                [
-                    { title: '태테르', count: '30+개' },
-                    { title: '달증', count: '45+개' },
-                    { title: '빵', count: '800+개' },
-                    { title: '뽑기권', count: '500+장' }
-                ].forEach(it => {
-                    const box = document.createElement('div');
-                    box.className = 'item-box';
-                    box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
-                    imgs.appendChild(box);
-                });
-                
-                item.appendChild(imgs);
-                item.addEventListener('click', () => copyToClipboard(item));
+                    });
+                    [
+                        { title: '태테르', count: '30+개' },
+                        { title: '달증', count: '45+개' },
+                        { title: '빵', count: '800+개' },
+                        { title: '뽑기권', count: '500+장' }
+                    ].forEach(it => {
+                        const box = document.createElement('div');
+                        box.className = 'item-box';
+                        box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
+                        imgs.appendChild(box);
+                    });
+                    item.appendChild(imgs);
+                    item.addEventListener('click', () => copyToClipboard(item));
+                } else { 
+                    item.textContent = data[k]; 
+                }
                 container.appendChild(item);
             });
-            
             document.getElementById('copyInstruction').style.display = 'block';
         }
 
@@ -798,28 +774,6 @@
                 .filter(b => b.classList.contains('selected'))
                 .map(b => `${b.dataset.engName}:${b.querySelector('input').value}`)
                 .join(',');
-        }
-
-        function resetAllCharacters() {
-            document.querySelectorAll('.character-box').forEach(charBox => {
-                charBox.classList.remove('selected');
-                const spinbox = charBox.querySelector('input[type="number"]');
-                spinbox.disabled = true;
-                spinbox.value = 0;
-            });
-        }
-        
-        function selectTierCharacters() {
-            tierCharacters.forEach(([eng]) => {
-                const charBox = [...document.querySelectorAll('.character-box')]
-                    .find(b => b.dataset.engName === eng);
-                if (charBox) {
-                    charBox.classList.add('selected');
-                    const spinbox = charBox.querySelector('input[type="number"]');
-                    spinbox.disabled = false;
-                    spinbox.value = 0;
-                }
-            });
         }
 
         document.getElementById('filterButton').addEventListener('click', () => {
