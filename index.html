@@ -714,54 +714,61 @@
             res.innerHTML = '<div class="content-container"></div>';
             const container = res.querySelector('.content-container');
             
-            // 정렬 로직 제거하고 데이터 순서 그대로 사용
-            Object.keys(data).forEach(k => {
+            Object.entries(data).forEach(([k, v]) => {
                 const item = document.createElement('div');
                 item.className = 'result-item';
-                const val = sortedData[k];
-                if(val){
-                    const [chars, priceCount] = val.split('=').map(s => s.trim());
-                    const pm = priceCount.match(/(\S+)\s*\(([^)]+)\)/);
-                    const price = pm ? pm[1] : '가격 정보 없음';
-                    const count = pm ? pm[2] : '0';
-                    const txt = document.createElement('div');
-                    txt.className = 'result-text';
-                    txt.innerHTML = `<span class="item">${chars}</span><span class="price">${price}</span><span class="count">&nbsp;&nbsp;&nbsp;(${count})</span>`;
-                    item.appendChild(txt);
-                    const imgs = document.createElement('div');
-                    imgs.className = 'item-images';
-                    chars.split(' ').forEach(it => {
-                        const m = it.match(/([가-힣]+)(\d*)/);
-                        if(m){
-                            const [_, name, cnt] = m;
-                            const rep = cnt ? parseInt(cnt) : 1;
-                            for(let i=0;i<rep;i++){
-                                const img = document.createElement('img');
-                                img.src = `cropped_characters/${name}.png`;
-                                img.alt = name;
-                                img.className = 'small-character-img';
-                                imgs.appendChild(img);
-                            }
+                
+                // sortedData 대신 luaData의 값을 사용
+                const chars = v.match(/.{1,3}/g)||[];
+                const formattedChars = chars.map(c => {
+                    const code = c.slice(0,2);
+                    const num = c[2] || '';
+                    const korName = characters.find(([eng]) => eng.slice(0,2) === code)?.[1];
+                    return korName ? (num ? `${korName}${num}` : korName) : '';
+                }).filter(Boolean).join(' ');
+                
+                const price = getPrice(k);
+                const count = sortedData[k]?.match(/\(([^)]+)\)/)?.[1] || '0';
+                
+                const txt = document.createElement('div');
+                txt.className = 'result-text';
+                txt.innerHTML = `<span class="item">${formattedChars}</span><span class="price">${price.toLocaleString()}원</span><span class="count">&nbsp;&nbsp;&nbsp;(${count})</span>`;
+                item.appendChild(txt);
+                
+                const imgs = document.createElement('div');
+                imgs.className = 'item-images';
+                formattedChars.split(' ').forEach(it => {
+                    const m = it.match(/([가-힣]+)(\d*)/);
+                    if(m){
+                        const [_, name, cnt] = m;
+                        const rep = cnt ? parseInt(cnt) : 1;
+                        for(let i=0;i<rep;i++){
+                            const img = document.createElement('img');
+                            img.src = `cropped_characters/${name}.png`;
+                            img.alt = name;
+                            img.className = 'small-character-img';
+                            imgs.appendChild(img);
                         }
-                    });
-                    [
-                        { title: '태테르', count: '30+개' },
-                        { title: '달증', count: '45+개' },
-                        { title: '빵', count: '800+개' },
-                        { title: '뽑기권', count: '500+장' }
-                    ].forEach(it => {
-                        const box = document.createElement('div');
-                        box.className = 'item-box';
-                        box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
-                        imgs.appendChild(box);
-                    });
-                    item.appendChild(imgs);
-                    item.addEventListener('click', () => copyToClipboard(item));
-                } else { 
-                    item.textContent = data[k]; 
-                }
+                    }
+                });
+                
+                [
+                    { title: '태테르', count: '30+개' },
+                    { title: '달증', count: '45+개' },
+                    { title: '빵', count: '800+개' },
+                    { title: '뽑기권', count: '500+장' }
+                ].forEach(it => {
+                    const box = document.createElement('div');
+                    box.className = 'item-box';
+                    box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
+                    imgs.appendChild(box);
+                });
+                
+                item.appendChild(imgs);
+                item.addEventListener('click', () => copyToClipboard(item));
                 container.appendChild(item);
             });
+            
             document.getElementById('copyInstruction').style.display = 'block';
         }
 
