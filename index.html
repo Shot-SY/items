@@ -730,7 +730,18 @@
             res.innerHTML = '<div class="content-container"></div>';
             const container = res.querySelector('.content-container');
             
-            const sorted = Object.keys(data).sort((a,b) => getPrice(b)-getPrice(a));
+            // 정렬 로직을 여기서도 적용
+            const budgetSelected = budgetBox.classList.contains('selected');
+            const sorted = Object.keys(data).sort((a, b) => {
+                if (budgetSelected) {
+                    // 예산 박스가 활성화된 경우: 선택된 캐릭터들의 총합이 많은 순
+                    return getSelectedCharacterSum(luaData[b]) - getSelectedCharacterSum(luaData[a]);
+                } else {
+                    // 예산 박스가 비활성화된 경우: 가격순
+                    return getPrice(b) - getPrice(a);
+                }
+            });
+        
             sorted.forEach(k => {
                 const item = document.createElement('div');
                 item.className = 'result-item';
