@@ -669,7 +669,13 @@
                         .sort((a, b) => b.sum - a.sum || b.price - a.price)
                         .map(e => e.key);
                 } else {
-                    sortedKeys = Object.keys(filtered).sort((a, b) => getPrice(b) - getPrice(a));
+                    // 가격순 정렬 로직 수정
+                    sortedKeys = Object.entries(filtered).map(([key, _]) => ({
+                        key,
+                        price: getPrice(key)
+                    }))
+                    .sort((a, b) => b.price - a.price)
+                    .map(entry => entry.key);
                 }
         
                 const final = {};
