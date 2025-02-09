@@ -908,7 +908,7 @@
             });
         
             // 예산 모드가 활성화된 경우 상위 50개만 선택
-            const displayItems = budgetSelected ? sorted.slice(0, 50) : sorted;
+            const displayItems = budgetSelected ? sorted.slice(0, 40) : sorted;
         
             displayItems.forEach(k => {
                 const item = document.createElement('div');
