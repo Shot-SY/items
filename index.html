@@ -588,9 +588,24 @@
     <div id="copyMessage">복사되었습니다</div>
     <script>
         window.addEventListener('load', () => {
+            // 마지막 로드 시간을 localStorage에서 확인
+            const lastLoad = localStorage.getItem('lastLoadTime');
+            const currentTime = Date.now();
+            
+            // 마지막 로드로부터 1초 이상 지났거나 lastLoad가 없으면 새로고침
+            if (!lastLoad || (currentTime - parseInt(lastLoad)) > 1000) {
+                localStorage.setItem('lastLoadTime', currentTime);
+                window.location.reload(true); // true를 넣으면 강제로 캐시를 무시
+                return;
+            }
+        
+            // 기존 로딩 로직
             const loader = document.getElementById('loader');
             loadData().then(filterData).then(() => new Promise(r => setTimeout(r, 500)))
-                .then(() => { loader.classList.add('hidden'); setTimeout(() => loader.style.display = 'none', 500); })
+                .then(() => { 
+                    loader.classList.add('hidden'); 
+                    setTimeout(() => loader.style.display = 'none', 500); 
+                })
                 .catch(error => {
                     console.error('초기 필터 적용 에러:', error);
                     loader.classList.add('hidden');
