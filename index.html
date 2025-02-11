@@ -598,7 +598,7 @@
             if (document.visibilityState === 'visible') {
                 const currentTime = Date.now();
                 const inactiveTime = currentTime - lastActivityTime;
-                const twoHours = 20000;
+                const twoHours = 7200000;
                 if (inactiveTime > twoHours) {
                     window.location.reload(true);
                 } else {
