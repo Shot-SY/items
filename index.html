@@ -981,31 +981,5 @@
         });
         
     </script>
-    <script>
-        let lastActivityTime = Date.now();
-
-        function updateLastActivity() {
-            const currentTime = Date.now();
-            const inactiveTime = currentTime - lastActivityTime;
-            const twoHours = 20000;
-            
-            if (inactiveTime >= twoHours) {
-                location.reload(true);
-            }
-            
-            lastActivityTime = currentTime;
-        }
-
-        const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
-        activityEvents.forEach(event => {
-            document.addEventListener(event, updateLastActivity);
-        });
-
-        window.addEventListener('focus', updateLastActivity);
-
-        window.addEventListener('load', () => {
-            lastActivityTime = Date.now();
-        });
-    </script>
 </body>
 </html>
