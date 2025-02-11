@@ -25,9 +25,11 @@
                 loader.style.display = 'flex';
                 loader.classList.remove('hidden');
                 
-                loadData().then(() => {
-                    return new Promise(() => {});
-                });
+                window.location.href = window.location.href + 
+                    (window.location.href.includes('?') ? '&' : '?') + 
+                    'cache=' + Date.now();
+                
+                return;
             }
             
             lastActivityTime = currentTime;
