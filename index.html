@@ -12,52 +12,6 @@
       gtag('js', new Date());
       gtag('config', 'G-37K1C9W7BK');
     </script>
-    <script>
-        let lastActivityTime = Date.now();
-
-        function updateLastActivity() {
-            const currentTime = Date.now();
-            const inactiveTime = currentTime - lastActivityTime;
-            const twoHours = 20000;
-            
-            if (inactiveTime >= twoHours) {
-                const loader = document.getElementById('loader');
-                loader.style.display = 'flex';
-                loader.classList.remove('hidden');
-                
-                // 로더 안에 새로고침 버튼 추가
-                const refreshButton = document.createElement('button');
-                refreshButton.innerText = '새로고침하기';
-                refreshButton.style.cssText = `
-                    margin-top: 20px;
-                    padding: 10px 20px;
-                    background: #ff4081;
-                    color: white;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    font-size: 16px;
-                `;
-                refreshButton.onclick = () => window.location.reload(true);
-                
-                loader.appendChild(refreshButton);
-                return;
-            }
-            
-            lastActivityTime = currentTime;
-        }
-
-        const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
-        activityEvents.forEach(event => {
-            document.addEventListener(event, updateLastActivity);
-        });
-
-        window.addEventListener('focus', updateLastActivity);
-
-        window.addEventListener('load', () => {
-            lastActivityTime = Date.now();
-        });
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
     <style>
         body {
@@ -1026,6 +980,32 @@
             });
         });
         
+    </script>
+    <script>
+        let lastActivityTime = Date.now();
+
+        function updateLastActivity() {
+            const currentTime = Date.now();
+            const inactiveTime = currentTime - lastActivityTime;
+            const twoHours = 7200000;
+            
+            if (inactiveTime >= twoHours) {
+                location.reload(true);
+            }
+            
+            lastActivityTime = currentTime;
+        }
+
+        const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+        activityEvents.forEach(event => {
+            document.addEventListener(event, updateLastActivity);
+        });
+
+        window.addEventListener('focus', updateLastActivity);
+
+        window.addEventListener('load', () => {
+            lastActivityTime = Date.now();
+        });
     </script>
 </body>
 </html>
