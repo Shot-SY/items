@@ -18,16 +18,24 @@
         function updateLastActivity() {
             const currentTime = Date.now();
             const inactiveTime = currentTime - lastActivityTime;
-            const twoHours = 30000;
+            const twoHours = 20000;
             
             if (inactiveTime >= twoHours) {
+                // 로더 표시
                 const loader = document.getElementById('loader');
                 loader.style.display = 'flex';
                 loader.classList.remove('hidden');
                 
-                window.location.href = window.location.href + 
-                    (window.location.href.includes('?') ? '&' : '?') + 
-                    'cache=' + Date.now();
+                // 캐시를 완전히 무시하고 서버에서 새로 받아오도록 강제
+                window.location.replace(
+                    window.location.href.split('?')[0] + 
+                    '?nocache=' + new Date().getTime()
+                );
+                
+                // 혹시나 위의 방법이 실패할 경우를 대비해 reload도 함께 실행
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 100);
                 
                 return;
             }
