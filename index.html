@@ -587,6 +587,26 @@
     <div id="results"></div>
     <div id="copyMessage">복사되었습니다</div>
     <script>
+        let lastActivityTime = Date.now();
+        const updateActivityTime = () => {
+            lastActivityTime = Date.now();
+        };
+        ['click', 'touchstart', 'scroll', 'keypress'].forEach(event => {
+            document.addEventListener(event, updateActivityTime);
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                const currentTime = Date.now();
+                const inactiveTime = currentTime - lastActivityTime;
+                const twoHours = 20000;
+                if (inactiveTime > twoHours) {
+                    window.location.reload(true);
+                } else {
+                    lastActivityTime = currentTime;
+                }
+            }
+        });
+        
         window.addEventListener('load', () => {
             // 마지막 로드 시간을 localStorage에서 확인
             const lastLoad = localStorage.getItem('lastLoadTime');
