@@ -21,7 +21,7 @@
         function updateLastActivity() {
             const currentTime = Date.now();
             const inactiveTime = currentTime - lastActivityTime;
-            const twoHours = 7200000;
+            const twoHours = 60000;
             
             if (inactiveTime >= twoHours) {
                 location.reload(true);
