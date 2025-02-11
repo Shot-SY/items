@@ -2,9 +2,6 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캐릭터 필터</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -24,7 +21,13 @@
             const twoHours = 7200000;
             
             if (inactiveTime >= twoHours) {
-                location.reload(true);
+                const loader = document.getElementById('loader');
+                loader.style.display = 'flex';
+                loader.classList.remove('hidden');
+                
+                loadData().then(() => {
+                    return new Promise(() => {});
+                });
             }
             
             lastActivityTime = currentTime;
