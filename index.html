@@ -21,36 +21,27 @@
             const twoHours = 20000;
             
             if (inactiveTime >= twoHours) {
-                // 로더 표시
                 const loader = document.getElementById('loader');
                 loader.style.display = 'flex';
                 loader.classList.remove('hidden');
                 
-                // 서버에 최신 버전 확인 요청
-                fetch(window.location.href, {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache'
-                    },
-                    cache: 'no-store'
-                })
-                .then(response => response.text())
-                .then(newHtml => {
-                    // 현재 페이지와 새로운 HTML 비교
-                    if (newHtml !== document.documentElement.outerHTML) {
-                        // 버전이 다르면 강제 새로고침
-                        document.open();
-                        document.write(newHtml);
-                        document.close();
-                    } else {
-                        // 버전이 같으면 데이터만 갱신
-                        return loadData();
-                    }
-                })
-                .catch(() => {
-                    // 에러 시 일반적인 새로고침 시도
-                    window.location.reload(true);
-                });
+                // 로더 안에 새로고침 버튼 추가
+                const refreshButton = document.createElement('button');
+                refreshButton.innerText = '새로고침하기';
+                refreshButton.style.cssText = `
+                    margin-top: 20px;
+                    padding: 10px 20px;
+                    background: #ff4081;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 16px;
+                `;
+                refreshButton.onclick = () => window.location.reload(true);
+                
+                loader.appendChild(refreshButton);
+                return;
             }
             
             lastActivityTime = currentTime;
