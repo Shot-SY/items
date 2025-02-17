@@ -708,7 +708,7 @@
         });
 
         budgetBox.addEventListener('click', (e) => {
-            if(e.target.tagName.toLowerCase() !== 'input') toggleBudgetSelection(budgetBox);
+            if(e.target.tagName.toLowerCase() !== 'input') udgetSelection(budgetBox);
         });
         
         budgetInput.addEventListener('click', (e) => { 
@@ -724,12 +724,16 @@
             const budgetTextContainer = budgetBox.querySelector('.budget-text-container');
             const tooltipIcon = budgetBox.querySelector('.tooltip-icon');
             
-            // 모든 캐릭터 박스 초기화
+            // 휘리 이후의 캐릭터들만 초기화
             [...document.getElementsByClassName('character-box')].forEach(box => {
-                box.classList.remove('selected');
-                const spinbox = box.querySelector('input[type="number"]');
-                spinbox.disabled = true;
-                spinbox.value = '0';
+                const engName = box.dataset.engName;
+                // 휘리와 그 이후의 캐릭터들만 초기화
+                if (engName === 'hwiri' || characters.findIndex(([eng]) => eng === engName) > characters.findIndex(([eng]) => eng === 'hwiri')) {
+                    box.classList.remove('selected');
+                    const spinbox = box.querySelector('input[type="number"]');
+                    spinbox.disabled = true;
+                    spinbox.value = '0';
+                }
             });
         
             if (isActivating) {
