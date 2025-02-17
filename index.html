@@ -724,12 +724,17 @@
             const budgetTextContainer = budgetBox.querySelector('.budget-text-container');
             const tooltipIcon = budgetBox.querySelector('.tooltip-icon');
             
-            // 모든 캐릭터 박스 초기화
+            // 예외 캐릭터 목록 정의
+            const exceptCharacters = ["fumitchell", "myle", "ervin", "gerd", "thomas"];
+            
+            // 예외 캐릭터를 제외한 모든 캐릭터 박스 초기화
             [...document.getElementsByClassName('character-box')].forEach(box => {
-                box.classList.remove('selected');
-                const spinbox = box.querySelector('input[type="number"]');
-                spinbox.disabled = true;
-                spinbox.value = '0';
+                if (!exceptCharacters.includes(box.dataset.engName)) {
+                    box.classList.remove('selected');
+                    const spinbox = box.querySelector('input[type="number"]');
+                    spinbox.disabled = true;
+                    spinbox.value = '0';
+                }
             });
         
             if (isActivating) {
@@ -737,18 +742,20 @@
                 budgetBox.classList.add('selected');
                 budgetInput.disabled = false;
                 budgetTextContainer.querySelector('.budget-text').textContent = '예산';
-                tooltipIcon.style.display = 'none'; // 툴팁 아이콘 숨기기
-                setTimeout(() => budgetInput.focus(), 300); // 애니메이션 후 포커스
+                tooltipIcon.style.display = 'none';
+                setTimeout(() => budgetInput.focus(), 300);
         
-                // tierCharacters에 해당하는 캐릭터들 자동 선택
+                // tierCharacters에 해당하는 캐릭터들 자동 선택 (예외 캐릭터는 건드리지 않음)
                 tierCharacters.forEach(([eng, kor]) => {
-                    const box = [...document.getElementsByClassName('character-box')]
-                        .find(b => b.dataset.engName === eng);
-                    if (box) {
-                        box.classList.add('selected');
-                        const spinbox = box.querySelector('input[type="number"]');
-                        spinbox.disabled = false;
-                        spinbox.value = '0';
+                    if (!exceptCharacters.includes(eng)) {
+                        const box = [...document.getElementsByClassName('character-box')]
+                            .find(b => b.dataset.engName === eng);
+                        if (box) {
+                            box.classList.add('selected');
+                            const spinbox = box.querySelector('input[type="number"]');
+                            spinbox.disabled = false;
+                            spinbox.value = '0';
+                        }
                     }
                 });
             } else {
@@ -757,7 +764,7 @@
                 budgetInput.disabled = true;
                 budgetInput.value = '';
                 budgetTextContainer.querySelector('.budget-text').textContent = '추천 조합 보기';
-                tooltipIcon.style.display = ''; // 툴팁 아이콘 다시 표시
+                tooltipIcon.style.display = '';
             }
         }
 
