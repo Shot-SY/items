@@ -947,8 +947,13 @@
             const budgetBox = document.getElementById('budgetBox');
             const budgetInput = document.getElementById('budgetInput');
             
-            if(budgetBox.classList.contains('selected') && budgetInput.value) {
-                result = `${budgetInput.value} - `;
+            if(budgetBox.classList.contains('selected')) {
+                if(budgetInput.value) {
+                    result = `${budgetInput.value} - `;
+                } 
+                else {
+                    result = "nil - ";
+                }
             }
             
             result += [...document.getElementsByClassName('character-box')]
