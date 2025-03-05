@@ -555,7 +555,7 @@
         </div>
     </div>
     <button id="filterButton">필터 적용</button>
-    <div id="copyInstruction">※ 전설픽업은 진행되지 않았습니다<br>※ 전설Ⅰ선택권은 마일, 어빈, 게르드, 토마스 중에서 선택 가능하며, 1500뽑 업적 보상을 포함합니다</div>
+    <div id="copyInstruction">※ 전설픽업은 진행되지 않았습니다</div>
     <div id="results"></div>
     <div id="copyMessage">복사되었습니다</div>
     <script>
@@ -894,8 +894,6 @@
                     
                     // 맨 앞에 올 아이템들 배열
                     [
-                        { title: '전설Ⅰ', count: '선택권' },
-                        { title: '전설Ⅰ', count: '선택권' }
                     ].forEach(it => {
                         const box = document.createElement('div');
                         box.className = 'item-box';
