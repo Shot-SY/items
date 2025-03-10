@@ -920,14 +920,6 @@
                         }
                     });
                     
-                    // 기타3성이 있으면 태테르 앞에 추가
-                    if (otherCharCount > 0) {
-                        const otherBox = document.createElement('div');
-                        otherBox.className = 'item-box';
-                        otherBox.innerHTML = `<div class="item-title">기타3성</div><div class="item-count">${otherCharCount}개</div>`;
-                        imgs.appendChild(otherBox);
-                    }
-                    
                     // 캐릭터 이미지 추가
                     charImages.forEach(imgData => {
                         const img = document.createElement('img');
@@ -936,6 +928,14 @@
                         img.className = 'small-character-img';
                         imgs.appendChild(img);
                     });
+                    
+                    // 기타3성이 있으면 태테르 앞에 추가
+                    if (otherCharCount > 0) {
+                        const otherBox = document.createElement('div');
+                        otherBox.className = 'item-box';
+                        otherBox.innerHTML = `<div class="item-title">기타3성</div><div class="item-count">${otherCharCount}장</div>`;
+                        imgs.appendChild(otherBox);
+                    }
                     
                     // 그 외 고정된 아이템 박스 추가
                     [
