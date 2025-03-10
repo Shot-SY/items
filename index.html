@@ -628,6 +628,10 @@
             ["gawain","가웨인"],["varius","베리어스"],["palman","팔만"],["madram","매드람"]
         ];
 
+        const mitchellIndex = characters.findIndex(char => char[0] === "mitchell");
+        
+        const otherCharacters = characters.slice(mitchellIndex + 1).map(char => char[1]);
+
         const tierCharacters = [
             ["hwiri","휘리"],["guse","구스"],["aph","알프"],
             ["bomuna","봄우나"],["jyoanna","죠안나"],["lody","로디"],["elenoa","엘레노아"],["shannon","섀넌"],
@@ -861,19 +865,17 @@
             res.innerHTML = '<div class="content-container"></div>';
             const container = res.querySelector('.content-container');
             
-            // 정렬 로직을 여기서도 적용
+            // 정렬 로직은 기존과 동일
             const budgetSelected = budgetBox.classList.contains('selected');
             const sorted = Object.keys(data).sort((a, b) => {
                 if (budgetSelected) {
-                    // 예산 박스가 활성화된 경우: 선택된 캐릭터들의 총합이 많은 순
                     return getSelectedCharacterSum(luaData[b]) - getSelectedCharacterSum(luaData[a]);
                 } else {
-                    // 예산 박스가 비활성화된 경우: 가격순
                     return getPrice(b) - getPrice(a);
                 }
             });
         
-            // 예산 모드가 활성화된 경우 상위 50개만 선택
+            // 예산 모드가 활성화된 경우 상위 40개만 선택
             const displayItems = budgetSelected ? sorted.slice(0, 40) : sorted;
         
             displayItems.forEach(k => {
@@ -891,31 +893,51 @@
                     item.appendChild(txt);
                     const imgs = document.createElement('div');
                     imgs.className = 'item-images';
-                    
-                    // 맨 앞에 올 아이템들 배열
-                    [
-                    ].forEach(it => {
-                        const box = document.createElement('div');
-                        box.className = 'item-box';
-                        box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
-                        imgs.appendChild(box);
-                    });
-                    
-                    // 그 다음 캐릭터 이미지 추가
+        
+                    // 미첼 이후의 캐릭터들(기타3성)의 개수를 추적
+                    let otherCharCount = 0;
+        
+                    // 캐릭터를 이미지로 표시하기 전 처리
+                    const charImages = [];
                     chars.split(' ').forEach(it => {
                         const m = it.match(/([가-힣]+)(\d*)/);
-                        if(m){
+                        if (m) {
                             const [_, name, cnt] = m;
                             const rep = cnt ? parseInt(cnt) : 1;
-                            for(let i=0;i<rep;i++){
-                                const img = document.createElement('img');
-                                img.src = `cropped_characters/${name}.png`;
-                                img.alt = name;
-                                img.className = 'small-character-img';
-                                imgs.appendChild(img);
+                            
+                            // 미첼 이후의 캐릭터인지 확인
+                            if (otherCharacters.includes(name)) {
+                                otherCharCount += rep; // 기타3성으로 카운트
+                            } else {
+                                // 일반 캐릭터는 이미지로 표시
+                                for (let i = 0; i < rep; i++) {
+                                    charImages.push({
+                                        src: `cropped_characters/${name}.png`,
+                                        alt: name
+                                    });
+                                }
                             }
                         }
                     });
+                    
+                    // 기타3성이 있으면 태테르 앞에 추가
+                    if (otherCharCount > 0) {
+                        const otherBox = document.createElement('div');
+                        otherBox.className = 'item-box';
+                        otherBox.innerHTML = `<div class="item-title">기타3성</div><div class="item-count">${otherCharCount}개</div>`;
+                        imgs.appendChild(otherBox);
+                    }
+                    
+                    // 캐릭터 이미지 추가
+                    charImages.forEach(imgData => {
+                        const img = document.createElement('img');
+                        img.src = imgData.src;
+                        img.alt = imgData.alt;
+                        img.className = 'small-character-img';
+                        imgs.appendChild(img);
+                    });
+                    
+                    // 그 외 고정된 아이템 박스 추가
                     [
                         { title: '태테르', count: '30+개' },
                         { title: '달증', count: '60+개' },
@@ -927,6 +949,7 @@
                         box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
                         imgs.appendChild(box);
                     });
+                    
                     item.appendChild(imgs);
                     item.addEventListener('click', () => copyToClipboard(item));
                 } else { 
