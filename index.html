@@ -557,6 +557,18 @@
             background-color: #ff4081;
             padding: 2px;
         }
+        /* 선택권 아이템 박스에 대한 스타일 추가 */
+        .item-box.selection-card {
+            border: 2px solid #FFD700;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, rgba(42, 42, 42, 0.9), rgba(26, 26, 26, 0.9));
+        }
+        
+        /* 선택권 아이템 제목의 첫 글자 스타일 */
+        .selection-card .item-title .highlight {
+            color: #FFD700;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -973,21 +985,32 @@
                             imgs.appendChild(charContainer);
                         }
                     });
-                    
-                    // 선택권 아이템들 추가
+
+                    // 선택권 아이템들 추가 (노란색 외곽선과 첫 글자 강조 효과 추가)
                     [
                         { title: '전설Ⅱ', count: '선택권' },
                         { title: '전설Ⅰ', count: '선택권' },
                         { title: '전설Ⅰ', count: '선택권' },
                         { title: '전설Ⅰ', count: '선택권' },
+                        { title: '3성', count: '선택권' },
                         { title: '3성', count: '선택권' }
                     ].forEach(it => {
                         const box = document.createElement('div');
-                        box.className = 'item-box';
-                        box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
+                        box.className = 'item-box selection-card';
+                        
+                        // 첫 글자를 강조하기 위한 HTML 구성
+                        const firstChar = it.title.charAt(0);
+                        const restChars = it.title.substring(1);
+                        
+                        box.innerHTML = `
+                            <div class="item-title">
+                                <span class="highlight">${firstChar}</span>${restChars}
+                            </div>
+                            <div class="item-count">${it.count}</div>
+                        `;
                         imgs.appendChild(box);
                     });
-                    
+
                     // 나머지 캐릭터 이미지와 개수 이미지 추가
                     charCounts.forEach((count, name) => {
                         const charInfo = characters.find(([_, kor]) => kor === name);
@@ -1015,7 +1038,7 @@
                         }
                     });
                     
-                    // 기타3성이 있으면 태테르 앞에 추가
+                    // 기타3성이 있으면 추가
                     if (otherCharCount > 0) {
                         const otherBox = document.createElement('div');
                         otherBox.className = 'item-box';
