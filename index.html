@@ -947,7 +947,34 @@
                         }
                     });
 
-                    // 맨 앞에 올 아이템들 배열
+                    // 캐릭터 이미지와 개수 이미지 추가 (예외 캐릭터 먼저)
+                    charCounts.forEach((count, name) => {
+                        const charInfo = characters.find(([_, kor]) => kor === name);
+                        // 예외 캐릭터인 경우에만 먼저 추가
+                        if (charInfo && exceptCharacters.includes(charInfo[0])) {
+                            const charContainer = document.createElement('div');
+                            charContainer.className = 'char-container';
+                            
+                            // 캐릭터 이미지
+                            const img = document.createElement('img');
+                            img.src = `cropped_characters/${name}.png`;
+                            img.alt = name;
+                            img.className = 'small-character-img except';
+                            
+                            charContainer.appendChild(img);
+                            
+                            // 개수 이미지 (숫자.png)
+                            const countImg = document.createElement('img');
+                            countImg.src = `cropped_characters/${count}.png`;
+                            countImg.alt = count.toString();
+                            countImg.className = 'count-badge';
+                            charContainer.appendChild(countImg);
+                            
+                            imgs.appendChild(charContainer);
+                        }
+                    });
+                    
+                    // 선택권 아이템들 추가
                     [
                         { title: '전설Ⅱ', count: '선택권' },
                         { title: '전설Ⅰ', count: '선택권' },
@@ -961,33 +988,31 @@
                         imgs.appendChild(box);
                     });
                     
-                    // 캐릭터 이미지와 개수 이미지 추가 (여기를 수정)
+                    // 나머지 캐릭터 이미지와 개수 이미지 추가
                     charCounts.forEach((count, name) => {
-                        const charContainer = document.createElement('div');
-                        charContainer.className = 'char-container';
-                        
-                        // 캐릭터 이미지
-                        const img = document.createElement('img');
-                        img.src = `cropped_characters/${name}.png`;
-                        img.alt = name;
-                        img.className = 'small-character-img';
-                        
-                        // 예외 캐릭터인지 확인하여 클래스 추가
                         const charInfo = characters.find(([_, kor]) => kor === name);
-                        if (charInfo && exceptCharacters.includes(charInfo[0])) {
-                            img.classList.add('except');
+                        // 예외 캐릭터가 아닌 경우에만 추가
+                        if (!charInfo || !exceptCharacters.includes(charInfo[0])) {
+                            const charContainer = document.createElement('div');
+                            charContainer.className = 'char-container';
+                            
+                            // 캐릭터 이미지
+                            const img = document.createElement('img');
+                            img.src = `cropped_characters/${name}.png`;
+                            img.alt = name;
+                            img.className = 'small-character-img';
+                            
+                            charContainer.appendChild(img);
+                            
+                            // 개수 이미지 (숫자.png)
+                            const countImg = document.createElement('img');
+                            countImg.src = `cropped_characters/${count}.png`;
+                            countImg.alt = count.toString();
+                            countImg.className = 'count-badge';
+                            charContainer.appendChild(countImg);
+                            
+                            imgs.appendChild(charContainer);
                         }
-                        
-                        charContainer.appendChild(img);
-                        
-                        // 개수 이미지 (숫자.png)
-                        const countImg = document.createElement('img');
-                        countImg.src = `cropped_characters/${count}.png`;
-                        countImg.alt = count.toString();
-                        countImg.className = 'count-badge';
-                        charContainer.appendChild(countImg);
-                        
-                        imgs.appendChild(charContainer);
                     });
                     
                     // 기타3성이 있으면 태테르 앞에 추가
