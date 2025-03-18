@@ -557,6 +557,69 @@
             background-color: #ff4081;
             padding: 2px;
         }
+        
+        /* 선택권 아이템 스타일 개선 */
+        .item-box.selection-ticket {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+            transform: scale(1);
+            transition: all 0.3s ease;
+        }
+        
+        .item-box.selection-ticket:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+        }
+        
+        .item-box.selection-ticket .item-title {
+            color: #ffd700;
+            font-weight: bold;
+            text-shadow: 0 0 3px rgba(255, 215, 0, 0.5);
+        }
+        
+        .item-box.selection-ticket .item-count {
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        /* 전설Ⅱ 선택권은 특별히 더 강조 */
+        .item-box.selection-ticket.legendary-2 {
+            background: linear-gradient(135deg, #3a2a2a, #2a1a1a);
+            border: 1px solid rgba(255, 64, 129, 0.4);
+            box-shadow: 0 4px 12px rgba(255, 64, 129, 0.3);
+        }
+        
+        .item-box.selection-ticket.legendary-2:hover {
+            border-color: rgba(255, 64, 129, 0.7);
+            box-shadow: 0 6px 16px rgba(255, 64, 129, 0.5);
+        }
+        
+        .item-box.selection-ticket.legendary-2 .item-title {
+            color: #ff4081;
+        }
+        
+        /* 선택권 아이템에 빛나는 효과 추가 */
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+            100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
+        }
+        
+        .item-box.selection-ticket {
+            animation: glow 3s infinite;
+        }
+        
+        .item-box.selection-ticket.legendary-2 {
+            animation: glow-legendary 3s infinite;
+        }
+        
+        @keyframes glow-legendary {
+            0% { box-shadow: 0 0 5px rgba(255, 64, 129, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(255, 64, 129, 0.5); }
+            100% { box-shadow: 0 0 5px rgba(255, 64, 129, 0.3); }
+        }
     </style>
 </head>
 <body>
@@ -976,15 +1039,19 @@
                     
                     // 선택권 아이템들 추가
                     [
-                        { title: '전설Ⅱ', count: '선택권' },
-                        { title: '전설Ⅰ', count: '선택권' },
-                        { title: '전설Ⅰ', count: '선택권' },
-                        { title: '전설Ⅰ', count: '선택권' },
-                        { title: '3성', count: '선택권' }
+                        { title: '전설Ⅱ', count: '선택권', class: 'legendary-2' },
+                        { title: '전설Ⅰ', count: '선택권', class: '' },
+                        { title: '전설Ⅰ', count: '선택권', class: '' },
+                        { title: '전설Ⅰ', count: '선택권', class: '' },
+                        { title: '3성', count: '선택권', class: '' },
+                        { title: '3성', count: '선택권', class: '' }
                     ].forEach(it => {
                         const box = document.createElement('div');
-                        box.className = 'item-box';
-                        box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
+                        box.className = `item-box selection-ticket ${it.class}`;
+                        box.innerHTML = `
+                            <div class="item-title">${it.title}</div>
+                            <div class="item-count">${it.count}</div>
+                        `;
                         imgs.appendChild(box);
                     });
                     
