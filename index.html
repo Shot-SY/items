@@ -531,15 +531,31 @@
                 font-size: 14px;
             }
         }
-        /* 예외 캐릭터 박스에 외곽선 적용 */
+        
         .character-box.except {
             border: 2px solid #ff9800;
             box-shadow: 0 4px 12px rgba(255,152,0,0.7);
         }
-        /* 결과 아이템에서 예외 캐릭터 이미지에 외곽선 적용 */
         .small-character-img.except {
             border: 2px solid #ff9800;
             box-shadow: 0 2px 8px rgba(255,152,0,0.7);
+        }
+        
+        .char-container {
+            position: relative;
+            display: inline-block;
+            margin: 0 5px;
+        }
+        
+        .count-badge {
+            position: absolute;
+            right: 0;
+            bottom: 2px;
+            width: 29px;
+            height: 29px;
+            border-radius: 50%;
+            background-color: #ff4081;
+            padding: 2px;
         }
     </style>
 </head>
@@ -945,12 +961,10 @@
                         imgs.appendChild(box);
                     });
                     
-                    // 캐릭터 이미지와 개수 이미지 추가
+                    // 캐릭터 이미지와 개수 이미지 추가 (여기를 수정)
                     charCounts.forEach((count, name) => {
                         const charContainer = document.createElement('div');
-                        charContainer.style.position = 'relative';
-                        charContainer.style.display = 'inline-block';
-                        charContainer.style.margin = '0 5px';
+                        charContainer.className = 'char-container';
                         
                         // 캐릭터 이미지
                         const img = document.createElement('img');
@@ -966,19 +980,14 @@
                         
                         charContainer.appendChild(img);
                         
-                        // 개수 이미지 (숫자.png)
-                        const countImg = document.createElement('img');
-                        countImg.src = `cropped_characters/${count}.png`;
-                        countImg.alt = count.toString();
-                        countImg.style.position = 'absolute';
-                        countImg.style.right = '0';
-                        countImg.style.bottom = '2px'; // 2px 위로 올림
-                        countImg.style.width = '29px';
-                        countImg.style.height = '29px';
-                        // countImg.style.borderRadius = '50%'; // 동그랗게 만들기
-                        // countImg.style.backgroundColor = '#ff4081'; // 배경색 추가
-                        // countImg.style.padding = '2px'; // 패딩 추가
-                        charContainer.appendChild(countImg);
+                        // 개수 이미지 (숫자.png) - 클래스 사용
+                        if (count > 1) {
+                            const countImg = document.createElement('img');
+                            countImg.src = `cropped_characters/${count}.png`;
+                            countImg.alt = count.toString();
+                            countImg.className = 'count-badge';
+                            charContainer.appendChild(countImg);
+                        }
                         
                         imgs.appendChild(charContainer);
                     });
