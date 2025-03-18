@@ -951,9 +951,13 @@
                         countImg.alt = count.toString();
                         countImg.style.position = 'absolute';
                         countImg.style.right = '0';
-                        countImg.style.bottom = '0';
-                        countImg.style.width = '29px';
-                        countImg.style.height = '29px';
+                        countImg.style.bottom = '2px'; // 2px 위로 올림
+                        countImg.style.width = '27px';
+                        countImg.style.height = '27px';
+                        countImg.style.borderRadius = '50%'; // 동그랗게 만들기
+                        countImg.style.backgroundColor = '#ff4081'; // 배경색 추가 (선택사항)
+                        countImg.style.padding = '2px'; // 패딩 추가 (선택사항)
+                        countImg.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)'; // 그림자 효과 (선택사항)
                         charContainer.appendChild(countImg);
                         
                         imgs.appendChild(charContainer);
