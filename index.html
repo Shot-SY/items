@@ -557,15 +557,14 @@
             background-color: #ff4081;
             padding: 2px;
         }
-        /* 선택권 아이템 박스에 대한 스타일 추가 */
+        
         .item-box.selection-card {
             border: 2px solid #FFD700;
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
             background: linear-gradient(135deg, rgba(42, 42, 42, 0.9), rgba(26, 26, 26, 0.9));
         }
         
-        /* 선택권 아이템 제목의 첫 글자 스타일 */
-        .selection-card .item-title .highlight {
+        .selection-card .item-title {
             color: #FFD700;
             font-weight: 700;
         }
@@ -997,17 +996,7 @@
                     ].forEach(it => {
                         const box = document.createElement('div');
                         box.className = 'item-box selection-card';
-                        
-                        // 첫 글자를 강조하기 위한 HTML 구성
-                        const firstChar = it.title.charAt(0);
-                        const restChars = it.title.substring(1);
-                        
-                        box.innerHTML = `
-                            <div class="item-title">
-                                <span class="highlight">${firstChar}</span>${restChars}
-                            </div>
-                            <div class="item-count">${it.count}</div>
-                        `;
+                        box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
                         imgs.appendChild(box);
                     });
 
