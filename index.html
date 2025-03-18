@@ -531,6 +531,16 @@
                 font-size: 14px;
             }
         }
+        /* 예외 캐릭터 박스에 외곽선 적용 */
+        .character-box.except {
+            border: 2px solid #ff9800;
+            box-shadow: 0 4px 12px rgba(255,152,0,0.7);
+        }
+        /* 결과 아이템에서 예외 캐릭터 이미지에 외곽선 적용 */
+        .small-character-img.except {
+            border: 2px solid #ff9800;
+            box-shadow: 0 2px 8px rgba(255,152,0,0.7);
+        }
     </style>
 </head>
 <body>
@@ -638,6 +648,8 @@
             ["daerael","대라엘"],["stella","스텔라"],["altos","알토스"],["duol","듀올"],["rachel","레이첼"]
         ];
 
+        const exceptCharacters = ["castol", "fumitchell", "myle", "ervin", "gerd", "thomas"];
+
         let sortedData = {}, luaData = {};
         const characterGrid = document.getElementById('characterGrid');
         const budgetBox = document.getElementById('budgetBox');
@@ -647,6 +659,11 @@
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
             charBox.dataset.engName = eng;
+            
+            // 예외 캐릭터인 경우 클래스 추가
+            if (exceptCharacters.includes(eng)) {
+                charBox.classList.add('except');
+            }
 
             const img = document.createElement('img');
             img.src = `cropped_characters/${kor}.png`;
@@ -698,9 +715,6 @@
         function toggleBudgetSelection(budgetBox) {
             const isActivating = !budgetBox.classList.contains('selected');
             const budgetTextContainer = budgetBox.querySelector('.budget-text-container');
-            
-            // 예외 캐릭터 목록 정의
-            const exceptCharacters = ["castol", "fumitchell", "myle", "ervin", "gerd", "thomas"];
             
             // 예외 캐릭터를 제외한 모든 캐릭터 박스 초기화
             [...document.getElementsByClassName('character-box')].forEach(box => {
@@ -943,6 +957,13 @@
                         img.src = `cropped_characters/${name}.png`;
                         img.alt = name;
                         img.className = 'small-character-img';
+                        
+                        // 예외 캐릭터인지 확인하여 클래스 추가
+                        const charInfo = characters.find(([_, kor]) => kor === name);
+                        if (charInfo && exceptCharacters.includes(charInfo[0])) {
+                            img.classList.add('except');
+                        }
+                        
                         charContainer.appendChild(img);
                         
                         // 개수 이미지 (숫자.png)
