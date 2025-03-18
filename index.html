@@ -980,14 +980,12 @@
                         
                         charContainer.appendChild(img);
                         
-                        // 개수 이미지 (숫자.png) - 클래스 사용
-                        if (count > 1) {
-                            const countImg = document.createElement('img');
-                            countImg.src = `cropped_characters/${count}.png`;
-                            countImg.alt = count.toString();
-                            countImg.className = 'count-badge';
-                            charContainer.appendChild(countImg);
-                        }
+                        // 개수 이미지 (숫자.png)
+                        const countImg = document.createElement('img');
+                        countImg.src = `cropped_characters/${count}.png`;
+                        countImg.alt = count.toString();
+                        countImg.className = 'count-badge';
+                        charContainer.appendChild(countImg);
                         
                         imgs.appendChild(charContainer);
                     });
