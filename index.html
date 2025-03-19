@@ -742,27 +742,52 @@
                     setTimeout(() => {
                         loader.style.display = 'none';
                         
-                        // 스크롤 성능 최적화 (4번 코드)
+                        // 스크롤 성능 최적화
                         const results = document.getElementById('results');
                         if (results) {
                             // 스크롤 성능 최적화를 위한 설정
                             results.style.willChange = 'scroll-position';
                             results.style.webkitOverflowScrolling = 'touch';
                             results.style.overscrollBehavior = 'contain';
+                            results.style.contain = 'strict';
                             
-                            // 스크롤 이벤트 최적화
-                            let scrollTimeout;
-                            results.addEventListener('scroll', function() {
-                                if (!results.isScrolling) {
-                                    results.isScrolling = true;
-                                    results.classList.add('scrolling');
-                                }
+                            // 스크롤 이벤트 최적화 - 쓰로틀링 적용
+                            let lastScrollTime = 0;
+                            const scrollThreshold = 16; // 약 60fps에 해당하는 시간
+                            
+                            results.addEventListener('scroll', function(e) {
+                                const now = performance.now();
                                 
-                                clearTimeout(scrollTimeout);
-                                scrollTimeout = setTimeout(function() {
-                                    results.isScrolling = false;
+                                // 쓰로틀링 - 마지막 스크롤 이벤트로부터 일정 시간이 지났을 때만 처리
+                                if (now - lastScrollTime >= scrollThreshold) {
+                                    lastScrollTime = now;
+                                    
+                                    if (!results.isScrolling) {
+                                        results.isScrolling = true;
+                                        results.classList.add('scrolling');
+                                        document.body.classList.add('is-scrolling');
+                                    }
+                                    
+                                    clearTimeout(results.scrollEndTimer);
+                                    results.scrollEndTimer = setTimeout(function() {
+                                        results.isScrolling = false;
+                                        results.classList.remove('scrolling');
+                                        document.body.classList.remove('is-scrolling');
+                                    }, 100);
+                                }
+                            }, { passive: true });
+                            
+                            // 스크롤 시작/종료 이벤트 추가
+                            results.addEventListener('touchstart', function() {
+                                results.classList.add('scrolling');
+                                document.body.classList.add('is-scrolling');
+                            }, { passive: true });
+                            
+                            results.addEventListener('touchend', function() {
+                                setTimeout(function() {
                                     results.classList.remove('scrolling');
-                                }, 150);
+                                    document.body.classList.remove('is-scrolling');
+                                }, 100);
                             }, { passive: true });
                         }
                         
