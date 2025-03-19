@@ -568,6 +568,33 @@
             color: #FFD700;
             font-weight: 700;
         }
+        /* 스크롤 중 최적화를 위한 스타일 */
+        #results.scrolling .result-item {
+            will-change: transform;
+            pointer-events: none;
+        }
+        
+        #results.scrolling .item-images img {
+            opacity: 0.7;
+            transition: opacity 0.1s ease;
+        }
+        
+        /* 이미지 최적화 */
+        .small-character-img, .count-badge {
+            will-change: transform;
+            transform: translateZ(0);
+        }
+        
+        /* 스크롤 최적화 */
+        #results {
+            will-change: scroll-position;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 결과 컨테이너 최적화 */
+        .content-container {
+            transform: translateZ(0);
+        }
     </style>
 </head>
 <body>
@@ -903,8 +930,29 @@
             const res = document.getElementById('results');
             res.scrollTop = 0;
             
-            res.innerHTML = '<div class="content-container"></div>';
-            const container = res.querySelector('.content-container');
+            // 스크롤 중에는 렌더링 일시 중지를 위한 플래그
+            let isScrolling = false;
+            
+            // 스크롤 이벤트 핸들러
+            res.addEventListener('scroll', () => {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    res.classList.add('scrolling');
+                }
+                
+                // 스크롤 종료 후 일정 시간 후에 렌더링 재개
+                clearTimeout(res.scrollTimeout);
+                res.scrollTimeout = setTimeout(() => {
+                    isScrolling = false;
+                    res.classList.remove('scrolling');
+                }, 100);
+            });
+            
+            // DocumentFragment 사용하여 DOM 조작 최소화
+            const fragment = document.createDocumentFragment();
+            const container = document.createElement('div');
+            container.className = 'content-container';
+            fragment.appendChild(container);
             
             // 정렬 로직은 기존과 동일
             const budgetSelected = budgetBox.classList.contains('selected');
@@ -918,43 +966,39 @@
 
             // 예산 모드가 활성화된 경우 상위 40개만 선택
             const displayItems = budgetSelected ? sorted.slice(0, 40) : sorted;
+
+            // 이미지 사전 로딩을 위한 Set
+            const imagesToPreload = new Set();
             
-            // 점진적 렌더링을 위한 설정
-            const batchSize = 10; // 한 번에 렌더링할 아이템 수
-            const totalItems = displayItems.length;
-            let renderedCount = 0;
+            // 모든 캐릭터 이미지 경로를 미리 수집
+            characters.forEach(([_, name]) => {
+                imagesToPreload.add(`cropped_characters/${name}.png`);
+            });
             
-            // 초기 아이템 렌더링
-            renderNextBatch();
-            
-            // 스크롤 이벤트 리스너 추가
-            res.addEventListener('scroll', handleScroll);
-            
-            // 스크롤 이벤트 핸들러
-            function handleScroll() {
-                // 스크롤이 하단에 가까워지면 추가 아이템 렌더링
-                if (res.scrollTop + res.clientHeight >= res.scrollHeight - 300) {
-                    renderNextBatch();
-                }
+            // 숫자 이미지도 미리 로드 (1-8까지)
+            for (let i = 1; i <= 8; i++) {
+                imagesToPreload.add(`cropped_characters/${i}.png`);
             }
             
-            // 다음 배치의 아이템 렌더링
-            function renderNextBatch() {
-                if (renderedCount >= totalItems) return;
+            // 이미지 사전 로딩 함수
+            function preloadImages() {
+                const imagePromises = Array.from(imagesToPreload).map(src => {
+                    return new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.onload = resolve;
+                        img.onerror = resolve; // 에러가 발생해도 계속 진행
+                        img.src = src;
+                    });
+                });
                 
-                const endIndex = Math.min(renderedCount + batchSize, totalItems);
-                
-                for (let i = renderedCount; i < endIndex; i++) {
-                    const k = displayItems[i];
-                    const item = createResultItem(k, data[k]);
-                    container.appendChild(item);
-                }
-                
-                renderedCount = endIndex;
+                return Promise.all(imagePromises);
             }
             
-            // 결과 아이템 생성 함수
-            function createResultItem(k, dataValue) {
+            // 이미지 사전 로딩 시작
+            preloadImages();
+
+            // 결과 아이템 생성 및 추가
+            displayItems.forEach(k => {
                 const item = document.createElement('div');
                 item.className = 'result-item';
                 const val = sortedData[k];
@@ -1009,6 +1053,7 @@
                             img.src = `cropped_characters/${name}.png`;
                             img.alt = name;
                             img.className = 'small-character-img except';
+                            img.loading = 'lazy'; // 지연 로딩 적용
                             
                             charContainer.appendChild(img);
                             
@@ -1017,8 +1062,9 @@
                             countImg.src = `cropped_characters/${count}.png`;
                             countImg.alt = count.toString();
                             countImg.className = 'count-badge';
-                            charContainer.appendChild(countImg);
+                            countImg.loading = 'lazy'; // 지연 로딩 적용
                             
+                            charContainer.appendChild(countImg);
                             imgs.appendChild(charContainer);
                         }
                     });
@@ -1052,6 +1098,7 @@
                             img.src = `cropped_characters/${name}.png`;
                             img.alt = name;
                             img.className = 'small-character-img';
+                            img.loading = 'lazy'; // 지연 로딩 적용
                             
                             charContainer.appendChild(img);
                             
@@ -1060,8 +1107,9 @@
                             countImg.src = `cropped_characters/${count}.png`;
                             countImg.alt = count.toString();
                             countImg.className = 'count-badge';
-                            charContainer.appendChild(countImg);
+                            countImg.loading = 'lazy'; // 지연 로딩 적용
                             
+                            charContainer.appendChild(countImg);
                             imgs.appendChild(charContainer);
                         }
                     });
@@ -1093,8 +1141,12 @@
                     item.textContent = data[k]; 
                 }
                 
-                return item;
-            }
+                container.appendChild(item);
+            });
+            
+            // 모든 DOM 요소를 한 번에 추가
+            res.innerHTML = '';
+            res.appendChild(fragment);
             
             document.getElementById('copyInstruction').style.display = 'block';
         }
