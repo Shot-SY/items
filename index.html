@@ -568,32 +568,41 @@
             color: #FFD700;
             font-weight: 700;
         }
-        /* 스크롤 중 최적화를 위한 스타일 */
+        /* 스크롤 최적화 스타일 수정 */
         #results.scrolling .result-item {
             will-change: transform;
-            pointer-events: none;
         }
         
+        /* 스크롤 중 이미지 투명도 변경 제거 */
         #results.scrolling .item-images img {
-            opacity: 0.7;
-            transition: opacity 0.1s ease;
+            /* opacity: 0.7; 이 부분 제거 */
+            /* transition: opacity 0.1s ease; 이 부분 제거 */
         }
         
         /* 이미지 최적화 */
         .small-character-img, .count-badge {
             will-change: transform;
             transform: translateZ(0);
+            backface-visibility: hidden; /* 추가: 렌더링 최적화 */
         }
         
         /* 스크롤 최적화 */
         #results {
             will-change: scroll-position;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain; /* 추가: 오버스크롤 방지 */
         }
         
         /* 결과 컨테이너 최적화 */
         .content-container {
             transform: translateZ(0);
+            backface-visibility: hidden; /* 추가: 렌더링 최적화 */
+        }
+        
+        /* 이미지 로딩 최적화 */
+        img {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
     </style>
 </head>
@@ -660,7 +669,36 @@
             loadData().then(filterData).then(() => new Promise(r => setTimeout(r, 500)))
                 .then(() => { 
                     loader.classList.add('hidden'); 
-                    setTimeout(() => loader.style.display = 'none', 500); 
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        
+                        // 스크롤 성능 최적화 (4번 코드)
+                        const results = document.getElementById('results');
+                        if (results) {
+                            // 스크롤 성능 최적화를 위한 설정
+                            results.style.willChange = 'scroll-position';
+                            results.style.webkitOverflowScrolling = 'touch';
+                            results.style.overscrollBehavior = 'contain';
+                            
+                            // 스크롤 이벤트 최적화
+                            let scrollTimeout;
+                            results.addEventListener('scroll', function() {
+                                if (!results.isScrolling) {
+                                    results.isScrolling = true;
+                                    results.classList.add('scrolling');
+                                }
+                                
+                                clearTimeout(scrollTimeout);
+                                scrollTimeout = setTimeout(function() {
+                                    results.isScrolling = false;
+                                    results.classList.remove('scrolling');
+                                }, 150);
+                            }, { passive: true });
+                        }
+                        
+                        // 페이지 로드 후 추가 최적화
+                        optimizeImages();
+                    }, 500); 
                 })
                 .catch(error => {
                     console.error('초기 필터 적용 에러:', error);
@@ -682,6 +720,30 @@
             retina_detect: true
         });
 
+        // tsParticles 최적화 함수
+        function optimizeParticles() {
+            // 스크롤 이벤트에서 파티클 최적화
+            document.addEventListener('scroll', function() {
+                if (window.tsParticles && window.tsParticles.domItem(0)) {
+                    // 스크롤 중에는 파티클 수를 줄임
+                    const currentParticles = window.tsParticles.domItem(0);
+                    if (!currentParticles.pausedByScroll) {
+                        currentParticles.pausedByScroll = true;
+                        currentParticles.options.particles.number.value = 20; // 스크롤 중 파티클 수 감소
+                        
+                        clearTimeout(currentParticles.scrollTimer);
+                        currentParticles.scrollTimer = setTimeout(() => {
+                            currentParticles.options.particles.number.value = 50; // 원래 파티클 수로 복원
+                            currentParticles.pausedByScroll = false;
+                        }, 300);
+                    }
+                }
+            }, { passive: true });
+        }
+
+        // 페이지 로드 후 파티클 최적화 실행
+        window.addEventListener('load', optimizeParticles);
+        
         const characters = [
             ["castol","카스톨"],["fumitchell","개미첼"],["myle","마일"],["ervin","어빈"],["gerd","게르드"],["thomas","토마스"],
             ["hwiri","휘리"],["guse","구스"],["aph","알프"],
@@ -930,23 +992,43 @@
             const res = document.getElementById('results');
             res.scrollTop = 0;
             
-            // 스크롤 중에는 렌더링 일시 중지를 위한 플래그
-            let isScrolling = false;
+            // 기존 스크롤 이벤트 리스너 제거
+            if (res.scrollHandler) {
+                res.removeEventListener('scroll', res.scrollHandler);
+            }
+            
+            // 스크롤 쓰로틀링을 위한 변수들
+            let ticking = false;
+            let lastScrollTop = 0;
             
             // 스크롤 이벤트 핸들러
-            res.addEventListener('scroll', () => {
-                if (!isScrolling) {
-                    isScrolling = true;
-                    res.classList.add('scrolling');
+            res.scrollHandler = function() {
+                const scrollTop = res.scrollTop;
+                
+                // 스크롤 방향 확인 (불필요한 처리 방지)
+                const isScrollingDown = scrollTop > lastScrollTop;
+                lastScrollTop = scrollTop;
+                
+                // 쓰로틀링 적용
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        // 스크롤 중에는 포인터 이벤트만 비활성화
+                        res.classList.add('scrolling');
+                        
+                        ticking = false;
+                    });
+                    ticking = true;
                 }
                 
-                // 스크롤 종료 후 일정 시간 후에 렌더링 재개
-                clearTimeout(res.scrollTimeout);
-                res.scrollTimeout = setTimeout(() => {
-                    isScrolling = false;
+                // 스크롤 종료 감지를 위한 타이머
+                clearTimeout(res.scrollEndTimer);
+                res.scrollEndTimer = setTimeout(function() {
                     res.classList.remove('scrolling');
-                }, 100);
-            });
+                }, 150); // 스크롤 종료 후 150ms 후에 클래스 제거
+            };
+            
+            // 스크롤 이벤트 리스너 등록
+            res.addEventListener('scroll', res.scrollHandler);
             
             // DocumentFragment 사용하여 DOM 조작 최소화
             const fragment = document.createDocumentFragment();
@@ -980,12 +1062,21 @@
                 imagesToPreload.add(`cropped_characters/${i}.png`);
             }
             
-            // 이미지 사전 로딩 함수
+            // 이미지 사전 로딩 함수 개선
             function preloadImages() {
                 const imagePromises = Array.from(imagesToPreload).map(src => {
                     return new Promise((resolve, reject) => {
                         const img = new Image();
-                        img.onload = resolve;
+                        img.decoding = 'async'; // 비동기 디코딩 사용
+                        img.onload = () => {
+                            // 이미지 캐싱을 위한 코드
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx.drawImage(img, 0, 0);
+                            resolve();
+                        };
                         img.onerror = resolve; // 에러가 발생해도 계속 진행
                         img.src = src;
                     });
@@ -1053,7 +1144,9 @@
                             img.src = `cropped_characters/${name}.png`;
                             img.alt = name;
                             img.className = 'small-character-img except';
-                            img.loading = 'lazy'; // 지연 로딩 적용
+                            img.loading = 'lazy';     // 지연 로딩 유지
+                            img.decoding = 'async';   // 비동기 디코딩 추가
+                            img.fetchpriority = 'low'; // 낮은 우선순위로 가져오기
                             
                             charContainer.appendChild(img);
                             
@@ -1062,7 +1155,8 @@
                             countImg.src = `cropped_characters/${count}.png`;
                             countImg.alt = count.toString();
                             countImg.className = 'count-badge';
-                            countImg.loading = 'lazy'; // 지연 로딩 적용
+                            countImg.loading = 'lazy';     // 지연 로딩 유지
+                            countImg.decoding = 'async';   // 비동기 디코딩 추가
                             
                             charContainer.appendChild(countImg);
                             imgs.appendChild(charContainer);
@@ -1098,7 +1192,9 @@
                             img.src = `cropped_characters/${name}.png`;
                             img.alt = name;
                             img.className = 'small-character-img';
-                            img.loading = 'lazy'; // 지연 로딩 적용
+                            img.loading = 'lazy';     // 지연 로딩 유지
+                            img.decoding = 'async';   // 비동기 디코딩 추가
+                            img.fetchpriority = 'low'; // 낮은 우선순위로 가져오기
                             
                             charContainer.appendChild(img);
                             
@@ -1107,7 +1203,8 @@
                             countImg.src = `cropped_characters/${count}.png`;
                             countImg.alt = count.toString();
                             countImg.className = 'count-badge';
-                            countImg.loading = 'lazy'; // 지연 로딩 적용
+                            countImg.loading = 'lazy';     // 지연 로딩 유지
+                            countImg.decoding = 'async';   // 비동기 디코딩 추가
                             
                             charContainer.appendChild(countImg);
                             imgs.appendChild(charContainer);
@@ -1149,8 +1246,53 @@
             res.appendChild(fragment);
             
             document.getElementById('copyInstruction').style.display = 'block';
+            
+            // tsParticles 제어 함수
+            const pauseParticles = () => {
+                if (window.tsParticles && window.tsParticles.domItem(0)) {
+                    window.tsParticles.domItem(0).pause();
+                }
+            };
+            
+            const resumeParticles = () => {
+                if (window.tsParticles && window.tsParticles.domItem(0)) {
+                    window.tsParticles.domItem(0).play();
+                }
+            };
+            
+            // 스크롤 중 파티클 효과 일시 중지
+            res.addEventListener('scroll', () => {
+                if (!res.particlesPaused) {
+                    pauseParticles();
+                    res.particlesPaused = true;
+                    
+                    clearTimeout(res.particlesTimer);
+                    res.particlesTimer = setTimeout(() => {
+                        resumeParticles();
+                        res.particlesPaused = false;
+                    }, 200);
+                }
+            });
         }
 
+        // 이미지 로딩 최적화 함수
+        function optimizeImages() {
+            // 이미지 지연 로딩 설정
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                if (!img.hasAttribute('loading')) {
+                    img.loading = 'lazy';
+                }
+                if (!img.hasAttribute('decoding')) {
+                    img.decoding = 'async';
+                }
+            });
+        }
+
+        // 페이지 로드 후 이미지 최적화 실행
+        window.addEventListener('load', optimizeImages);
+
+        
         function copyToClipboard(el) {
             const chars = el.querySelector('.result-text .item').textContent.trim();
             const price = el.querySelector('.result-text .price').textContent.trim();
