@@ -604,6 +604,76 @@
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
         }
+        
+        /* 결과 아이템 스타일 수정 */
+        .result-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(42,42,42,0.8);
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(255,64,129,0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative; /* 위치 고정을 위해 추가 */
+            transform: translateZ(0); /* 하드웨어 가속 활성화 */
+            contain: layout paint; /* 렌더링 격리 */
+        }
+        
+        /* 스크롤 최적화 스타일 수정 */
+        #results.scrolling .result-item {
+            /* will-change: transform; 제거 - 오히려 문제 발생 */
+            /* 스크롤 중에는 변환 효과 비활성화 */
+            transition: none !important;
+        }
+        
+        /* 이미지 최적화 */
+        .small-character-img, .count-badge {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            contain: paint; /* 렌더링 격리 추가 */
+        }
+        
+        /* 스크롤 최적화 */
+        #results {
+            will-change: scroll-position;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            contain: strict; /* 렌더링 격리 강화 */
+            transform: translateZ(0); /* 하드웨어 가속 강화 */
+        }
+        
+        /* 결과 컨테이너 최적화 */
+        .content-container {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            contain: layout paint style; /* 렌더링 격리 강화 */
+        }
+        
+        /* 아이템 이미지 컨테이너 최적화 */
+        .item-images {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            transform: translateZ(0); /* 하드웨어 가속 */
+            contain: layout paint; /* 렌더링 격리 */
+        }
+        
+        /* 캐릭터 컨테이너 최적화 */
+        .char-container {
+            position: relative;
+            display: inline-block;
+            margin: 0 5px;
+            transform: translateZ(0); /* 하드웨어 가속 */
+            contain: layout paint; /* 렌더링 격리 */
+        }
+        
+        /* 아이템 박스 최적화 */
+        .item-box {
+            transform: translateZ(0); /* 하드웨어 가속 */
+            contain: layout paint; /* 렌더링 격리 */
+        }
     </style>
 </head>
 <body>
@@ -1003,32 +1073,36 @@
             
             // 스크롤 이벤트 핸들러
             res.scrollHandler = function() {
-                const scrollTop = res.scrollTop;
-                
-                // 스크롤 방향 확인 (불필요한 처리 방지)
-                const isScrollingDown = scrollTop > lastScrollTop;
-                lastScrollTop = scrollTop;
-                
-                // 쓰로틀링 적용
-                if (!ticking) {
-                    window.requestAnimationFrame(function() {
-                        // 스크롤 중에는 포인터 이벤트만 비활성화
-                        res.classList.add('scrolling');
-                        
-                        ticking = false;
-                    });
-                    ticking = true;
+                // 스크롤 중에는 즉시 스크롤링 클래스 추가
+                if (!res.isScrolling) {
+                    res.isScrolling = true;
+                    res.classList.add('scrolling');
+                    
+                    // 스크롤 중 애니메이션 최적화
+                    document.body.classList.add('is-scrolling');
+                    
+                    // 파티클 효과 일시 중지
+                    if (window.tsParticles && window.tsParticles.domItem(0)) {
+                        window.tsParticles.domItem(0).pause();
+                    }
                 }
                 
                 // 스크롤 종료 감지를 위한 타이머
                 clearTimeout(res.scrollEndTimer);
                 res.scrollEndTimer = setTimeout(function() {
+                    res.isScrolling = false;
                     res.classList.remove('scrolling');
-                }, 150); // 스크롤 종료 후 150ms 후에 클래스 제거
+                    document.body.classList.remove('is-scrolling');
+                    
+                    // 파티클 효과 재개
+                    if (window.tsParticles && window.tsParticles.domItem(0)) {
+                        window.tsParticles.domItem(0).play();
+                    }
+                }, 100); // 100ms로 줄여서 더 빠르게 반응하도록 설정
             };
             
-            // 스크롤 이벤트 리스너 등록
-            res.addEventListener('scroll', res.scrollHandler);
+            // passive 옵션으로 스크롤 성능 향상
+            res.addEventListener('scroll', res.scrollHandler, { passive: true });
             
             // DocumentFragment 사용하여 DOM 조작 최소화
             const fragment = document.createDocumentFragment();
