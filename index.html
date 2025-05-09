@@ -1083,20 +1083,24 @@
             return m ? parseInt(m[1].replace(/,/g,'')) : -1;
         }
 
+        const fixedItemsInfo = [
+            { name: '태테르', countText: '50+개' },
+            { name: '달증', countText: '100+개' },
+            { name: '빵', countText: '1000+개' },
+            { name: '소환권', countText: '800+장' }
+        ];
+
         function displayResults(data) {
             const res = document.getElementById('results');
             res.scrollTop = 0;
 
-            // 기존 스크롤 이벤트 리스너 제거
             if (res.scrollHandler) {
                 res.removeEventListener('scroll', res.scrollHandler);
             }
 
-            // 스크롤 쓰로틀링을 위한 변수들
             let ticking = false;
             let lastScrollTop = 0;
 
-            // 스크롤 이벤트 핸들러
             res.scrollHandler = function() {
                 if (!res.isScrolling) {
                     res.isScrolling = true;
@@ -1139,10 +1143,6 @@
             characters.forEach(([_, name]) => {
                 imagesToPreload.add(`cropped_characters/${name}.png`);
             });
-            // 숫자 이미지는 이제 필요 없으므로 사전 로딩 제거
-            // for (let i = 1; i <= 8; i++) {
-            //     imagesToPreload.add(`cropped_characters/${i}.png`);
-            // }
 
             function preloadImages() {
                 const imagePromises = Array.from(imagesToPreload).map(src => {
@@ -1172,25 +1172,40 @@
                 const val = sortedData[k];
 
                 if (val) {
-                    const [chars, priceCount] = val.split('=').map(s => s.trim());
+                    const [originalChars, priceCount] = val.split('=').map(s => s.trim());
                     const pm = priceCount.match(/(\S+)\s*\(([^)]+)\)/);
                     const price = pm ? pm[1] : '가격 정보 없음';
                     const count = pm ? pm[2] : '0';
 
+                    // --- 수정된 부분 시작: 고정 아이템 텍스트 추가 ---
+                    let fixedItemsTextPortion = "";
+                    fixedItemsInfo.forEach(fi => {
+                        // 예: "태테르40+개" (공백 없이) 또는 "태테르(40+개)" 등 원하는 형태로 조합
+                        // 여기서는 이름과 수량을 붙이고, 각 아이템은 공백으로 구분합니다.
+                        fixedItemsTextPortion += `${fi.name}${fi.countText} `;
+                    });
+                    // 문자열 마지막의 불필요한 공백 제거
+                    fixedItemsTextPortion = fixedItemsTextPortion.trim();
+
+                    // 기존 캐릭터 목록과 고정 아이템 텍스트를 합칩니다.
+                    const combinedCharsText = `${originalChars} ${fixedItemsTextPortion}`;
+                    // --- 수정된 부분 끝 ---
+
                     const txt = document.createElement('div');
                     txt.className = 'result-text';
-                    txt.innerHTML = `<span class="item">${chars}</span><span class="price">${price}</span><span class="count">   (${count})</span>`;
+                    // 수정된 텍스트 사용
+                    txt.innerHTML = `<span class="item">${combinedCharsText}</span><span class="price">${price}</span><span class="count">   (${count})</span>`;
                     item.appendChild(txt);
 
                     const imgs = document.createElement('div');
                     imgs.className = 'item-images';
-                    // 이미지 간 간격 추가 (CSS로도 가능)
-                    imgs.style.gap = '5px'; // 이미지 사이에 약간의 간격 추가
+                    imgs.style.gap = '5px';
 
                     let otherCharCount = 0;
                     const charCounts = new Map();
 
-                    chars.split(' ').forEach(it => {
+                    // originalChars를 사용해 캐릭터 이미지 생성 로직 수행
+                    originalChars.split(' ').forEach(it => {
                         const m = it.match(/([가-힣]+)(\d*)/);
                         if (m) {
                             const [_, name, cnt] = m;
@@ -1203,25 +1218,20 @@
                         }
                     });
 
-                    // --- 수정된 부분 시작 ---
-
                     // 캐릭터 이미지 추가 (예외 캐릭터 먼저)
-                    charCounts.forEach((count, name) => {
+                    charCounts.forEach((charNum, name) => { // 변수명 charNum으로 변경 (count와 혼동 방지)
                         const charInfo = characters.find(([_, kor]) => kor === name);
-                        // 예외 캐릭터인 경우에만 먼저 처리
                         if (charInfo && exceptCharacters.includes(charInfo[0])) {
-                            // 개수만큼 이미지 반복 생성
-                            for (let i = 0; i < count; i++) {
+                            for (let i = 0; i < charNum; i++) {
                                 const img = document.createElement('img');
                                 img.src = `cropped_characters/${name}.png`;
                                 img.alt = name;
-                                img.className = 'small-character-img except'; // 예외 클래스 적용
+                                img.className = 'small-character-img except';
                                 img.loading = 'lazy';
                                 img.decoding = 'async';
                                 img.fetchpriority = 'low';
                                 imgs.appendChild(img);
                             }
-                            // 처리된 캐릭터는 맵에서 제거 (중복 방지)
                             charCounts.delete(name);
                         }
                     });
@@ -1236,22 +1246,19 @@
                         imgs.appendChild(box);
                     });
 
-                    // 나머지 캐릭터 이미지 추가 (맵에 남아있는 것들)
-                    charCounts.forEach((count, name) => {
-                        // 개수만큼 이미지 반복 생성
-                        for (let i = 0; i < count; i++) {
+                    // 나머지 캐릭터 이미지 추가
+                    charCounts.forEach((charNum, name) => {
+                        for (let i = 0; i < charNum; i++) {
                             const img = document.createElement('img');
                             img.src = `cropped_characters/${name}.png`;
                             img.alt = name;
-                            img.className = 'small-character-img'; // 일반 클래스 적용
+                            img.className = 'small-character-img';
                             img.loading = 'lazy';
                             img.decoding = 'async';
                             img.fetchpriority = 'low';
                             imgs.appendChild(img);
                         }
                     });
-
-                    // --- 수정된 부분 끝 ---
 
                     // 기타3성 박스 추가 (기존 로직 유지)
                     if (otherCharCount > 0) {
@@ -1261,23 +1268,19 @@
                         imgs.appendChild(otherBox);
                     }
 
-                    // 고정 아이템 박스 추가 (기존 로직 유지)
-                    [
-                        { title: '태테르', count: '40+개' },
-                        { title: '달증', count: '70+개' },
-                        { title: '빵', count: '1000+개' },
-                        { title: '소환권', count: '500+장' }
-                    ].forEach(it => {
+                    // --- 수정된 부분 시작: 고정 아이템 박스를 fixedItemsInfo 배열 기반으로 생성 ---
+                    fixedItemsInfo.forEach(fi => {
                         const box = document.createElement('div');
                         box.className = 'item-box';
-                        box.innerHTML = `<div class="item-title">${it.title}</div><div class="item-count">${it.count}</div>`;
+                        box.innerHTML = `<div class="item-title">${fi.name}</div><div class="item-count">${fi.countText}</div>`;
                         imgs.appendChild(box);
                     });
+                    // --- 수정된 부분 끝 ---
 
                     item.appendChild(imgs);
                     item.addEventListener('click', () => copyToClipboard(item));
                 } else {
-                    item.textContent = data[k];
+                    item.textContent = data[k]; // 이 부분은 val이 없을 경우의 fallback
                 }
 
                 container.appendChild(item);
@@ -1288,7 +1291,6 @@
 
             document.getElementById('copyInstruction').style.display = 'block';
 
-            // 파티클 제어 로직 (기존과 동일)
             const pauseParticles = () => {
                 if (window.tsParticles && window.tsParticles.domItem(0)) {
                     window.tsParticles.domItem(0).pause();
