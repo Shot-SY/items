@@ -268,40 +268,6 @@
             color: #ff9800;
             font-weight: 500;
         }
-        @media (max-width: 768px) {
-            .character-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
-                gap: 15px;
-            }
-            .character-box {
-                height: 140px;
-                padding: 10px;
-            }
-            .spinbox-container input[type="number"] {
-                width: 45px;
-            }
-            #filterButton {
-                font-size: 16px;
-                padding: 12px;
-            }
-            .result-item {
-                padding: 12px;
-            }
-            .small-character-img {
-                width: 60px;
-                height: 60px;
-            }
-            .result-text {
-                gap: 5px;
-            }
-            #copyInstruction {
-                font-size: 1em;
-            }
-            #copyMessage {
-                font-size: 1em;
-                padding: 15px 20px;
-            }
-        }
         #tsparticles {
             position: fixed;
             top: 0;
@@ -366,18 +332,6 @@
             color: #fff;
             font-size: 12px;
             font-weight: 500;
-        }
-        @media (max-width: 768px) {
-            .item-box {
-                width: 47px;
-                height: 47px;
-            }
-            .item-title {
-                font-size: 12px;
-            }
-            .item-count {
-                font-size: 10px;
-            }
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -516,15 +470,70 @@
         }
         
         @media (max-width: 768px) {
+            .character-grid {
+                /* 한 줄에 4~5개 표시되도록 최소 너비 조정 */
+                grid-template-columns: repeat(auto-fill, minmax(80px,1fr));
+                gap: 10px;
+            }
+            .character-box {
+                /* 그리드 크기에 맞춰 높이와 패딩 미세 조정 */
+                height: 125px; 
+                padding: 8px;
+            }
+            /* 캐릭터 박스 내부 이미지와 이름 크기 조정 */
+            .character-box .character-img {
+                width: 60px;
+                height: 70px;
+                margin-bottom: 5px;
+            }
+            .character-box .character-name {
+                font-size: 14px;
+            }
+            .spinbox-container input[type="number"] {
+                width: 45px;
+            }
+            #filterButton {
+                font-size: 16px;
+                padding: 12px;
+            }
+            .result-item {
+                padding: 12px;
+            }
+            .small-character-img {
+                /* 한 줄에 7~8개 표시되도록 크기 조정 */
+                width: 40px;
+                height: 40px;
+            }
+            .result-text {
+                gap: 5px;
+            }
+            #copyInstruction {
+                font-size: 1em;
+            }
+            #copyMessage {
+                font-size: 1em;
+                padding: 15px 20px;
+            }
+            .item-box {
+                /* 작은 캐릭터 이미지와 크기를 통일 (47px -> 40px) */
+                width: 40px;
+                height: 40px;
+            }
+            /* 명시도 규칙에 맞춰 선택자 지정 및 폰트 크기 조정 */
+            .item-box .item-title {
+                font-size: 10px; /* 12px -> 8px */
+                margin-bottom: 2px;
+            }
+            .item-box .item-count {
+                font-size: 10px; /* 10px -> 8px */
+            }
             .budget-box {
                 width: 100%;
                 max-width: 280px;
             }
-            
             .budget-text {
                 font-size: 16px;
             }
-            
             .budget-input-container input[type="number"] {
                 width: 100px;
                 padding: 6px 10px;
