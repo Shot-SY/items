@@ -829,11 +829,6 @@
 				priceBox.textContent = `₩${price.toLocaleString()}`;
 				imgsContainer.appendChild(priceBox);
 
-                const countBox = document.createElement('div');
-                countBox.className = 'item-box';
-                countBox.innerHTML = `<div class="item-title">번호</div><div class="item-count">${itemCount}</div>`;
-                imgsContainer.appendChild(countBox);
-
                 item.appendChild(imgsContainer);
                 container.appendChild(item);
             });
