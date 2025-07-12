@@ -59,11 +59,11 @@
             backdrop-filter: blur(5px);
             z-index: 1;
         }
-        .character-box.rare { /* 주황 외곽선 */
+        .character-box.rare {
             border: 2px solid #ff9800;
             box-shadow: 0 0 15px rgba(255,152,0,0.5), 0 4px 12px rgba(255,152,0,0.7);
         }
-        .character-box.super-rare { /* 빨강 외곽선 */
+        .character-box.super-rare {
             border: 2px solid #D32F2F;
             box-shadow: 0 0 15px rgba(211, 47, 47, 0.5), 0 4px 12px rgba(211, 47, 47, 0.7);
         }
@@ -72,6 +72,21 @@
             box-shadow: 0 0 20px rgba(255,64,129,0.7), 0 8px 20px rgba(255,64,129,0.8);
             transform: translateY(-5px);
             z-index: 2;
+        }
+        /* [수정] gplay 배경 패턴 추가 */
+        .character-box::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
+            opacity: 0.5;
+            border-radius: 15px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .character-box > * {
+            position: relative;
+            z-index: 1;
         }
         @media (hover: hover) and (pointer: fine) {
             .character-box:hover {
@@ -203,20 +218,33 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
+            position: relative; /* ::after를 위해 추가 */
             contain: layout paint;
+            z-index: 1;
+        }
+        /* [수정] gplay 배경 패턴 추가 */
+        .result-item::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
+            opacity: 0.15;
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 0;
         }
         .small-character-img {
             width: auto;
-            height: 60px; /* 크기 조정 */
+            height: 60px;
             object-fit: contain;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .small-character-img.rare { /* 주황 외곽선 */
+        .small-character-img.rare {
             border: 2px solid #ff9800;
             box-shadow: 0 0 8px rgba(255,152,0,0.6);
         }
-        .small-character-img.super-rare { /* 빨강 외곽선 */
+        .small-character-img.super-rare {
             border: 2px solid #D32F2F;
             box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);
         }
@@ -225,6 +253,8 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 8px;
+            position: relative; /* z-index를 위해 추가 */
+            z-index: 1;
             contain: layout paint;
         }
         .item-box {
@@ -268,8 +298,7 @@
             text-shadow: 1px 1px 2px #000;
         }
         #tsparticles {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
         }
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -316,7 +345,6 @@
         .budget-input-container input[type="number"]:focus { border-color: #ff4081; outline: none; }
         .budget-unit { color: #e0e0e0; margin-left: 8px; font-size: 16px; }
 
-        /* --- Extras Box 및 팝업 스타일 (추가) --- */
 		.extras-box {
 			display: inline-flex; justify-content: center; align-items: center;
 			background: linear-gradient(145deg, #333, #222);
@@ -352,7 +380,7 @@
             .spinbox-container input[type="number"] { width: 45px; }
             #filterButton { font-size: 16px; padding: 12px; }
             .result-item { padding: 12px; }
-            .small-character-img { height: 45px; } /* 크기 조정 */
+            .small-character-img { height: 45px; }
             .item-images { gap: 5px; }
             #copyInstruction { font-size: 1em; }
             #copyMessage { font-size: 1em; padding: 15px 20px; }
@@ -390,7 +418,6 @@
     <div id="results"></div>
     <div id="copyMessage">복사되었습니다</div>
 
-    <!-- Extras 팝업 HTML (추가) -->
     <div id="extrasPopup">
 		<div class="extras-popup-content">
 			<span class="close-button" id="closeExtrasPopup">×</span>
@@ -454,9 +481,6 @@
             ["volgade","볼게이드"],["gawain","가웨인"],["varius","베리어스"],["palman","팔만"],["madram","매드람"]
         ];
 
-        const morisonIndex = characters.findIndex(char => char[0] === "morison");
-        const otherCharacters = characters.slice(morisonIndex + 1).map(char => char[1]);
-
         const tierCharacters = [ "hwiri", "guse", "dominique", "aph", "mgisa", "sria", "ysara", "gglas", "buruka", "intis", "bomuna", "jyoanna", "daerael", "stella", "altos", "duol", "morison" ];
         const exceptCharacters = ["isabel","castol", "fumitchell", "myle", "ervin", "gerd", "thomas"];
 
@@ -471,9 +495,9 @@
             charBox.dataset.engName = eng;
             
             if (exceptCharacters.includes(eng)) {
-                charBox.classList.add('super-rare'); // 빨간 외곽선
+                charBox.classList.add('super-rare');
             } else if (tierCharacters.includes(eng)) {
-                charBox.classList.add('rare'); // 주황 외곽선
+                charBox.classList.add('rare');
             }
 
             const img = document.createElement('img');
@@ -696,7 +720,10 @@
                 const superRareCharImages = [];
                 const rareCharImages = [];
                 const extraCharImages = [];
-                const otherCharData = [];
+                const fixedItemsInfo = [
+                    { name: '태테르', countText: '50+' }, { name: '달증', countText: '100+' }, 
+                    { name: '빵', countText: '1500+' }, { name: '소환권', countText: '1000+' }
+                ];
 
                 originalChars.split(' ').forEach(it => {
                     const m = it.match(/([가-힣]+)(\d*)/);
@@ -719,13 +746,10 @@
                                     extraCharImages.push(imageData);
                                 }
                             }
-                        } else {
-                            otherCharData.push({ name, count: rep });
                         }
                     }
                 });
 
-                // 이미지 렌더링 함수
                 const renderImageStacks = (images, className) => {
                     let i = 0;
                     while (i < images.length) {
@@ -764,18 +788,23 @@
                 renderImageStacks(superRareCharImages, 'super-rare');
                 renderImageStacks(rareCharImages, 'rare');
 
-                if (extraCharImages.length > 0) {
+                // [수정] 기타 팝업에 들어갈 모든 콘텐츠를 준비
+                const extrasContent = extraCharImages.map(imgData => ({ type: 'char', ...imgData }));
+                fixedItemsInfo.forEach(item => {
+                    extrasContent.push({ type: 'item', title: item.name, count: item.countText });
+                });
+
+                if (extrasContent.length > 0) {
                     const extrasBox = document.createElement('div');
 					extrasBox.className = 'item-box extras-box'; 
-					extrasBox.innerHTML = `<div class="item-title">Extras (${extraCharImages.length})</div>`;
+					extrasBox.innerHTML = `<div class="item-title">기타</div>`; // [수정] 텍스트 변경
 					extrasBox.addEventListener('click', (e) => {
 						e.stopPropagation();
-						showExtrasPopup(extraCharImages);
+						showExtrasPopup(extrasContent); // [수정] 통합된 콘텐츠 전달
 					});
 					imgsContainer.appendChild(extrasBox);
                 }
                 
-                // 가격, 물품번호 박스
                 const priceBox = document.createElement('div');
 				priceBox.className = 'price-box';
 				priceBox.textContent = `₩${price.toLocaleString()}`;
@@ -795,17 +824,27 @@
             document.getElementById('copyInstruction').style.display = 'block';
         }
 
-        function showExtrasPopup(images) {
+        // [수정] 기타 팝업 함수
+        function showExtrasPopup(content) {
 			const popup = document.getElementById('extrasPopup');
 			const grid = document.getElementById('extras-popup-grid');
 			grid.innerHTML = '';
 
-			images.forEach(imgData => {
-				const img = document.createElement('img');
-				img.src = imgData.src;
-				img.alt = imgData.alt;
-				img.className = 'small-character-img';
-				grid.appendChild(img);
+			content.forEach(item => {
+                if (item.type === 'char') {
+                    const img = document.createElement('img');
+                    img.src = item.src;
+                    img.alt = item.alt;
+                    img.className = 'small-character-img';
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    grid.appendChild(img);
+                } else if (item.type === 'item') {
+                    const box = document.createElement('div');
+                    box.className = 'item-box'; // 기존 item-box 스타일 재사용
+                    box.innerHTML = `<div class="item-title">${item.title}</div><div class="item-count">${item.count}</div>`;
+                    grid.appendChild(box);
+                }
 			});
 			popup.style.display = 'flex';
 		}
