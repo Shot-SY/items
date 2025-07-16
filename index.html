@@ -24,18 +24,6 @@
             position: relative;
             overflow-y: scroll;
         }
-        /* [MODIFIED] Added background texture like gf2.html */
-        body::before {
-	        content: "";
-	        position: absolute;
-	        top: 0;
-	        left: 0;
-	        width: 100%;
-	        height: 100%;
-	        background: url('https://www.transparenttextures.com/patterns/dark-matter.png') repeat;
-	        opacity: 0.1;
-	        z-index: -1;
-	    }
         h1 {
             text-align: center;
             margin-bottom: 30px;
@@ -85,6 +73,7 @@
             transform: translateY(-5px);
             z-index: 2;
         }
+        /* [수정] gplay 배경 패턴 추가 */
         .character-box::after {
             content: "";
             position: absolute;
@@ -105,20 +94,13 @@
                 box-shadow: 0 6px 20px rgba(255,255,255,0.2);
                 z-index: 10;
             }
-            /* [MODIFIED] Improved result item hover effect like gf2.html */
             .result-item:hover {
-                background: linear-gradient(135deg, #33363d, #2a2c30);
-				box-shadow: 0 6px 25px rgba(0,0,0,0.7), 0 0 10px rgba(255, 64, 129, 0.4);
-				transform: translateY(-3px);
-				border-color: rgba(255, 64, 129, 0.5);
+                background: linear-gradient(135deg, #3a3a3a, #2c2c2c);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+                border-color: rgba(255, 64, 129, 0.5);
+                transform: translateY(-3px);
+                z-index: 5;
             }
-            .result-item:hover::before {
-				opacity: 1;
-			}
-            .extras-box:hover {
-				background: rgba(176, 176, 176, 0.2);
-				border-color: rgba(176, 176, 176, 0.8);
-			}
         }
         .character-img {
             width: 80px;
@@ -181,16 +163,6 @@
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
         }
-        /* [MODIFIED] Added button interaction styles like gf2.html */
-        #filterButton:hover {
-	        background: linear-gradient(45deg, #ff4081, #f50057);
-	        box-shadow: 0 6px 20px rgba(255,64,129,0.8);
-	        transform: translateY(-3px);
-	    }
-	    #filterButton:active {
-	        transform: translateY(0);
-	        box-shadow: 0 4px 16px rgba(255,64,129,0.6);
-	    }
         #copyInstruction {
             margin-bottom: 15px;
             font-style: italic;
@@ -199,54 +171,28 @@
             font-size: 1.2em;
             font-weight: 600;
         }
-        /* [MODIFIED] Modern copy message style from gf2.html */
         #copyMessage {
-	        position: fixed;
-	        top: 50%;
-	        left: 50%;
-	        transform: translate(-50%, -50%) scale(0.8);
-	        background: linear-gradient(135deg, #232526 0%, #414345 100%);
-	        color: #fff;
-	        padding: 20px 30px;
-	        border-radius: 12px;
-	        display: none;
-	        opacity: 0;
-	        font-family: 'Poppins', sans-serif;
-	        font-size: 1.1em;
-	        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-	        z-index: 1000;
-	        transition: opacity 0.3s ease, transform 0.3s ease;
-	        border-left: 4px solid #ff4081;
-	        will-change: transform, opacity;
-	    }
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background-color: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            display: none;
+            opacity: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1em;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
         #copyMessage.show {
-	        display: flex;
-	        align-items: center;
-	        gap: 15px;
-	        animation: messagePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-	    }
-        @keyframes messagePop {
-	        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-	        50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-	        100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-	    }
-        .copy-icon {
-	        width: 24px;
-	        height: 24px;
-	        background-color: #ff4081;
-	        border-radius: 50%;
-	        display: flex;
-	        align-items: center;
-	        justify-content: center;
-	        animation: pulse 1s infinite;
-	    }
-        @keyframes pulse {
-	        0% { box-shadow: 0 0 0 0 rgba(255, 64, 129, 0.7); }
-	        70% { box-shadow: 0 0 0 10px rgba(255, 64, 129, 0); }
-	        100% { box-shadow: 0 0 0 0 rgba(255, 64, 129, 0); }
-	    }
-        .copy-icon svg { width: 14px; height: 14px; fill: white; }
-        
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
         #results {
             padding: 20px;
             height: 800px;
@@ -255,62 +201,41 @@
             background-color: rgba(20,20,20,0.8);
             border-radius: 15px;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-            position: relative; /* [MODIFIED] For performance */
-            z-index: 1;
-		    will-change: scroll-position;
-		    -webkit-overflow-scrolling: touch;
-		    transform: translateZ(0);
-        }
-        #results .content-container {
+            contain: strict;
             transform: translateZ(0);
-            will-change: opacity;
-            transition: opacity 0.2s ease;
-            contain: layout paint style;
-            backface-visibility: hidden;
         }
-        #results.filtering .content-container { opacity: 0; }
-        #results.scrolling .result-item { transition: none !important; }
-
-        /* [MODIFIED] New modern result item styles from gf2.html */
+        #results.filtering .content-container {
+            opacity: 0;
+        }
         .result-item {
-			margin-bottom: 15px;
-			padding: 12px 20px;
-			background: linear-gradient(135deg, #202228, #1a1c20);
-			cursor: pointer;
-			transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-			border-radius: 12px;
-			border: 1px solid rgba(255, 255, 255, 0.1);
-			box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 2px rgba(0,0,0,0.4);
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			flex-wrap: wrap;
-			gap: 15px;
-			position: relative;
-			overflow: hidden;
-		}
-		.result-item::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 4px;
-			height: 100%;
-			background: linear-gradient(180deg, #ff4081, #f50057);
-			opacity: 0.6;
-			transition: opacity 0.3s;
-		}
-        .item-images, .result-info-right {
-			display: flex;
-			align-items: center;
-			flex-wrap: wrap;
-			gap: 8px;
-		}
-		.result-info-right { justify-content: flex-end; }
-
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #2a2a2a, #202020);
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s, border-color 0.3s, transform 0.2s;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            position: relative; /* ::after를 위해 추가 */
+            contain: layout paint;
+            z-index: 1;
+        }
+        /* [수정] gplay 배경 패턴 추가 */
+        .result-item::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
+            opacity: 0.15;
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 0;
+        }
         .small-character-img {
             width: auto;
-            height: 50px; /* [MODIFIED] Adjusted height for new layout */
+            height: 60px;
             object-fit: contain;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -323,56 +248,58 @@
             border: 2px solid #D32F2F;
             box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);
         }
-        
-        /* [MODIFIED] New item box style from gf2.html */
-        .item-box { 
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			height: 50px;
-			min-width: 70px;
-			padding: 0 10px;
-			background: rgba(255, 193, 7, 0.05);
-			border: 1px solid rgba(255, 193, 7, 0.5);
-			border-radius: 8px;
-			text-align: center;
-		}
-		.item-box .item-title {
-			color: rgba(255, 193, 7, 0.8);
-			font-size: 12px;
-			font-weight: normal;
-			text-transform: uppercase;
-			margin-bottom: 2px;
-		}
-		.item-box .item-count {
-			color: #fff;
-			font-size: 16px;
-			font-weight: 700;
-			font-family: 'Poppins', sans-serif;
-			text-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
-		}
-
-        /* [MODIFIED] New price box style from gf2.html */
-        .price-box {
+        .item-images {
             display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            position: relative; /* z-index를 위해 추가 */
+            z-index: 1;
+            contain: layout paint;
+        }
+        .item-box {
+            display: inline-flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 50px;
-			min-width: 95px;
-            padding: 0 10px;
+            width: 70px;
+            height: 60px;
+            background: linear-gradient(145deg, #4d3e00, #332a00);
+            border: 2px solid #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.6), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+        }
+        .item-box .item-title {
+            color: #ffc107;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px #000;
+            margin-bottom: 4px;
+        }
+        .item-box .item-count {
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .price-box {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 70px;
+            height: 60px;
             background: linear-gradient(145deg, #104020, #052912); 
             border: 2px solid #27ae60;
             box-shadow: 0 0 8px rgba(39, 174, 96, 0.5), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(46, 204, 113, 0.2);
-            border-radius: 8px;
+            border-radius: 10px;
             color: #90ee90;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
             font-family: 'Poppins', sans-serif;
             text-shadow: 1px 1px 2px #000;
         }
-
-        #tsparticles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        #tsparticles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        }
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(18,18,18,0.95);
@@ -386,7 +313,9 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        #budgetContainer { display: flex; justify-content: center; margin-bottom: 30px; }
+        #budgetContainer {
+            display: flex; justify-content: center; margin-bottom: 30px;
+        }
         .budget-box {
             width: 300px; height: 60px; padding: 10px 20px;
             display: flex; flex-direction: row; justify-content: center; align-items: center;
@@ -416,26 +345,14 @@
         .budget-input-container input[type="number"]:focus { border-color: #ff4081; outline: none; }
         .budget-unit { color: #e0e0e0; margin-left: 8px; font-size: 16px; }
 
-        /* [MODIFIED] New extras box style from gf2.html */
 		.extras-box {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 50px;
-			min-width: 70px;
-			padding: 0 10px;
-			background: rgba(176, 176, 176, 0.1);
-			border: 1px dashed rgba(176, 176, 176, 0.5);
-			border-radius: 8px;
+			display: inline-flex; justify-content: center; align-items: center;
+			background: linear-gradient(145deg, #333, #222);
+			border: 2px solid #b0b0b0;
+			box-shadow: 0 0 10px rgba(176, 176, 176, 0.3), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(255,255,255,0.1);
 			cursor: pointer;
-			transition: background 0.2s, border-color 0.2s;
 		}
-		.extras-box .item-title {
-			color: #e0e0e0;
-			font-size: 14px;
-			text-decoration: none;
-			font-weight: bold;
-		}
+		.extras-box .item-title { color: #e0e0e0; text-decoration: underline; margin-bottom: 0; }
 		#extrasPopup {
 			display: none; position: fixed; z-index: 4000; left: 0; top: 0;
 			width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7);
@@ -454,31 +371,26 @@
 		#extras-popup-grid {
 			display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-top: 10px;
 		}
-        #extras-popup-grid .item-box { height: 60px; }
 
         @media (max-width: 768px) {
-            h1 { font-size: 2em; }
             .character-grid { grid-template-columns: repeat(auto-fill, minmax(80px,1fr)); gap: 10px; }
             .character-box { height: 125px; padding: 8px; }
             .character-box .character-img { width: 60px; height: 70px; margin-bottom: 5px; }
             .character-box .character-name { font-size: 14px; }
             .spinbox-container input[type="number"] { width: 45px; }
             #filterButton { font-size: 16px; padding: 12px; }
+            .result-item { padding: 12px; }
+            .small-character-img { height: 45px; }
+            .item-images { gap: 5px; }
             #copyInstruction { font-size: 1em; }
             #copyMessage { font-size: 1em; padding: 15px 20px; }
+            .item-box, .price-box, .extras-box { width: 55px; height: 45px; }
+            .item-box .item-title, .extras-box .item-title { font-size: 10px; margin-bottom: 0; }
+            .item-box .item-count, .price-box { font-size: 10px; }
             .budget-box { width: 100%; max-width: 280px; }
             .budget-text { font-size: 16px; }
             .budget-input-container input[type="number"] { width: 100px; padding: 6px 10px; font-size: 14px; }
             .extras-popup-content { width: 90%; padding: 20px; }
-
-            /* [MODIFIED] Responsive styles for new result item layout */
-            .result-item { padding: 10px; }
-            .item-images, .result-info-right { flex-basis: 100%; }
-			.result-info-right { justify-content: space-around; }
-            .small-character-img, .item-box, .extras-box, .price-box { height: 45px; }
-            .item-images { gap: 5px; }
-            .item-box .item-title, .extras-box .item-title { font-size: 12px; }
-			.item-box .item-count, .price-box { font-size: 14px; }
         }
     </style>
 </head>
@@ -504,15 +416,7 @@
     <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">※ 클릭하면 물품 코드가 복사됩니다<br>※ 실제 계정에는 일부 캐릭터가 없고, 대신 전설선택권6장 & 3성선택권2장이 있습니다</div>
     <div id="results"></div>
-    <!-- [MODIFIED] New copy message structure -->
-    <div id="copyMessage">
-        <div class="copy-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-        </div>
-        <span>복사되었습니다</span>
-    </div>
+    <div id="copyMessage">복사되었습니다</div>
 
     <div id="extrasPopup">
 		<div class="extras-popup-content">
@@ -533,7 +437,6 @@
             }
         });
         
-        // [MODIFIED] Added performance optimizations from gf2.html
         window.addEventListener('load', () => {
             const lastLoad = localStorage.getItem('lastLoadTime');
             const currentTime = Date.now();
@@ -546,24 +449,7 @@
             loadData().then(filterData).then(() => new Promise(r => setTimeout(r, 500)))
                 .then(() => { 
                     loader.classList.add('hidden'); 
-                    setTimeout(() => { 
-                        loader.style.display = 'none'; 
-                        const results = document.getElementById('results');
-                        if (results) {
-                            let lastScrollTime = 0;
-                            results.addEventListener('scroll', function(e) {
-                                if (!results.isScrolling) {
-                                    results.isScrolling = true;
-                                    results.classList.add('scrolling');
-                                }
-                                clearTimeout(results.scrollEndTimer);
-                                results.scrollEndTimer = setTimeout(function() {
-                                    results.isScrolling = false;
-                                    results.classList.remove('scrolling');
-                                }, 150);
-                            }, { passive: true });
-                        }
-                    }, 500); 
+                    setTimeout(() => { loader.style.display = 'none'; }, 500); 
                 })
                 .catch(error => {
                     console.error('초기 필터 적용 에러:', error);
@@ -571,6 +457,40 @@
                     setTimeout(() => loader.style.display = 'none', 500);
                 });
         });
+
+	    /*
+        tsParticles.load("tsparticles", {
+            particles: {
+                number: { value: 60, density: { enable: true, value_area: 800 }},
+                shape: { type: "star", stroke: { width: 0, color: "#fff" }},
+                size: { value: 3, random: { enable: true, minimumValue: 1 }},
+                move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out" },
+                color: {
+                    value: ["#ff4081", "#f50057", "#D32F2F", "#ff9800", "#FFD700", "#4a148c"]
+                },
+
+                opacity: {
+                    value: { min: 0, max: 1 },
+                    animation: {
+                        enable: true,
+                        speed: { min: 2, max: 4 },
+                        sync: false,
+                        startValue: "random"
+                    }
+                },
+
+                rotate: {
+                    animation: {
+                        enable: true,
+                        speed: { min: 15, max: 25 },
+                        sync: false
+                    }
+                }
+            },
+            interactivity: { events: { onhover: { enable: false }, onclick: { enable: false } }},
+            retina_detect: true
+        });
+		*/
 
         const characters = [
             ["isabel","이자벨"],["castol","카스톨"],["fumitchell","개미첼"],["myle","마일"],["ervin","어빈"],["gerd","게르드"],["thomas","토마스"],
@@ -779,7 +699,6 @@
             return m ? parseInt(m[1].replace(/,/g,'')) : 0;
         }
 
-        // [MODIFIED] displayResults function completely refactored for new layout
         function displayResults(data) {
             const res = document.getElementById('results');
             res.scrollTop = 0;
@@ -797,7 +716,7 @@
             });
             const displayKeys = budgetSelected ? sortedKeys.slice(0, 40) : sortedKeys;
             const isMobile = window.innerWidth <= 768;
-            const overlapMargin = isMobile ? -25 : -28; 
+            const overlapMargin = isMobile ? -26 : -33;
 
             displayKeys.forEach(k => {
                 const item = document.createElement('div');
@@ -808,12 +727,6 @@
 					copyToClipboard(item);
 				});
 
-                const leftSection = document.createElement('div');
-                leftSection.className = 'item-images';
-
-                const rightSection = document.createElement('div');
-                rightSection.className = 'result-info-right';
-
                 const val = sortedData[k];
                 if (!val) return;
 
@@ -821,6 +734,9 @@
                 const price = getPrice(k);
                 const countMatch = priceCount.match(/\(([^)]+)\)/);
                 const itemCount = countMatch ? countMatch[1] : 'N/A';
+                
+                const imgsContainer = document.createElement('div');
+				imgsContainer.className = 'item-images';
                 
                 const superRareCharImages = [];
                 const rareCharImages = [];
@@ -837,36 +753,40 @@
                         const rep = cnt ? parseInt(cnt) : 1;
                         const charInfo = characters.find(([_, kor]) => kor === name);
                         if (charInfo) {
-                             const imageData = { src: `cropped_characters/${name}.png`, alt: name, engName: charInfo[0] };
+                             const imageData = {
+                                src: `cropped_characters/${name}.png`,
+                                alt: name,
+                                engName: charInfo[0]
+                            };
                             for (let i = 0; i < rep; i++) {
-                                if (exceptCharacters.includes(charInfo[0])) superRareCharImages.push(imageData);
-                                else if (tierCharacters.includes(charInfo[0])) rareCharImages.push(imageData);
-                                else extraCharImages.push(imageData);
+                                if (exceptCharacters.includes(charInfo[0])) {
+                                    superRareCharImages.push(imageData);
+                                } else if (tierCharacters.includes(charInfo[0])) {
+                                    rareCharImages.push(imageData);
+                                } else {
+                                    extraCharImages.push(imageData);
+                                }
                             }
                         }
                     }
                 });
 
-                const renderImageStacks = (images, className, targetContainer) => {
+                const renderImageStacks = (images, className) => {
                     let i = 0;
                     while (i < images.length) {
                         const currentImgData = images[i];
                         let count = 1;
-                        while (i + 1 < images.length && images[i + 1].src === currentImgData.src) { count++; i++; }
-                        
-                        const imgElement = (j) => {
-                            const img = document.createElement('img');
-                            img.src = currentImgData.src; img.alt = currentImgData.alt;
-                            img.className = `small-character-img ${className}`;
-                            return img;
-                        };
-
+                        while (i + 1 < images.length && images[i + 1].src === currentImgData.src) {
+                            count++; i++;
+                        }
                         if (count > 1) {
                             const stackContainer = document.createElement('div');
                             stackContainer.style.display = 'flex';
                             stackContainer.style.alignItems = 'center';
                             for (let j = 0; j < count; j++) {
-                                const img = imgElement(j);
+                                const img = document.createElement('img');
+                                img.src = currentImgData.src; img.alt = currentImgData.alt;
+                                img.className = `small-character-img ${className}`;
                                 img.style.position = 'relative';
                                 img.style.zIndex = count - j;
                                 if (j > 0) {
@@ -875,43 +795,43 @@
                                 }
                                 stackContainer.appendChild(img);
                             }
-                            targetContainer.appendChild(stackContainer);
+                            imgsContainer.appendChild(stackContainer);
                         } else {
-                            targetContainer.appendChild(imgElement(0));
+                            const img = document.createElement('img');
+                            img.src = currentImgData.src; img.alt = currentImgData.alt;
+                            img.className = `small-character-img ${className}`;
+                            imgsContainer.appendChild(img);
                         }
                         i++;
                     }
                 };
 
-                renderImageStacks(superRareCharImages, 'super-rare', leftSection);
-                renderImageStacks(rareCharImages, 'rare', leftSection);
+                renderImageStacks(superRareCharImages, 'super-rare');
+                renderImageStacks(rareCharImages, 'rare');
 
+                // [수정] 기타 팝업에 들어갈 모든 콘텐츠를 준비
                 const extrasContent = extraCharImages.map(imgData => ({ type: 'char', ...imgData }));
-                fixedItemsInfo.forEach(item => { extrasContent.push({ type: 'item', title: item.name, count: item.countText }); });
+                fixedItemsInfo.forEach(item => {
+                    extrasContent.push({ type: 'item', title: item.name, count: item.countText });
+                });
 
                 if (extrasContent.length > 0) {
                     const extrasBox = document.createElement('div');
-					extrasBox.className = 'extras-box'; 
-					extrasBox.innerHTML = `<div class="item-title">기타</div>`;
+					extrasBox.className = 'item-box extras-box'; 
+					extrasBox.innerHTML = `<div class="item-title">기타</div>`; // [수정] 텍스트 변경
 					extrasBox.addEventListener('click', (e) => {
 						e.stopPropagation();
-						showExtrasPopup(extrasContent);
+						showExtrasPopup(extrasContent); // [수정] 통합된 콘텐츠 전달
 					});
-					leftSection.appendChild(extrasBox);
+					imgsContainer.appendChild(extrasBox);
                 }
                 
-                const countBox = document.createElement('div');
-                countBox.className = 'item-box';
-                countBox.innerHTML = `<div class="item-title">아이템</div><div class="item-count">${itemCount}</div>`;
-                rightSection.appendChild(countBox);
-
                 const priceBox = document.createElement('div');
 				priceBox.className = 'price-box';
 				priceBox.textContent = `₩${price.toLocaleString()}`;
-				rightSection.appendChild(priceBox);
+				imgsContainer.appendChild(priceBox);
 
-                item.appendChild(leftSection);
-                item.appendChild(rightSection);
+                item.appendChild(imgsContainer);
                 container.appendChild(item);
             });
 
@@ -920,6 +840,7 @@
             document.getElementById('copyInstruction').style.display = 'block';
         }
 
+        // [수정] 기타 팝업 함수
         function showExtrasPopup(content) {
 			const popup = document.getElementById('extrasPopup');
 			const grid = document.getElementById('extras-popup-grid');
@@ -928,14 +849,16 @@
 			content.forEach(item => {
                 if (item.type === 'char') {
                     const img = document.createElement('img');
-                    img.src = item.src; img.alt = item.alt;
+                    img.src = item.src;
+                    img.alt = item.alt;
                     img.className = 'small-character-img';
-                    img.loading = 'lazy'; img.decoding = 'async';
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
                     grid.appendChild(img);
                 } else if (item.type === 'item') {
                     const box = document.createElement('div');
-                    box.className = 'item-box';
-                    box.innerHTML = `<div class="item-title" style="font-size: 14px;">${item.title}</div><div class="item-count" style="font-size: 12px;">${item.count}</div>`;
+                    box.className = 'item-box'; // 기존 item-box 스타일 재사용
+                    box.innerHTML = `<div class="item-title">${item.title}</div><div class="item-count">${item.count}</div>`;
                     grid.appendChild(box);
                 }
 			});
@@ -949,7 +872,6 @@
             navigator.clipboard.writeText(textToCopy).then(() => showCopyMessage(), err => console.error('복사 실패: ', err));
         }
 
-        // [MODIFIED] New showCopyMessage function from gf2.html
         function showCopyMessage(){
             const msg = document.getElementById('copyMessage');
             msg.classList.add('show');
@@ -967,29 +889,14 @@
                 .join(',');
             return result;
         }
-
-        // [MODIFIED] Added throttle function
-        function throttle(func, delay) {
-            let lastCall = 0;
-            return function(...args) {
-                const now = Date.now();
-                if (now - lastCall >= delay) {
-                    lastCall = now;
-                    return func.apply(this, args);
-                }
-            };
-        }
-
-        // [MODIFIED] Throttled event listener
-        const throttledFilterHandler = throttle(function() {
+        
+        document.getElementById('filterButton').addEventListener('click', () => {
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
             loadData().then(() => { 
                 filterData(); 
                 gtag('event', 'apply_filter', { 'selected_characters': getSelectedCharacters() });
             }).catch(error => { console.error('필터 적용 에러:', error); });
-        }, 500);
-        
-        document.getElementById('filterButton').addEventListener('click', throttledFilterHandler);
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             const extrasPopup = document.getElementById('extrasPopup');
