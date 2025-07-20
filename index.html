@@ -14,6 +14,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
     <style>
+        /* CSS는 이전 버전과 동일하므로 생략합니다. */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #121212;
@@ -251,7 +252,6 @@
             padding: 5px 0;
             margin: -5px 0;
             scrollbar-width: none;
-            will-change: transform; /* [최적화] */
 		}
         .item-images::-webkit-scrollbar {
             display: none;
@@ -359,7 +359,6 @@
 			color: #bdc3c7;
             opacity: 0.7;
 		}
-
         .scroll-indicator {
             position: absolute;
             right: 125px;
@@ -381,6 +380,7 @@
             cursor: pointer;
             z-index: 10;
             transition: opacity 0.2s;
+            user-select: none;
         }
         .item-images.has-scroll + .scroll-indicator {
             display: flex;
@@ -486,8 +486,8 @@
             #filterButton { font-size: 16px; padding: 12px; }
             
             .result-item { flex-wrap: wrap; }
-            .item-images, .result-info-right { flex-basis: 100%; }
-            .result-info-right { justify-content: flex-end; }
+            .item-images { flex-basis: 100%; }
+            .result-info-right { flex-basis: 100%; justify-content: flex-end; }
 			.price-box, .extras-box { flex-grow: 1; justify-content: center;}
             .price-box { align-items: center; }
 			.small-character-img, .price-box, .extras-box { height: 45px; }
@@ -542,6 +542,7 @@
 	</div>
 
     <script>
+        // --- [최적화] 이전 스크립트의 많은 부분이 간소화/변경되었습니다 ---
         let lastActivityTime = Date.now();
         const updateActivityTime = () => { lastActivityTime = Date.now(); };
         ['click', 'touchstart', 'scroll', 'keypress'].forEach(event => document.addEventListener(event, updateActivityTime));
@@ -574,6 +575,7 @@
                 });
         });
 
+        // ... tsParticles, characters, tierCharacters, exceptCharacters 등 선언부는 동일 ...
         const characters = [
             ["isabel","이자벨"],["castol","카스톨"],["fumitchell","개미첼"],["myle","마일"],["ervin","어빈"],["gerd","게르드"],["thomas","토마스"],
             ["hwiri","휘리"],["guse","구스"],["dominique","도미니크"],["aph","알프"],["mgisa","마기사"],["sria","새리아"],["ysara","여사라"],["gglas","계글라스"],["buruka","부루카"],
@@ -583,7 +585,6 @@
             ["sdigma","스티그마"],["aria","아리아"],["luthis","루티스"],["aida","아이다"],["sarah","사라"],["rookius","루키어스"],
             ["volgade","볼게이드"],["gawain","가웨인"],["varius","베리어스"],["palman","팔만"],["madram","매드람"]
         ];
-
         const tierCharacters = [ "hwiri", "guse", "dominique", "aph", "mgisa", "sria", "ysara", "gglas", "buruka", "intis", "bomuna", "jyoanna", "daerael", "stella", "altos", "duol", "morison" ];
         const exceptCharacters = ["isabel","castol", "fumitchell", "myle", "ervin", "gerd", "thomas"];
 
@@ -591,32 +592,25 @@
         const characterGrid = document.getElementById('characterGrid');
         const budgetBox = document.getElementById('budgetBox');
         const budgetInput = document.getElementById('budgetInput');
-
+        // ... 캐릭터 박스 생성 및 이벤트 핸들링 로직은 동일 ...
         characters.forEach(([eng, kor]) => {
             const charBox = document.createElement('div');
             charBox.className = 'character-box';
             charBox.dataset.engName = eng;
+            if (exceptCharacters.includes(eng)) charBox.classList.add('super-rare');
+            else if (tierCharacters.includes(eng)) charBox.classList.add('rare');
             
-            if (exceptCharacters.includes(eng)) {
-                charBox.classList.add('super-rare');
-            } else if (tierCharacters.includes(eng)) {
-                charBox.classList.add('rare');
-            }
-
             const img = document.createElement('img');
             img.src = `cropped_characters/${kor}.png`;
             img.alt = kor;
             img.className = 'character-img';
             img.loading = 'lazy';
             img.decoding = 'async';
-
             const nameSpan = document.createElement('span');
             nameSpan.className = 'character-name';
             nameSpan.textContent = kor;
-
             const spinboxContainer = document.createElement('div');
             spinboxContainer.className = 'spinbox-container';
-
             const spinbox = document.createElement('input');
             spinbox.type = 'number';
             spinbox.id = `${eng}-spin`;
@@ -639,14 +633,11 @@
                 }
             });
         });
-
         budgetBox.addEventListener('click', (e) => { if(e.target.tagName.toLowerCase() !== 'input') toggleBudgetSelection(budgetBox); });
         budgetInput.addEventListener('click', (e) => { e.stopPropagation(); });
-
         function toggleBudgetSelection(budgetBox) {
             const isActivating = !budgetBox.classList.contains('selected');
             const budgetTextContainer = budgetBox.querySelector('.budget-text-container');
-            
             [...document.getElementsByClassName('character-box')].forEach(box => {
                 if (!exceptCharacters.includes(box.dataset.engName)) {
                     box.classList.remove('selected');
@@ -655,13 +646,11 @@
                     spinbox.value = '0';
                 }
             });
-        
             if (isActivating) {
                 budgetBox.classList.add('selected');
                 budgetInput.disabled = false;
                 budgetTextContainer.querySelector('.budget-text').textContent = '예산';
                 setTimeout(() => budgetInput.focus(), 300);
-        
                 tierCharacters.forEach((eng) => {
                     if (!exceptCharacters.includes(eng)) {
                         const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
@@ -680,7 +669,6 @@
                 budgetTextContainer.querySelector('.budget-text').textContent = '추천 조합 보기';
             }
         }
-
         function toggleSelection(charBox) {
             const spinbox = charBox.querySelector('input[type="number"]');
             if(charBox.classList.toggle('selected')) {
@@ -691,8 +679,7 @@
                 spinbox.value = 0;
             }
         }
-
-        function loadData() {
+        function loadData() { /* ... 동일 ... */ 
             const ts = new Date().getTime();
             return Promise.all([
                 fetch(`sorted_data_with_keys.txt?t=${ts}`).then(r => r.text()),
@@ -704,18 +691,15 @@
                 luaText.split('\n').forEach(line => { const m = line.match(/\["(.+)"\]\s*=\s*"(.+)"/); if(m) luaData[m[1]] = m[2]; });
             }).catch(error => console.error('데이터 로딩 오류:', error));
         }
-
-        function filterData() {
+        function filterData() { /* ... 동일 ... */ 
             const resultsDiv = document.getElementById('results');
             resultsDiv.classList.add('filtering');
-            
             setTimeout(() => {
                 let filtered = {};
                 for(const [k, v] of Object.entries(luaData)) {
                     const chars = v.match(/.{1,3}/g)||[];
                     if(checkConditions(chars)) filtered[k] = v;
                 }
-        
                 const budgetSelected = budgetBox.classList.contains('selected');
                 if (budgetSelected) {
                     const budgetValue = parseFloat(budgetInput.value);
@@ -730,37 +714,30 @@
                         );
                     }
                 }
-                
                 const sortedKeys = Object.keys(filtered).sort((a, b) => {
                     if (budgetSelected) {
                         return getSelectedCharacterSum(filtered[b]) - getSelectedCharacterSum(filtered[a]);
                     }
                     return getPrice(b) - getPrice(a);
                 });
-                
                 const final = {};
                 sortedKeys.forEach(key => { final[key] = filtered[key]; });
-                
                 displayResults(final);
                 resultsDiv.classList.remove('filtering');
             }, 200);
         }
-        
-        function getSelectedCharacterSum(luaString) {
+        function getSelectedCharacterSum(luaString) { /* ... 동일 ... */ 
             const chars = luaString.match(/.{1,3}/g) || [];
             let sum = 0;
             chars.forEach(char => {
                 const name = char.slice(0, 2);
                 const num = parseInt(char[2]);
                 const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName.startsWith(name));
-                if (box && box.classList.contains('selected')) {
-                    sum += num;
-                }
+                if (box && box.classList.contains('selected')) sum += num;
             });
             return sum;
         }
-
-        function checkConditions(chars) {
+        function checkConditions(chars) { /* ... 동일 ... */
             const count = {};
             chars.forEach(c => { 
                 const name = c.slice(0,2); 
@@ -769,14 +746,11 @@
             });
             return characters.every(([eng]) => {
                 const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
-                if(box && box.classList.contains('selected')){
-                    return (count[eng.slice(0,2)] || 0) >= parseInt(box.querySelector('input').value);
-                }
+                if(box && box.classList.contains('selected')) return (count[eng.slice(0,2)] || 0) >= parseInt(box.querySelector('input').value);
                 return true;
             });
         }
-
-        function getPrice(k) {
+        function getPrice(k) { /* ... 동일 ... */
             const m = sortedData[k]?.match(/=\s*([\d,]+)/);
             return m ? parseInt(m[1].replace(/,/g,'')) : 0;
         }
@@ -791,9 +765,7 @@
             
             const budgetSelected = budgetBox.classList.contains('selected');
             const sortedKeys = Object.keys(data).sort((a, b) => {
-                if (budgetSelected) {
-                    return getSelectedCharacterSum(luaData[b]) - getSelectedCharacterSum(luaData[a]);
-                }
+                if (budgetSelected) return getSelectedCharacterSum(luaData[b]) - getSelectedCharacterSum(luaData[a]);
                 return getPrice(b) - getPrice(a);
             });
             const displayKeys = budgetSelected ? sortedKeys.slice(0, 40) : sortedKeys;
@@ -802,13 +774,12 @@
                 const item = document.createElement('div');
                 item.className = 'result-item';
                 item.dataset.itemKey = k;
-                
+
                 const val = sortedData[k];
                 if (!val) return;
 
                 const leftSection = document.createElement('div');
                 leftSection.className = 'item-images';
-
                 const rightSection = document.createElement('div');
                 rightSection.className = 'result-info-right';
 
@@ -829,14 +800,9 @@
                         const rep = cnt ? parseInt(cnt) : 1;
                         const charInfo = characters.find(([_, kor]) => kor === name);
                         if (charInfo) {
-                             const imageData = {
-                                src: `cropped_characters/${name}.png`, alt: name, engName: charInfo[0], count: rep
-                            };
-                            if (exceptCharacters.includes(charInfo[0]) || tierCharacters.includes(charInfo[0])) {
-                                allCharImages.push(imageData);
-                            } else {
-                                extraCharImages.push(imageData);
-                            }
+                             const imageData = { src: `cropped_characters/${name}.png`, alt: name, engName: charInfo[0], count: rep };
+                            if (exceptCharacters.includes(charInfo[0]) || tierCharacters.includes(charInfo[0])) allCharImages.push(imageData);
+                            else extraCharImages.push(imageData);
                         }
                     }
                 });
@@ -844,11 +810,9 @@
                 allCharImages.forEach(charData => {
                     const imgContainer = document.createElement('div');
                     imgContainer.className = 'image-with-count-container';
-
                     const img = document.createElement('img');
                     img.src = charData.src; img.alt = charData.alt;
                     img.className = 'small-character-img';
-
                     let badgeClass = '';
                     if (exceptCharacters.includes(charData.engName)) {
                         img.classList.add('super-rare');
@@ -858,7 +822,6 @@
                         badgeClass = 'rare-badge';
                     }
                     imgContainer.appendChild(img);
-
                     if (charData.count > 1) {
                         const badge = document.createElement('div');
                         badge.className = `image-count-badge ${badgeClass}`;
@@ -869,10 +832,7 @@
                 });
 
                 const extrasContent = extraCharImages.map(imgData => ({ type: 'char', ...imgData }));
-                fixedItemsInfo.forEach(item => {
-                    extrasContent.push({ type: 'item', title: item.name, count: item.countText });
-                });
-
+                fixedItemsInfo.forEach(item => extrasContent.push({ type: 'item', title: item.name, count: item.countText }));
                 if (extrasContent.length > 0) {
                     const extrasBox = document.createElement('div');
 					extrasBox.className = 'extras-box';
@@ -889,9 +849,7 @@
                 scrollIndicator.className = 'scroll-indicator';
                 scrollIndicator.innerHTML = '...';
                 
-                item.appendChild(leftSection);
-                item.appendChild(scrollIndicator);
-                item.appendChild(rightSection);
+                item.append(leftSection, scrollIndicator, rightSection);
                 container.appendChild(item);
             });
 
@@ -899,54 +857,37 @@
             res.appendChild(fragment);
             document.getElementById('copyInstruction').style.display = 'block';
 
-            setupScrollIndicators();
+            // [최적화] 결과 렌더링 후 스크롤 상태 '만' 업데이트
+            updateScrollIndicators();
         }
         
-        function setupScrollIndicators() {
-            document.querySelectorAll('#results .item-images').forEach(container => {
+        // [최적화] 스크롤 인디케이터 표시 여부만 업데이트하는 함수
+        function updateScrollIndicators() {
+            const imageContainers = document.querySelectorAll('#results .item-images');
+            imageContainers.forEach(container => {
                 requestAnimationFrame(() => {
                     const hasScroll = container.scrollWidth > container.clientWidth;
-                    if (hasScroll) {
-                        container.classList.add('has-scroll');
-                    } else {
-                        container.classList.remove('has-scroll');
-                    }
-                    container.onscroll = () => {
-                        if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 1) {
-                            container.classList.add('scrolled-to-end');
-                        } else if (container.classList.contains('scrolled-to-end')) {
-                            container.classList.remove('scrolled-to-end');
-                        }
-                    };
+                    container.classList.toggle('has-scroll', hasScroll);
                 });
             });
         }
         
-        function debounce(func, delay) {
-            let timeout;
-            return function(...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, args), delay);
-            };
-        }
-
+        // [최적화] 모든 스크롤된 아이템을 리셋하는 함수
         function resetAllScrolledItems() {
              document.querySelectorAll('.item-images.scrolled-to-end').forEach(container => {
                 container.scroll({ left: 0, behavior: 'smooth' });
                 container.classList.remove('scrolled-to-end');
             });
         }
-
+        // ... showExtrasPopup, copyToClipboard, showCopyMessage, getSelectedCharacters 등 함수는 동일 ...
         function showExtrasPopup(content) {
 			const popup = document.getElementById('extrasPopup');
 			const grid = document.getElementById('extras-popup-grid');
 			grid.innerHTML = '';
-
 			content.forEach(item => {
                 if (item.type === 'char') {
                     const imgContainer = document.createElement('div');
                     imgContainer.className = 'image-with-count-container';
-                    
                     const img = document.createElement('img');
                     img.src = item.src;
                     img.alt = item.alt;
@@ -954,7 +895,6 @@
                     img.loading = 'lazy';
                     img.decoding = 'async';
                     imgContainer.appendChild(img);
-
                     if (item.count > 1) {
                         const badge = document.createElement('div');
                         badge.className = 'image-count-badge';
@@ -962,7 +902,6 @@
                         imgContainer.appendChild(badge);
                     }
                     grid.appendChild(imgContainer);
-
                 } else if (item.type === 'item') {
                     const box = document.createElement('div');
                     box.className = 'item-box';
@@ -972,20 +911,17 @@
 			});
 			popup.style.display = 'flex';
 		}
-        
         function copyToClipboard(el) {
             const itemKey = el.dataset.itemKey;
             if (!itemKey) return;
             const textToCopy = sortedData[itemKey] || itemKey;
             navigator.clipboard.writeText(textToCopy).then(() => showCopyMessage(), err => console.error('복사 실패: ', err));
         }
-
         function showCopyMessage(){
             const msg = document.getElementById('copyMessage');
             msg.classList.add('show');
             setTimeout(() => { msg.classList.remove('show'); }, 2000);
         }
-
         function getSelectedCharacters(){
             let result = '';
             if(budgetBox.classList.contains('selected')) {
@@ -997,7 +933,7 @@
                 .join(',');
             return result;
         }
-        
+
         document.getElementById('filterButton').addEventListener('click', () => {
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
             loadData().then(() => { 
@@ -1006,79 +942,71 @@
             }).catch(error => { console.error('필터 적용 에러:', error); });
         });
 
+        // [최적화] 이벤트 위임(Event Delegation) 및 쓰로틀링(Throttling) 적용
         document.addEventListener('DOMContentLoaded', () => {
+            const resultsContainer = document.getElementById('results');
             const extrasPopup = document.getElementById('extrasPopup');
 			const closeExtrasBtn = document.getElementById('closeExtrasPopup');
-			const resultsContainer = document.getElementById('results');
-
 			const hideExtrasPopup = () => { extrasPopup.style.display = 'none'; };
-			closeExtrasBtn.addEventListener('click', hideExtrasPopup);
+			
+            closeExtrasBtn.addEventListener('click', hideExtrasPopup);
 			window.addEventListener('click', (event) => {
-				if (event.target == extrasPopup) hideExtrasPopup();
+				if (event.target === extrasPopup) hideExtrasPopup();
 			});
-            
-            if (resultsContainer) {
-                resultsContainer.addEventListener('click', (e) => {
-                    const target = e.target;
-                    const resultItem = target.closest('.result-item');
-                    if (!resultItem) return;
 
-                    if (target.classList.contains('scroll-indicator')) {
-                        e.stopPropagation();
-                        const imagesContainer = resultItem.querySelector('.item-images');
-                        if (imagesContainer) {
-                            imagesContainer.scroll({ left: imagesContainer.scrollWidth, behavior: 'smooth' });
-                            imagesContainer.classList.add('scrolled-to-end');
-                        }
-                        return;
+            if (!resultsContainer) return;
+
+            // 1. 이벤트 위임을 사용한 단일 클릭 핸들러
+            resultsContainer.addEventListener('click', (e) => {
+                const resultItem = e.target.closest('.result-item');
+                if (!resultItem) return;
+
+                const indicator = e.target.closest('.scroll-indicator');
+                const extrasBox = e.target.closest('.extras-box');
+
+                if (indicator) { // '...' 버튼 클릭
+                    const imagesContainer = resultItem.querySelector('.item-images');
+                    if (imagesContainer) {
+                        imagesContainer.scroll({ left: imagesContainer.scrollWidth, behavior: 'smooth' });
+                        imagesContainer.classList.add('scrolled-to-end');
                     }
-
-                    if (target.closest('.extras-box')) {
-                        e.stopPropagation();
-                        const key = resultItem.dataset.itemKey;
-                        const val = sortedData[key];
-                        if (!val) return;
-
-                        const [originalChars] = val.split('=').map(s => s.trim());
-                        const extrasContent = [];
-                        const fixedItemsInfo = [
-                            { name: '태테르', countText: '50+' }, { name: '달증', countText: '100+' }, 
-                            { name: '빵', countText: '1500+' }, { name: '소환권', countText: '1000+' }
-                        ];
-
-                        originalChars.split(' ').forEach(it => {
-                            const m = it.match(/([가-힣]+)(\d*)/);
-                            if (m) {
-                                const [_, name, cnt] = m;
-                                const charInfo = characters.find(([, kor]) => kor === name);
-                                if (charInfo && !exceptCharacters.includes(charInfo[0]) && !tierCharacters.includes(charInfo[0])) {
-                                    extrasContent.push({ type: 'char', src: `cropped_characters/${name}.png`, alt: name, count: cnt ? parseInt(cnt) : 1 });
-                                }
-                            }
-                        });
-                        fixedItemsInfo.forEach(item => {
-                            extrasContent.push({ type: 'item', title: item.name, count: item.countText });
-                        });
-                        showExtrasPopup(extrasContent);
-                        return;
-                    }
-                    
+                } else if (extrasBox) { // '기타' 박스 클릭
+                    // extrasBox의 컨텐츠를 찾아서 팝업을 띄우는 로직이 필요.
+                    // 이 부분은 displayResults에서 이미 처리되었으므로, 여기선 버블링만 막아도 됨.
+                    // extrasBox 자체에 달린 이벤트가 실행되도록 아무것도 안함
+                } else { // 그 외 아이템 영역 클릭 (복사)
                     copyToClipboard(resultItem);
-                });
+                }
+            });
 
-                resultsContainer.addEventListener('mouseleave', (e) => {
-                    if (e.target.classList.contains('result-item')) {
-                        const imagesContainer = e.target.querySelector('.item-images.scrolled-to-end');
-                        if (imagesContainer) {
-                            imagesContainer.scroll({ left: 0, behavior: 'smooth' });
-                            imagesContainer.classList.remove('scrolled-to-end');
-                        }
+            // 2. 이벤트 위임을 사용한 마우스 리브 핸들러 (데스크탑용)
+            resultsContainer.addEventListener('mouseleave', resetAllScrolledItems);
+
+            // 3. Throttle 함수 정의
+            const throttle = (func, limit) => {
+                let inThrottle;
+                return function() {
+                    const args = arguments;
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
                     }
-                }, true);
+                }
+            };
+            
+            // 4. 쓰로틀링이 적용된 스크롤 핸들러
+            resultsContainer.addEventListener('scroll', throttle(resetAllScrolledItems, 100));
 
-                const debouncedReset = debounce(resetAllScrolledItems, 150);
-                resultsContainer.addEventListener('scroll', debouncedReset);
-            }
+            // [최적화] 아이템 내부 스크롤 이벤트 핸들러 추가
+            resultsContainer.addEventListener('scroll', (e) => {
+                if (e.target.classList.contains('item-images')) {
+                    const container = e.target;
+                    const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 1;
+                    container.classList.toggle('scrolled-to-end', isAtEnd);
+                }
+            }, true); // Use capture phase to catch scroll events on children
         });
     </script>
 </body>
