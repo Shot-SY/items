@@ -224,10 +224,9 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			flex-wrap: nowrap; /*
- [수정] 줄바꿈 방지 */
+			flex-wrap: nowrap;
 			gap: 15px;
-			position: relative; /* [추가] 자식요소 absolute 포지셔닝 기준 */
+			position: relative;
 			overflow: hidden;
 		}
 		.result-item::before {
@@ -245,22 +244,23 @@
 		.item-images {
 			display: flex;
 			align-items: center;
-			flex-wrap: nowrap; /* [수정] 가로 스크롤을 위해 nowrap 적용 */
+			flex-wrap: nowrap;
 			gap: 8px;
-            flex-grow: 1; /* [추가] 남는 공간 차지 */
-            overflow-x: auto; /* [수정] 가로 스크롤 활성화 */
+            flex-grow: 1;
+            overflow-x: auto;
             padding: 5px 0;
             margin: -5px 0;
-            scrollbar-width: none; /* Firefox 스크롤바 숨김 */
+            scrollbar-width: none;
+            will-change: transform; /* [최적화] */
 		}
         .item-images::-webkit-scrollbar {
-            display: none; /* Chrome, Safari 스크롤바 숨김 */
+            display: none;
         }
 
 		.result-info-right {
 			display: flex;
 			align-items: center;
-			flex-shrink: 0; /* [추가] 너비 줄어들지 않도록 설정 */
+			flex-shrink: 0;
 		}
 
         .small-character-img {
@@ -336,35 +336,33 @@
             font-size: 12px;
             font-weight: 600;
         }
-        /* [수정] 가격 박스 오른쪽 정렬 스타일 */
         .price-box {
 			display: flex;
             flex-direction: column;
 			justify-content: center;
-			align-items: flex-end; /* 오른쪽 정렬 */
+			align-items: flex-end;
 			height: 50px;
 			min-width: 95px;
 			padding: 0 10px;
-			background: linear-gradient(270deg, rgba(39, 174, 96, 0.2), transparent); /* 그라데이션 방향 수정 */
+			background: linear-gradient(270deg, rgba(39, 174, 96, 0.2), transparent);
 			border-radius: 8px;
 			font-family: 'Poppins', sans-serif;
 		}
-        .price-box .price-krw { /* 클래스 추가하여 관리 */
+        .price-box .price-krw {
 			font-size: 18px;
 			font-weight: 700;
 			color: #2ecc71;
 			text-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
 		}
-        .price-box .price-label { /* 클래스 추가하여 관리 */
+        .price-box .price-label {
 			font-size: 12px;
 			color: #bdc3c7;
             opacity: 0.7;
 		}
 
-        /* [추가] 스크롤 인디케이터(...) 버튼 스타일 */
         .scroll-indicator {
             position: absolute;
-            right: 125px; /* 가격 박스 너비(95px) + gap(15px) + a little more */
+            right: 125px;
             top: 50%;
             transform: translateY(-50%);
             width: 28px;
@@ -374,7 +372,7 @@
             border: 1px solid rgba(255,255,255,0.2);
             color: #fff;
             border-radius: 50%;
-            display: none; /* 기본적으로 숨김 */
+            display: none;
             align-items: center;
             justify-content: center;
             font-size: 18px;
@@ -385,7 +383,7 @@
             transition: opacity 0.2s;
         }
         .item-images.has-scroll + .scroll-indicator {
-            display: flex; /* 스크롤이 있을 때만 표시 */
+            display: flex;
         }
         .item-images.scrolled-to-end + .scroll-indicator {
             opacity: 0;
@@ -488,10 +486,10 @@
             #filterButton { font-size: 16px; padding: 12px; }
             
             .result-item { flex-wrap: wrap; }
-            .item-images { flex-basis: 100%; }
-            .result-info-right { flex-basis: 100%; justify-content: flex-end; }
+            .item-images, .result-info-right { flex-basis: 100%; }
+            .result-info-right { justify-content: flex-end; }
 			.price-box, .extras-box { flex-grow: 1; justify-content: center;}
-            .price-box { align-items: center; } /* 모바일에선 가격 중앙 정렬 */
+            .price-box { align-items: center; }
 			.small-character-img, .price-box, .extras-box { height: 45px; }
             .item-images { gap: 5px; }
 
@@ -503,7 +501,7 @@
             .item-box .item-count { font-size: 12px; }
             .price-box .price-krw { font-size: 16px; }
             .price-box .price-label { display: none; }
-            .scroll-indicator { display: none !important; } /* 모바일에선 ... 버튼 비활성화 */
+            .scroll-indicator { display: none !important; }
 
             .budget-box { width: 100%; max-width: 280px; }
             .budget-text { font-size: 16px; }
@@ -544,7 +542,6 @@
 	</div>
 
     <script>
-        // ... (이전 script 내용은 동일) ...
         let lastActivityTime = Date.now();
         const updateActivityTime = () => { lastActivityTime = Date.now(); };
         ['click', 'touchstart', 'scroll', 'keypress'].forEach(event => document.addEventListener(event, updateActivityTime));
@@ -577,7 +574,6 @@
                 });
         });
 
-        // ... tsParticles, characters, tierCharacters, exceptCharacters, DOM element selectors 등은 동일 ...
         const characters = [
             ["isabel","이자벨"],["castol","카스톨"],["fumitchell","개미첼"],["myle","마일"],["ervin","어빈"],["gerd","게르드"],["thomas","토마스"],
             ["hwiri","휘리"],["guse","구스"],["dominique","도미니크"],["aph","알프"],["mgisa","마기사"],["sria","새리아"],["ysara","여사라"],["gglas","계글라스"],["buruka","부루카"],
@@ -806,11 +802,7 @@
                 const item = document.createElement('div');
                 item.className = 'result-item';
                 item.dataset.itemKey = k;
-                item.addEventListener('click', (e) => {
-					if (e.target.closest('.extras-box') || e.target.classList.contains('scroll-indicator')) return;
-					copyToClipboard(item);
-				});
-
+                
                 const val = sortedData[k];
                 if (!val) return;
 
@@ -885,10 +877,6 @@
                     const extrasBox = document.createElement('div');
 					extrasBox.className = 'extras-box';
 					extrasBox.innerHTML = `<div class="item-title">기타</div>`;
-					extrasBox.addEventListener('click', (e) => {
-						e.stopPropagation();
-						showExtrasPopup(extrasContent);
-					});
 					leftSection.appendChild(extrasBox);
                 }
                 
@@ -902,7 +890,7 @@
                 scrollIndicator.innerHTML = '...';
                 
                 item.appendChild(leftSection);
-                item.appendChild(scrollIndicator); // [중요] 버튼을 leftSection 다음에 추가
+                item.appendChild(scrollIndicator);
                 item.appendChild(rightSection);
                 container.appendChild(item);
             });
@@ -911,57 +899,37 @@
             res.appendChild(fragment);
             document.getElementById('copyInstruction').style.display = 'block';
 
-            // [추가] 결과 렌더링 후 스크롤 버튼 설정
             setupScrollIndicators();
         }
         
-        // [추가] 스크롤 인디케이터 설정 및 이벤트 핸들링 함수
         function setupScrollIndicators() {
-            const resultItems = document.querySelectorAll('#results .result-item');
-
-            resultItems.forEach(item => {
-                const imagesContainer = item.querySelector('.item-images');
-                const scrollIndicator = item.querySelector('.scroll-indicator');
-
-                // 레이아웃 계산이 끝난 후 너비 비교
+            document.querySelectorAll('#results .item-images').forEach(container => {
                 requestAnimationFrame(() => {
-                    const hasScroll = imagesContainer.scrollWidth > imagesContainer.clientWidth;
+                    const hasScroll = container.scrollWidth > container.clientWidth;
                     if (hasScroll) {
-                        imagesContainer.classList.add('has-scroll');
-
-                        scrollIndicator.onclick = (e) => {
-                            e.stopPropagation();
-                            imagesContainer.scroll({
-                                left: imagesContainer.scrollWidth - imagesContainer.clientWidth,
-                                behavior: 'smooth'
-                            });
-                            imagesContainer.classList.add('scrolled-to-end');
-                        };
-
-                        item.onmouseleave = () => {
-                            if (imagesContainer.classList.contains('scrolled-to-end')) {
-                                imagesContainer.scroll({ left: 0, behavior: 'smooth' });
-                                imagesContainer.classList.remove('scrolled-to-end');
-                            }
-                        };
-
-                        imagesContainer.onscroll = () => {
-                            // 사용자가 직접 스크롤해서 끝에 도달하면 버튼 숨김
-                            if (imagesContainer.scrollLeft + imagesContainer.clientWidth >= imagesContainer.scrollWidth - 1) {
-                                imagesContainer.classList.add('scrolled-to-end');
-                            } else if (imagesContainer.classList.contains('scrolled-to-end')) {
-                                imagesContainer.classList.remove('scrolled-to-end');
-                            }
-                        };
-
+                        container.classList.add('has-scroll');
                     } else {
-                        imagesContainer.classList.remove('has-scroll');
+                        container.classList.remove('has-scroll');
                     }
+                    container.onscroll = () => {
+                        if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 1) {
+                            container.classList.add('scrolled-to-end');
+                        } else if (container.classList.contains('scrolled-to-end')) {
+                            container.classList.remove('scrolled-to-end');
+                        }
+                    };
                 });
             });
         }
         
-        // [추가] 모든 스크롤된 아이템을 리셋하는 함수
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
         function resetAllScrolledItems() {
              document.querySelectorAll('.item-images.scrolled-to-end').forEach(container => {
                 container.scroll({ left: 0, behavior: 'smooth' });
@@ -1041,23 +1009,76 @@
         document.addEventListener('DOMContentLoaded', () => {
             const extrasPopup = document.getElementById('extrasPopup');
 			const closeExtrasBtn = document.getElementById('closeExtrasPopup');
+			const resultsContainer = document.getElementById('results');
+
 			const hideExtrasPopup = () => { extrasPopup.style.display = 'none'; };
 			closeExtrasBtn.addEventListener('click', hideExtrasPopup);
 			window.addEventListener('click', (event) => {
 				if (event.target == extrasPopup) hideExtrasPopup();
 			});
-
-            // [추가] 전역 이벤트 리스너 (스크롤 초기화용)
-            const resultsContainer = document.getElementById('results');
+            
             if (resultsContainer) {
-                resultsContainer.addEventListener('scroll', resetAllScrolledItems);
+                resultsContainer.addEventListener('click', (e) => {
+                    const target = e.target;
+                    const resultItem = target.closest('.result-item');
+                    if (!resultItem) return;
+
+                    if (target.classList.contains('scroll-indicator')) {
+                        e.stopPropagation();
+                        const imagesContainer = resultItem.querySelector('.item-images');
+                        if (imagesContainer) {
+                            imagesContainer.scroll({ left: imagesContainer.scrollWidth, behavior: 'smooth' });
+                            imagesContainer.classList.add('scrolled-to-end');
+                        }
+                        return;
+                    }
+
+                    if (target.closest('.extras-box')) {
+                        e.stopPropagation();
+                        const key = resultItem.dataset.itemKey;
+                        const val = sortedData[key];
+                        if (!val) return;
+
+                        const [originalChars] = val.split('=').map(s => s.trim());
+                        const extrasContent = [];
+                        const fixedItemsInfo = [
+                            { name: '태테르', countText: '50+' }, { name: '달증', countText: '100+' }, 
+                            { name: '빵', countText: '1500+' }, { name: '소환권', countText: '1000+' }
+                        ];
+
+                        originalChars.split(' ').forEach(it => {
+                            const m = it.match(/([가-힣]+)(\d*)/);
+                            if (m) {
+                                const [_, name, cnt] = m;
+                                const charInfo = characters.find(([, kor]) => kor === name);
+                                if (charInfo && !exceptCharacters.includes(charInfo[0]) && !tierCharacters.includes(charInfo[0])) {
+                                    extrasContent.push({ type: 'char', src: `cropped_characters/${name}.png`, alt: name, count: cnt ? parseInt(cnt) : 1 });
+                                }
+                            }
+                        });
+                        fixedItemsInfo.forEach(item => {
+                            extrasContent.push({ type: 'item', title: item.name, count: item.countText });
+                        });
+                        showExtrasPopup(extrasContent);
+                        return;
+                    }
+                    
+                    copyToClipboard(resultItem);
+                });
+
+                resultsContainer.addEventListener('mouseleave', (e) => {
+                    if (e.target.classList.contains('result-item')) {
+                        const imagesContainer = e.target.querySelector('.item-images.scrolled-to-end');
+                        if (imagesContainer) {
+                            imagesContainer.scroll({ left: 0, behavior: 'smooth' });
+                            imagesContainer.classList.remove('scrolled-to-end');
+                        }
+                    }
+                }, true);
+
+                const debouncedReset = debounce(resetAllScrolledItems, 150);
+                resultsContainer.addEventListener('scroll', debouncedReset);
             }
-            document.body.addEventListener('click', (e) => {
-                // 클릭된 요소가 result-item 내부가 아니거나, 스크롤 버튼이 아니면 초기화
-                if (!e.target.closest('.result-item') && !e.target.classList.contains('scroll-indicator')) {
-                    resetAllScrolledItems();
-                }
-            });
         });
     </script>
 </body>
