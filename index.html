@@ -73,7 +73,6 @@
             transform: translateY(-5px);
             z-index: 2;
         }
-        /* [수정] gplay 배경 패턴 추가 */
         .character-box::after {
             content: "";
             position: absolute;
@@ -95,12 +94,18 @@
                 z-index: 10;
             }
             .result-item:hover {
-                background: linear-gradient(135deg, #3a3a3a, #2c2c2c);
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-                border-color: rgba(255, 64, 129, 0.5);
-                transform: translateY(-3px);
-                z-index: 5;
-            }
+				background: linear-gradient(135deg, #33363d, #2a2c30);
+				box-shadow: 0 6px 25px rgba(0,0,0,0.7), 0 0 10px rgba(255, 64, 129, 0.4);
+				transform: translateY(-3px);
+				border-color: rgba(255, 64, 129, 0.5);
+			}
+			.result-item:hover::before {
+				opacity: 1;
+			}
+			.extras-box:hover {
+				background: rgba(176, 176, 176, 0.2);
+				border-color: rgba(176, 176, 176, 0.8);
+			}
         }
         .character-img {
             width: 80px;
@@ -207,35 +212,49 @@
         #results.filtering .content-container {
             opacity: 0;
         }
-        .result-item {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: linear-gradient(135deg, #2a2a2a, #202020);
-            cursor: pointer;
-            transition: background 0.3s, box-shadow 0.3s, border-color 0.3s, transform 0.2s;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            position: relative; /* ::after를 위해 추가 */
-            contain: layout paint;
-            z-index: 1;
-        }
-        /* [수정] gplay 배경 패턴 추가 */
-        .result-item::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
-            opacity: 0.15;
-            border-radius: 12px;
-            pointer-events: none;
-            z-index: 0;
-        }
+        /* [수정] 결과 아이템 스타일 (gf2 스타일 적용) */
+		.result-item {
+			margin-bottom: 15px;
+			padding: 12px 20px;
+			background: linear-gradient(135deg, #202228, #1a1c20);
+			cursor: pointer;
+			transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+			border-radius: 12px;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 2px rgba(0,0,0,0.4);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 15px;
+			position: relative;
+			overflow: hidden;
+		}
+		.result-item::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 4px;
+			height: 100%;
+			background: linear-gradient(180deg, #ff4081, #f50057);
+			opacity: 0.6;
+			transition: opacity 0.3s;
+		}
+
+		.item-images, .result-info-right {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+		.result-info-right {
+			justify-content: flex-end;
+		}
+
         .small-character-img {
+            height: 50px;
             width: auto;
-            height: 60px;
             object-fit: contain;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -248,15 +267,40 @@
             border: 2px solid #D32F2F;
             box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);
         }
-        .item-images {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            position: relative; /* z-index를 위해 추가 */
-            z-index: 1;
-            contain: layout paint;
+        /* [추가] 카운트 배지 관련 스타일 */
+        .image-with-count-container {
+            position: relative;
+            display: inline-block;
+            vertical-align: middle;
         }
+		.image-count-badge {
+		    position: absolute;
+		    bottom: -4px;
+		    right: -4px; 
+		    min-width: 18px;
+		    text-align: center;
+		    background: rgba(0, 0, 0, 0.75);
+		    backdrop-filter: blur(4px);
+		    color: #fff;
+		    padding: 1px 6px;
+		    border-radius: 8px; 
+		    font-family: 'Poppins', sans-serif;
+		    font-size: 13px; 
+		    font-weight: 600;
+		    line-height: 1.4;
+		    border: 1px solid rgba(255, 255, 255, 0.1);
+		    box-shadow: 0 2px 5px rgba(0,0,0,0.6); 
+		    pointer-events: none;
+		}
+		.image-count-badge.rare-badge {
+		    color: #ffc107;
+		    text-shadow: 0 0 5px rgba(255, 193, 7, 0.7);
+		}
+		.image-count-badge.super-rare-badge {
+		    color: #ff5252;
+		    text-shadow: 0 0 5px rgba(255, 82, 82, 0.7);
+		}
+
         .item-box {
             display: inline-flex;
             flex-direction: column;
@@ -281,22 +325,24 @@
             font-size: 12px;
             font-weight: 600;
         }
+        /* [수정] 가격 박스 스타일 (gf2 스타일 기반, ggv 색상 유지) */
         .price-box {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 70px;
-            height: 60px;
-            background: linear-gradient(145deg, #104020, #052912); 
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 50px;
+			min-width: 95px;
+			padding: 0 10px;
+			background: linear-gradient(145deg, #104020, #052912); 
             border: 2px solid #27ae60;
             box-shadow: 0 0 8px rgba(39, 174, 96, 0.5), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(46, 204, 113, 0.2);
-            border-radius: 10px;
+            border-radius: 8px;
             color: #90ee90;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
             font-family: 'Poppins', sans-serif;
             text-shadow: 1px 1px 2px #000;
-        }
+		}
         #tsparticles {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
         }
@@ -345,14 +391,26 @@
         .budget-input-container input[type="number"]:focus { border-color: #ff4081; outline: none; }
         .budget-unit { color: #e0e0e0; margin-left: 8px; font-size: 16px; }
 
+        /* [수정] 기타 박스 스타일 (gf2 스타일 적용) */
 		.extras-box {
-			display: inline-flex; justify-content: center; align-items: center;
-			background: linear-gradient(145deg, #333, #222);
-			border: 2px solid #b0b0b0;
-			box-shadow: 0 0 10px rgba(176, 176, 176, 0.3), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(255,255,255,0.1);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 50px;
+			min-width: 70px;
+			padding: 0 10px;
+			background: rgba(176, 176, 176, 0.1);
+			border: 1px dashed rgba(176, 176, 176, 0.5);
+			border-radius: 8px;
 			cursor: pointer;
+			transition: background 0.2s, border-color 0.2s;
 		}
-		.extras-box .item-title { color: #e0e0e0; text-decoration: underline; margin-bottom: 0; }
+		.extras-box .item-title {
+			color: #e0e0e0;
+			font-size: 14px;
+			text-decoration: none;
+			font-weight: bold;
+		}
 		#extrasPopup {
 			display: none; position: fixed; z-index: 4000; left: 0; top: 0;
 			width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7);
@@ -379,14 +437,21 @@
             .character-box .character-name { font-size: 14px; }
             .spinbox-container input[type="number"] { width: 45px; }
             #filterButton { font-size: 16px; padding: 12px; }
-            .result-item { padding: 12px; }
-            .small-character-img { height: 45px; }
+            
+            /* [수정] 반응형 스타일 */
+            .result-item { padding: 10px; }
+			.item-images, .result-info-right { flex-basis: 100%; }
+			.result-info-right { justify-content: space-between; }
+			.price-box, .extras-box { flex-grow: 1; }
+			.small-character-img, .price-box, .extras-box { height: 45px; }
             .item-images { gap: 5px; }
+
             #copyInstruction { font-size: 1em; }
             #copyMessage { font-size: 1em; padding: 15px 20px; }
-            .item-box, .price-box, .extras-box { width: 55px; height: 45px; }
-            .item-box .item-title, .extras-box .item-title { font-size: 10px; margin-bottom: 0; }
-            .item-box .item-count, .price-box { font-size: 10px; }
+            .item-box { width: 55px; height: 45px; }
+            .item-box .item-title { font-size: 10px; margin-bottom: 0; }
+            .extras-box .item-title { font-size: 12px; }
+            .item-box .item-count, .price-box { font-size: 12px; }
             .budget-box { width: 100%; max-width: 280px; }
             .budget-text { font-size: 16px; }
             .budget-input-container input[type="number"] { width: 100px; padding: 6px 10px; font-size: 14px; }
@@ -426,6 +491,7 @@
 	</div>
 
     <script>
+        // ... (이전 script 내용은 동일) ...
         let lastActivityTime = Date.now();
         const updateActivityTime = () => { lastActivityTime = Date.now(); };
         ['click', 'touchstart', 'scroll', 'keypress'].forEach(event => document.addEventListener(event, updateActivityTime));
@@ -458,40 +524,7 @@
                 });
         });
 
-	    /*
-        tsParticles.load("tsparticles", {
-            particles: {
-                number: { value: 60, density: { enable: true, value_area: 800 }},
-                shape: { type: "star", stroke: { width: 0, color: "#fff" }},
-                size: { value: 3, random: { enable: true, minimumValue: 1 }},
-                move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out" },
-                color: {
-                    value: ["#ff4081", "#f50057", "#D32F2F", "#ff9800", "#FFD700", "#4a148c"]
-                },
-
-                opacity: {
-                    value: { min: 0, max: 1 },
-                    animation: {
-                        enable: true,
-                        speed: { min: 2, max: 4 },
-                        sync: false,
-                        startValue: "random"
-                    }
-                },
-
-                rotate: {
-                    animation: {
-                        enable: true,
-                        speed: { min: 15, max: 25 },
-                        sync: false
-                    }
-                }
-            },
-            interactivity: { events: { onhover: { enable: false }, onclick: { enable: false } }},
-            retina_detect: true
-        });
-		*/
-
+        // ... tsParticles, characters, tierCharacters, exceptCharacters, DOM element selectors 등은 동일 ...
         const characters = [
             ["isabel","이자벨"],["castol","카스톨"],["fumitchell","개미첼"],["myle","마일"],["ervin","어빈"],["gerd","게르드"],["thomas","토마스"],
             ["hwiri","휘리"],["guse","구스"],["dominique","도미니크"],["aph","알프"],["mgisa","마기사"],["sria","새리아"],["ysara","여사라"],["gglas","계글라스"],["buruka","부루카"],
@@ -699,6 +732,9 @@
             return m ? parseInt(m[1].replace(/,/g,'')) : 0;
         }
 
+        // =================================================================
+        // [수정] displayResults 함수 (gf2 스타일 적용)
+        // =================================================================
         function displayResults(data) {
             const res = document.getElementById('results');
             res.scrollTop = 0;
@@ -715,8 +751,6 @@
                 return getPrice(b) - getPrice(a);
             });
             const displayKeys = budgetSelected ? sortedKeys.slice(0, 40) : sortedKeys;
-            const isMobile = window.innerWidth <= 768;
-            const overlapMargin = isMobile ? -26 : -33;
 
             displayKeys.forEach(k => {
                 const item = document.createElement('div');
@@ -730,16 +764,16 @@
                 const val = sortedData[k];
                 if (!val) return;
 
-                const [originalChars, priceCount] = val.split('=').map(s => s.trim());
+                const leftSection = document.createElement('div');
+                leftSection.className = 'item-images';
+
+                const rightSection = document.createElement('div');
+                rightSection.className = 'result-info-right';
+
                 const price = getPrice(k);
-                const countMatch = priceCount.match(/\(([^)]+)\)/);
-                const itemCount = countMatch ? countMatch[1] : 'N/A';
+                const [originalChars] = val.split('=').map(s => s.trim());
                 
-                const imgsContainer = document.createElement('div');
-				imgsContainer.className = 'item-images';
-                
-                const superRareCharImages = [];
-                const rareCharImages = [];
+                const allCharImages = [];
                 const extraCharImages = [];
                 const fixedItemsInfo = [
                     { name: '태테르', countText: '50+' }, { name: '달증', countText: '100+' }, 
@@ -754,62 +788,44 @@
                         const charInfo = characters.find(([_, kor]) => kor === name);
                         if (charInfo) {
                              const imageData = {
-                                src: `cropped_characters/${name}.png`,
-                                alt: name,
-                                engName: charInfo[0]
+                                src: `cropped_characters/${name}.png`, alt: name, engName: charInfo[0], count: rep
                             };
-                            for (let i = 0; i < rep; i++) {
-                                if (exceptCharacters.includes(charInfo[0])) {
-                                    superRareCharImages.push(imageData);
-                                } else if (tierCharacters.includes(charInfo[0])) {
-                                    rareCharImages.push(imageData);
-                                } else {
-                                    extraCharImages.push(imageData);
-                                }
+                            if (exceptCharacters.includes(charInfo[0]) || tierCharacters.includes(charInfo[0])) {
+                                allCharImages.push(imageData);
+                            } else {
+                                extraCharImages.push(imageData);
                             }
                         }
                     }
                 });
+                
+                allCharImages.forEach(charData => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'image-with-count-container';
 
-                const renderImageStacks = (images, className) => {
-                    let i = 0;
-                    while (i < images.length) {
-                        const currentImgData = images[i];
-                        let count = 1;
-                        while (i + 1 < images.length && images[i + 1].src === currentImgData.src) {
-                            count++; i++;
-                        }
-                        if (count > 1) {
-                            const stackContainer = document.createElement('div');
-                            stackContainer.style.display = 'flex';
-                            stackContainer.style.alignItems = 'center';
-                            for (let j = 0; j < count; j++) {
-                                const img = document.createElement('img');
-                                img.src = currentImgData.src; img.alt = currentImgData.alt;
-                                img.className = `small-character-img ${className}`;
-                                img.style.position = 'relative';
-                                img.style.zIndex = count - j;
-                                if (j > 0) {
-                                    img.style.marginLeft = `${overlapMargin}px`;
-                                    img.style.filter = 'brightness(55%)';
-                                }
-                                stackContainer.appendChild(img);
-                            }
-                            imgsContainer.appendChild(stackContainer);
-                        } else {
-                            const img = document.createElement('img');
-                            img.src = currentImgData.src; img.alt = currentImgData.alt;
-                            img.className = `small-character-img ${className}`;
-                            imgsContainer.appendChild(img);
-                        }
-                        i++;
+                    const img = document.createElement('img');
+                    img.src = charData.src; img.alt = charData.alt;
+                    img.className = 'small-character-img';
+
+                    let badgeClass = '';
+                    if (exceptCharacters.includes(charData.engName)) {
+                        img.classList.add('super-rare');
+                        badgeClass = 'super-rare-badge';
+                    } else if (tierCharacters.includes(charData.engName)) {
+                        img.classList.add('rare');
+                        badgeClass = 'rare-badge';
                     }
-                };
+                    imgContainer.appendChild(img);
 
-                renderImageStacks(superRareCharImages, 'super-rare');
-                renderImageStacks(rareCharImages, 'rare');
+                    if (charData.count > 1) {
+                        const badge = document.createElement('div');
+                        badge.className = `image-count-badge ${badgeClass}`;
+                        badge.textContent = `x${charData.count}`;
+                        imgContainer.appendChild(badge);
+                    }
+                    leftSection.appendChild(imgContainer);
+                });
 
-                // [수정] 기타 팝업에 들어갈 모든 콘텐츠를 준비
                 const extrasContent = extraCharImages.map(imgData => ({ type: 'char', ...imgData }));
                 fixedItemsInfo.forEach(item => {
                     extrasContent.push({ type: 'item', title: item.name, count: item.countText });
@@ -817,21 +833,22 @@
 
                 if (extrasContent.length > 0) {
                     const extrasBox = document.createElement('div');
-					extrasBox.className = 'item-box extras-box'; 
-					extrasBox.innerHTML = `<div class="item-title">기타</div>`; // [수정] 텍스트 변경
+					extrasBox.className = 'extras-box';
+					extrasBox.innerHTML = `<div class="item-title">기타</div>`;
 					extrasBox.addEventListener('click', (e) => {
 						e.stopPropagation();
-						showExtrasPopup(extrasContent); // [수정] 통합된 콘텐츠 전달
+						showExtrasPopup(extrasContent);
 					});
-					imgsContainer.appendChild(extrasBox);
+					leftSection.appendChild(extrasBox);
                 }
                 
                 const priceBox = document.createElement('div');
 				priceBox.className = 'price-box';
 				priceBox.textContent = `₩${price.toLocaleString()}`;
-				imgsContainer.appendChild(priceBox);
+				rightSection.appendChild(priceBox);
 
-                item.appendChild(imgsContainer);
+                item.appendChild(leftSection);
+                item.appendChild(rightSection);
                 container.appendChild(item);
             });
 
@@ -848,16 +865,29 @@
 
 			content.forEach(item => {
                 if (item.type === 'char') {
+                    // 캐릭터 개수도 팝업에 표시하도록 수정
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'image-with-count-container';
+                    
                     const img = document.createElement('img');
                     img.src = item.src;
                     img.alt = item.alt;
                     img.className = 'small-character-img';
                     img.loading = 'lazy';
                     img.decoding = 'async';
-                    grid.appendChild(img);
+                    imgContainer.appendChild(img);
+
+                    if (item.count > 1) {
+                        const badge = document.createElement('div');
+                        badge.className = 'image-count-badge';
+                        badge.textContent = `x${item.count}`;
+                        imgContainer.appendChild(badge);
+                    }
+                    grid.appendChild(imgContainer);
+
                 } else if (item.type === 'item') {
                     const box = document.createElement('div');
-                    box.className = 'item-box'; // 기존 item-box 스타일 재사용
+                    box.className = 'item-box';
                     box.innerHTML = `<div class="item-title">${item.title}</div><div class="item-count">${item.count}</div>`;
                     grid.appendChild(box);
                 }
