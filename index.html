@@ -213,19 +213,19 @@
             opacity: 0;
         }
 		.result-item {
-			margin-bottom: 18px;
-			padding: 14px 24px;
+			margin-bottom: 15px;
+			padding: 12px 20px;
 			background: linear-gradient(135deg, #202228, #1a1c20);
 			cursor: pointer;
 			transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-			border-radius: 14px;
+			border-radius: 12px;
 			border: 1px solid rgba(255, 255, 255, 0.1);
 			box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 2px rgba(0,0,0,0.4);
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			flex-wrap: nowrap;
-			gap: 18px;
+			gap: 15px;
 			position: relative;
 			overflow: hidden;
 		}
@@ -241,21 +241,15 @@
 			transition: opacity 0.3s;
 		}
 
-        .item-images-wrapper {
-            flex-grow: 1;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-        }
-
 		.item-images {
 			display: flex;
 			align-items: center;
 			flex-wrap: nowrap;
-			gap: 10px;
+			gap: 8px;
+            flex-grow: 1;
             overflow-x: auto;
-            padding: 6px;
-            margin: -6px;
+            padding: 5px 0;
+            margin: -5px 0;
             scrollbar-width: none;
 		}
         .item-images::-webkit-scrollbar {
@@ -265,17 +259,15 @@
 		.result-info-right {
 			display: flex;
 			align-items: center;
-            flex-shrink: 0;
-            gap: 10px;
+			flex-shrink: 0;
 		}
 
         .small-character-img {
-            height: 60px;
+            height: 50px;
             width: auto;
             object-fit: contain;
-            border-radius: 10px;
+            border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
         }
         .small-character-img.rare {
             border: 2px solid #ff9800;
@@ -293,17 +285,17 @@
         }
 		.image-count-badge {
 		    position: absolute;
-		    bottom: -5px;
-		    right: -5px; 
-		    min-width: 22px;
+		    bottom: -4px;
+		    right: -4px; 
+		    min-width: 18px;
 		    text-align: center;
 		    background: rgba(0, 0, 0, 0.75);
 		    backdrop-filter: blur(4px);
 		    color: #fff;
-		    padding: 2px 7px;
-		    border-radius: 10px; 
+		    padding: 1px 6px;
+		    border-radius: 8px; 
 		    font-family: 'Poppins', sans-serif;
-		    font-size: 15px; 
+		    font-size: 13px; 
 		    font-weight: 600;
 		    line-height: 1.4;
 		    border: 1px solid rgba(255, 255, 255, 0.1);
@@ -323,48 +315,50 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 84px;
-            height: 72px;
+            width: 70px;
+            height: 60px;
             background: linear-gradient(145deg, #4d3e00, #332a00);
             border: 2px solid #ffc107;
             box-shadow: 0 0 10px rgba(255, 193, 7, 0.6), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(255, 215, 0, 0.2);
-            border-radius: 12px;
+            border-radius: 10px;
             flex-shrink: 0;
         }
         .item-box .item-title {
             color: #ffc107;
-            font-size: 17px;
+            font-size: 14px;
             font-weight: bold;
             text-shadow: 1px 1px 2px #000;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         .item-box .item-count {
             color: #fff;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
         }
+        /* [수정] 가격 박스 스타일 변경 */
         .price-box {
 			display: flex;
-			justify-content: flex-end;
-			align-items: center;
-			height: 60px;
-			min-width: 114px;
-			padding: 0 12px;
+			justify-content: flex-end; /* 가로 오른쪽 정렬 */
+			align-items: center;      /* 세로 중앙 정렬 */
+			height: 50px;
+			min-width: 95px;
+			padding: 0 10px;
 			background: linear-gradient(270deg, rgba(39, 174, 96, 0.2), transparent);
-			border-radius: 10px;
+			border-radius: 8px;
 			font-family: 'Poppins', sans-serif;
 		}
         .price-box .price-krw {
-			font-size: 22px;
+			font-size: 18px;
 			font-weight: 700;
 			color: #2ecc71;
 			text-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
 		}
 
+        /* [추가] 스크롤 인디케이터(...) 버튼 스타일 */
         .scroll-indicator {
             position: absolute;
+            right: 125px; /* 가격 박스 너비(95px) + gap(15px) + a little more */
             top: 50%;
-            right: 15px;
             transform: translateY(-50%);
             width: 28px;
             height: 28px;
@@ -373,7 +367,7 @@
             border: 1px solid rgba(255,255,255,0.2);
             color: #fff;
             border-radius: 50%;
-            display: none;
+            display: none; /* 기본적으로 숨김 */
             align-items: center;
             justify-content: center;
             font-size: 18px;
@@ -383,26 +377,12 @@
             z-index: 10;
             transition: opacity 0.2s;
         }
-        .item-images-wrapper.has-scroll .scroll-indicator {
-            display: flex;
+        .item-images.has-scroll + .scroll-indicator {
+            display: flex; /* 스크롤이 있을 때만 표시 */
         }
-        .item-images-wrapper.scrolled-to-end .scroll-indicator {
+        .item-images.scrolled-to-end + .scroll-indicator {
             opacity: 0;
             pointer-events: none;
-        }
-        .item-images-wrapper.has-scroll::after {
-            content: '';
-            position: absolute;
-            top: 0; right: 0;
-            width: 70px; height: 100%;
-            background: linear-gradient(to right, rgba(26, 28, 32, 0), #1a1c20 80%);
-            pointer-events: none;
-            z-index: 5;
-            transition: opacity 0.3s;
-            opacity: 1;
-        }
-        .item-images-wrapper.scrolled-to-end::after {
-            opacity: 0;
         }
 
         #tsparticles {
@@ -457,19 +437,19 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			height: 60px;
-			min-width: 84px;
-			padding: 0 12px;
+			height: 50px;
+			min-width: 70px;
+			padding: 0 10px;
 			background: rgba(176, 176, 176, 0.1);
 			border: 1px dashed rgba(176, 176, 176, 0.5);
-			border-radius: 10px;
+			border-radius: 8px;
 			cursor: pointer;
 			transition: background 0.2s, border-color 0.2s;
             flex-shrink: 0;
 		}
 		.extras-box .item-title {
 			color: #e0e0e0;
-			font-size: 17px;
+			font-size: 14px;
 			text-decoration: none;
 			font-weight: bold;
 		}
@@ -500,26 +480,22 @@
             .spinbox-container input[type="number"] { width: 45px; }
             #filterButton { font-size: 16px; padding: 12px; }
             
-            .result-item { flex-wrap: wrap; padding: 12px; }
-            .item-images-wrapper, .result-info-right { flex-basis: 100%; }
-            .result-info-right { justify-content: space-between; }
+            .result-item { flex-wrap: wrap; }
+            .item-images { flex-basis: 100%; }
+            .result-info-right { flex-basis: 100%; justify-content: flex-end; }
 			.price-box, .extras-box { flex-grow: 1; justify-content: center;}
             .price-box { align-items: center; } /* 모바일에선 가격 중앙 정렬 */
-			.small-character-img, .price-box, .extras-box { height: 54px; }
-            .item-images { gap: 6px; }
-
-            .scroll-indicator { display: none !important; }
-            .item-images-wrapper.has-scroll::after {
-			    width: 60px;
-			}
+			.small-character-img, .price-box, .extras-box { height: 45px; }
+            .item-images { gap: 5px; }
 
             #copyInstruction { font-size: 1em; }
             #copyMessage { font-size: 1em; padding: 15px 20px; }
-            .item-box { width: 66px; height: 54px; }
-            .item-box .item-title { font-size: 12px; margin-bottom: 2px; }
-            .extras-box .item-title { font-size: 14px; }
-            .item-box .item-count { font-size: 14px; }
-            .price-box .price-krw { font-size: 19px; }
+            .item-box { width: 55px; height: 45px; }
+            .item-box .item-title { font-size: 10px; margin-bottom: 0; }
+            .extras-box .item-title { font-size: 12px; }
+            .item-box .item-count { font-size: 12px; }
+            .price-box .price-krw { font-size: 16px; }
+            .scroll-indicator { display: none !important; } /* 모바일에선 ... 버튼 비활성화 */
 
             .budget-box { width: 100%; max-width: 280px; }
             .budget-text { font-size: 16px; }
@@ -826,19 +802,9 @@
 					if (e.target.closest('.extras-box') || e.target.classList.contains('scroll-indicator')) return;
 					copyToClipboard(item);
 				});
-                item.addEventListener('mouseenter', () => resetOtherScrolledItems(item));
-                item.addEventListener('mouseleave', () => {
-                    const container = item.querySelector('.item-images-wrapper.has-scroll .item-images');
-                    if (container && container.scrollLeft > 0) {
-                        container.scroll({ left: 0, behavior: 'smooth' });
-                    }
-                });
 
                 const val = sortedData[k];
                 if (!val) return;
-
-                const imagesWrapper = document.createElement('div');
-                imagesWrapper.className = 'item-images-wrapper';
 
                 const leftSection = document.createElement('div');
                 leftSection.className = 'item-images';
@@ -920,6 +886,7 @@
                 
                 const priceBox = document.createElement('div');
 				priceBox.className = 'price-box';
+                // [수정] '가격' 텍스트 제거
 				priceBox.innerHTML = `<div class="price-krw">₩${price.toLocaleString()}</div>`;
 				rightSection.appendChild(priceBox);
 
@@ -927,10 +894,8 @@
                 scrollIndicator.className = 'scroll-indicator';
                 scrollIndicator.innerHTML = '...';
                 
-                imagesWrapper.appendChild(leftSection);
-                imagesWrapper.appendChild(scrollIndicator);
-
-                item.appendChild(imagesWrapper);
+                item.appendChild(leftSection);
+                item.appendChild(scrollIndicator);
                 item.appendChild(rightSection);
                 container.appendChild(item);
             });
@@ -943,58 +908,52 @@
         }
         
         function setupScrollIndicators() {
-            document.querySelectorAll('#results .result-item').forEach(item => {
-                const wrapper = item.querySelector('.item-images-wrapper');
+            const resultItems = document.querySelectorAll('#results .result-item');
+
+            resultItems.forEach(item => {
                 const imagesContainer = item.querySelector('.item-images');
                 const scrollIndicator = item.querySelector('.scroll-indicator');
-
-                if (!wrapper || !imagesContainer || !scrollIndicator) return;
 
                 requestAnimationFrame(() => {
                     const hasScroll = imagesContainer.scrollWidth > imagesContainer.clientWidth;
                     if (hasScroll) {
-                        wrapper.classList.add('has-scroll');
-                        
+                        imagesContainer.classList.add('has-scroll');
+
                         scrollIndicator.onclick = (e) => {
                             e.stopPropagation();
                             imagesContainer.scroll({
                                 left: imagesContainer.scrollWidth - imagesContainer.clientWidth,
                                 behavior: 'smooth'
                             });
+                            imagesContainer.classList.add('scrolled-to-end');
+                        };
+
+                        item.onmouseleave = () => {
+                            if (imagesContainer.classList.contains('scrolled-to-end')) {
+                                imagesContainer.scroll({ left: 0, behavior: 'smooth' });
+                                imagesContainer.classList.remove('scrolled-to-end');
+                            }
                         };
 
                         imagesContainer.onscroll = () => {
-                            const isAtEnd = imagesContainer.scrollLeft + imagesContainer.clientWidth >= imagesContainer.scrollWidth - 5;
-                            if (isAtEnd) {
-                                wrapper.classList.add('scrolled-to-end');
-                            } else {
-                                wrapper.classList.remove('scrolled-to-end');
+                            if (imagesContainer.scrollLeft + imagesContainer.clientWidth >= imagesContainer.scrollWidth - 1) {
+                                imagesContainer.classList.add('scrolled-to-end');
+                            } else if (imagesContainer.classList.contains('scrolled-to-end')) {
+                                imagesContainer.classList.remove('scrolled-to-end');
                             }
                         };
 
                     } else {
-                        wrapper.classList.remove('has-scroll');
+                        imagesContainer.classList.remove('has-scroll');
                     }
                 });
             });
         }
         
         function resetAllScrolledItems() {
-             document.querySelectorAll('.item-images-wrapper.has-scroll .item-images').forEach(container => {
-                if (container.scrollLeft > 0) {
-                    container.scroll({ left: 0, behavior: 'smooth' });
-                }
-            });
-        }
-
-        function resetOtherScrolledItems(currentItem) {
-            document.querySelectorAll('.result-item').forEach(item => {
-                if (item !== currentItem) {
-                    const container = item.querySelector('.item-images-wrapper.has-scroll .item-images');
-                    if (container && container.scrollLeft > 0) {
-                        container.scroll({ left: 0, behavior: 'smooth' });
-                    }
-                }
+             document.querySelectorAll('.item-images.scrolled-to-end').forEach(container => {
+                container.scroll({ left: 0, behavior: 'smooth' });
+                container.classList.remove('scrolled-to-end');
             });
         }
 
