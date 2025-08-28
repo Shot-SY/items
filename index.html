@@ -240,13 +240,17 @@
 			opacity: 0.6;
 			transition: opacity 0.3s;
 		}
-
+        .item-images-wrapper { /* [추가] tskrb의 구조를 따르기 위한 래퍼 */
+            flex-grow: 1; 
+            position: relative; 
+            overflow: hidden; 
+            display: flex;
+        }
 		.item-images {
 			display: flex;
 			align-items: center;
 			flex-wrap: nowrap;
 			gap: 8px;
-            flex-grow: 1;
             overflow-x: auto;
             padding: 5px 0;
             margin: -5px 0;
@@ -335,11 +339,10 @@
             font-size: 12px;
             font-weight: 600;
         }
-        /* [수정] 가격 박스 스타일 변경 */
         .price-box {
 			display: flex;
-			justify-content: flex-end; /* 가로 오른쪽 정렬 */
-			align-items: center;      /* 세로 중앙 정렬 */
+			justify-content: flex-end;
+			align-items: center;
 			height: 50px;
 			min-width: 95px;
 			padding: 0 10px;
@@ -354,35 +357,51 @@
 			text-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
 		}
 
-        /* [추가] 스크롤 인디케이터(...) 버튼 스타일 */
         .scroll-indicator {
+			position: absolute;
+			top: 50%;
+            right: 15px; 
+			transform: translateY(-50%);
+			width: 28px;
+			height: 28px;
+			background: linear-gradient(135deg, rgba(40,40,40,0.8), rgba(20,20,20,0.8));
+			backdrop-filter: blur(5px);
+			border: 1px solid rgba(255,255,255,0.2);
+			color: #fff;
+			border-radius: 50%;
+			display: none; 
+			align-items: center;
+			justify-content: center;
+			font-size: 18px;
+			line-height: 28px;
+			font-weight: bold;
+			cursor: pointer;
+			z-index: 10;
+			transition: opacity 0.2s;
+            text-shadow: 0 0 4px rgba(0,0,0,0.5);
+		}
+		.item-images-wrapper.has-scroll .scroll-indicator {
+			display: flex;
+		}
+		.item-images-wrapper.scrolled-to-end .scroll-indicator {
+			opacity: 0;
+			pointer-events: none;
+		}
+        .item-images-wrapper.has-scroll::after {
+            content: '';
             position: absolute;
-            right: 125px; /* 가격 박스 너비(95px) + gap(15px) + a little more */
-            top: 50%;
-            transform: translateY(-50%);
-            width: 28px;
-            height: 28px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #fff;
-            border-radius: 50%;
-            display: none; /* 기본적으로 숨김 */
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            line-height: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10;
-            transition: opacity 0.2s;
-        }
-        .item-images.has-scroll + .scroll-indicator {
-            display: flex; /* 스크롤이 있을 때만 표시 */
-        }
-        .item-images.scrolled-to-end + .scroll-indicator {
-            opacity: 0;
+            top: 0;
+            right: 0;
+            width: 70px;
+            height: 100%;
+            background: linear-gradient(to right, rgba(26, 28, 32, 0), #1a1c20 80%);
             pointer-events: none;
+            z-index: 5;
+            transition: opacity 0.3s;
+            opacity: 1;
+        }
+        .item-images-wrapper.scrolled-to-end::after {
+            opacity: 0;
         }
 
         #tsparticles {
@@ -481,10 +500,11 @@
             #filterButton { font-size: 16px; padding: 12px; }
             
             .result-item { flex-wrap: wrap; }
+            .item-images-wrapper { flex-basis: 100%; } /* [추가] 모바일 레이아웃 */
             .item-images { flex-basis: 100%; }
             .result-info-right { flex-basis: 100%; justify-content: flex-end; }
 			.price-box, .extras-box { flex-grow: 1; justify-content: center;}
-            .price-box { align-items: center; } /* 모바일에선 가격 중앙 정렬 */
+            .price-box { align-items: center; }
 			.small-character-img, .price-box, .extras-box { height: 45px; }
             .item-images { gap: 5px; }
 
@@ -495,7 +515,7 @@
             .extras-box .item-title { font-size: 12px; }
             .item-box .item-count { font-size: 12px; }
             .price-box .price-krw { font-size: 16px; }
-            .scroll-indicator { display: none !important; } /* 모바일에선 ... 버튼 비활성화 */
+            .scroll-indicator { display: none !important; }
 
             .budget-box { width: 100%; max-width: 280px; }
             .budget-text { font-size: 16px; }
@@ -536,7 +556,6 @@
 	</div>
 
     <script>
-        // ... (이전 script 내용은 동일) ...
         let lastActivityTime = Date.now();
         const updateActivityTime = () => { lastActivityTime = Date.now(); };
         ['click', 'touchstart', 'scroll', 'keypress'].forEach(event => document.addEventListener(event, updateActivityTime));
@@ -569,7 +588,6 @@
                 });
         });
 
-        // ... tsParticles, characters, tierCharacters, exceptCharacters, DOM element selectors 등은 동일 ...
         const characters = [
             ["reone","레오네"],["isabel","이자벨"],["castol","카스톨"],["fumitchell","개미첼"],["myle","마일"],["ervin","어빈"],["gerd","게르드"],["thomas","토마스"],
             ["hwiri","휘리"],["guse","구스"],["dominique","도미니크"],["aph","알프"],["mgisa","마기사"],["sria","새리아"],["kzimu","카지무"],["ysara","여사라"],["gglas","계글라스"],["buruka","부루카"],
@@ -584,6 +602,7 @@
         const exceptCharacters = ["reone","isabel","castol", "fumitchell", "myle", "ervin", "gerd", "thomas"];
 
         let sortedData = {}, luaData = {};
+        let itemObserver; // [추가] IntersectionObserver 변수
         const characterGrid = document.getElementById('characterGrid');
         const budgetBox = document.getElementById('budgetBox');
         const budgetInput = document.getElementById('budgetInput');
@@ -777,6 +796,78 @@
             return m ? parseInt(m[1].replace(/,/g,'')) : 0;
         }
 
+        // [추가] tskrb로부터 가져온 최적화 관련 함수들
+        function createCharacterImageElement(charData, isLazy = false) {
+            const container = document.createElement('div');
+            container.className = 'image-with-count-container';
+            if (isLazy) container.classList.add('js-lazy-loaded');
+            
+            const img = document.createElement('img');
+            img.src = charData.src;
+            img.alt = charData.alt;
+            img.className = 'small-character-img';
+            
+            let badgeClass = '';
+            if (exceptCharacters.includes(charData.engName)) {
+                img.classList.add('super-rare');
+                badgeClass = 'super-rare-badge';
+            } else if (tierCharacters.includes(charData.engName)) {
+                img.classList.add('rare');
+                badgeClass = 'rare-badge';
+            }
+            container.appendChild(img);
+
+            if (charData.count > 1) {
+                const badge = document.createElement('div');
+                badge.className = `image-count-badge ${badgeClass}`;
+                badge.textContent = `x${charData.count}`;
+                container.appendChild(badge);
+            }
+            return container;
+        }
+
+        function setupItemObserver() {
+            if (itemObserver) itemObserver.disconnect();
+            const options = { root: document.getElementById('results'), rootMargin: '400px 0px', threshold: 0 };
+            itemObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    const item = entry.target;
+                    if (entry.isIntersecting) {
+                        clearTimeout(item.revertTimer);
+                        item.renderTimer = setTimeout(() => renderFullItem(item), 100);
+                    } else {
+                        clearTimeout(item.renderTimer);
+                        item.revertTimer = setTimeout(() => revertToLazyItem(item), 100);
+                    }
+                });
+            }, options);
+            const lazyItems = document.querySelectorAll('.lazy-load-item');
+            lazyItems.forEach(item => itemObserver.observe(item));
+        }
+
+        function renderFullItem(item) {
+            if (item.querySelector('.js-lazy-loaded')) return;
+            const remainingCharsData = item.dataset.remainingChars;
+            if (remainingCharsData) {
+                const remainingChars = JSON.parse(remainingCharsData);
+                const imageContainer = item.querySelector('.item-images');
+                const extrasBox = imageContainer.querySelector('.extras-box');
+                remainingChars.forEach(charData => {
+                    const imageElement = createCharacterImageElement(charData, true);
+                    if (extrasBox) imageContainer.insertBefore(imageElement, extrasBox);
+                    else imageContainer.appendChild(imageElement);
+                });
+            }
+            setupScrollIndicatorForItem(item);
+        }
+
+        function revertToLazyItem(item) {
+            const lazyElements = item.querySelectorAll('.js-lazy-loaded');
+            if (lazyElements.length === 0) return;
+            lazyElements.forEach(el => el.remove());
+            setupScrollIndicatorForItem(item);
+        }
+
         function displayResults(data) {
             const res = document.getElementById('results');
             res.scrollTop = 0;
@@ -806,8 +897,10 @@
                 const val = sortedData[k];
                 if (!val) return;
 
-                const leftSection = document.createElement('div');
-                leftSection.className = 'item-images';
+                const imagesWrapper = document.createElement('div');
+                imagesWrapper.className = 'item-images-wrapper';
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'item-images';
 
                 const rightSection = document.createElement('div');
                 rightSection.className = 'result-info-right';
@@ -841,32 +934,16 @@
                     }
                 });
                 
-                allCharImages.forEach(charData => {
-                    const imgContainer = document.createElement('div');
-                    imgContainer.className = 'image-with-count-container';
-
-                    const img = document.createElement('img');
-                    img.src = charData.src; img.alt = charData.alt;
-                    img.className = 'small-character-img';
-
-                    let badgeClass = '';
-                    if (exceptCharacters.includes(charData.engName)) {
-                        img.classList.add('super-rare');
-                        badgeClass = 'super-rare-badge';
-                    } else if (tierCharacters.includes(charData.engName)) {
-                        img.classList.add('rare');
-                        badgeClass = 'rare-badge';
+                // [수정] 최적화된 렌더링 로직 적용
+                if (allCharImages.length > 0) {
+                    const firstCharData = allCharImages[0];
+                    imageContainer.appendChild(createCharacterImageElement(firstCharData, false));
+                    const remainingCharsData = allCharImages.slice(1);
+                    if (remainingCharsData.length > 0) {
+                        item.classList.add('lazy-load-item');
+                        item.dataset.remainingChars = JSON.stringify(remainingCharsData);
                     }
-                    imgContainer.appendChild(img);
-
-                    if (charData.count > 1) {
-                        const badge = document.createElement('div');
-                        badge.className = `image-count-badge ${badgeClass}`;
-                        badge.textContent = `x${charData.count}`;
-                        imgContainer.appendChild(badge);
-                    }
-                    leftSection.appendChild(imgContainer);
-                });
+                }
 
                 const extrasContent = extraCharImages.map(imgData => ({ type: 'char', ...imgData }));
                 fixedItemsInfo.forEach(item => {
@@ -881,12 +958,11 @@
 						e.stopPropagation();
 						showExtrasPopup(extrasContent);
 					});
-					leftSection.appendChild(extrasBox);
+					imageContainer.appendChild(extrasBox);
                 }
                 
                 const priceBox = document.createElement('div');
 				priceBox.className = 'price-box';
-                // [수정] '가격' 텍스트 제거
 				priceBox.innerHTML = `<div class="price-krw">₩${price.toLocaleString()}</div>`;
 				rightSection.appendChild(priceBox);
 
@@ -894,8 +970,9 @@
                 scrollIndicator.className = 'scroll-indicator';
                 scrollIndicator.innerHTML = '...';
                 
-                item.appendChild(leftSection);
-                item.appendChild(scrollIndicator);
+                imagesWrapper.appendChild(imageContainer);
+                imagesWrapper.appendChild(scrollIndicator);
+                item.appendChild(imagesWrapper);
                 item.appendChild(rightSection);
                 container.appendChild(item);
             });
@@ -905,55 +982,39 @@
             document.getElementById('copyInstruction').style.display = 'block';
 
             setupScrollIndicators();
+            setupItemObserver(); // [추가] 옵저버 설정
         }
         
+        // [수정] 스크롤 인디케이터 로직을 tskrb와 유사하게 변경
         function setupScrollIndicators() {
-            const resultItems = document.querySelectorAll('#results .result-item');
-
-            resultItems.forEach(item => {
-                const imagesContainer = item.querySelector('.item-images');
-                const scrollIndicator = item.querySelector('.scroll-indicator');
-
-                requestAnimationFrame(() => {
-                    const hasScroll = imagesContainer.scrollWidth > imagesContainer.clientWidth;
-                    if (hasScroll) {
-                        imagesContainer.classList.add('has-scroll');
-
-                        scrollIndicator.onclick = (e) => {
-                            e.stopPropagation();
-                            imagesContainer.scroll({
-                                left: imagesContainer.scrollWidth - imagesContainer.clientWidth,
-                                behavior: 'smooth'
-                            });
-                            imagesContainer.classList.add('scrolled-to-end');
-                        };
-
-                        item.onmouseleave = () => {
-                            if (imagesContainer.classList.contains('scrolled-to-end')) {
-                                imagesContainer.scroll({ left: 0, behavior: 'smooth' });
-                                imagesContainer.classList.remove('scrolled-to-end');
-                            }
-                        };
-
-                        imagesContainer.onscroll = () => {
-                            if (imagesContainer.scrollLeft + imagesContainer.clientWidth >= imagesContainer.scrollWidth - 1) {
-                                imagesContainer.classList.add('scrolled-to-end');
-                            } else if (imagesContainer.classList.contains('scrolled-to-end')) {
-                                imagesContainer.classList.remove('scrolled-to-end');
-                            }
-                        };
-
-                    } else {
-                        imagesContainer.classList.remove('has-scroll');
-                    }
-                });
+			document.querySelectorAll('#results .result-item').forEach(setupScrollIndicatorForItem);
+		}
+        
+        function setupScrollIndicatorForItem(item) {
+            const wrapper = item.querySelector('.item-images-wrapper');
+            const imagesContainer = item.querySelector('.item-images');
+            const scrollIndicator = item.querySelector('.scroll-indicator');
+            if (!wrapper || !imagesContainer || !scrollIndicator) return;
+            requestAnimationFrame(() => {
+                const hasScroll = imagesContainer.scrollWidth > imagesContainer.clientWidth;
+                if (hasScroll) {
+                    wrapper.classList.add('has-scroll');
+                    scrollIndicator.onclick = (e) => { e.stopPropagation(); imagesContainer.scroll({ left: imagesContainer.scrollWidth - imagesContainer.clientWidth, behavior: 'smooth' }); };
+                    imagesContainer.onscroll = () => { wrapper.classList.toggle('scrolled-to-end', imagesContainer.scrollLeft + imagesContainer.clientWidth >= imagesContainer.scrollWidth - 5); };
+                    imagesContainer.dispatchEvent(new Event('scroll'));
+                } else {
+                    wrapper.classList.remove('has-scroll', 'scrolled-to-end');
+                    imagesContainer.onscroll = null;
+                    scrollIndicator.onclick = null;
+                }
             });
         }
         
         function resetAllScrolledItems() {
-             document.querySelectorAll('.item-images.scrolled-to-end').forEach(container => {
-                container.scroll({ left: 0, behavior: 'smooth' });
-                container.classList.remove('scrolled-to-end');
+             document.querySelectorAll('.item-images-wrapper.has-scroll .item-images').forEach(container => {
+                if (container.scrollLeft > 0) {
+                    container.scroll({ left: 0, behavior: 'smooth' });
+                }
             });
         }
 
