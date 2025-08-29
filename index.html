@@ -728,7 +728,6 @@
             }).catch(error => console.error('데이터 로딩 오류:', error));
         }
 
-        // ===== [새 함수] 현재 필터링된 아이템 목록 기준, 전체에 적용될 할인액 계산 =====
         function calculateReductionAmount(itemKeys) {
             const pricesAfterBaseDiscount = itemKeys
                 .map(k => getPrice(k) * 0.8)
@@ -736,41 +735,35 @@
 
             if (pricesAfterBaseDiscount.length > 0) {
                 const minPrice = Math.min(...pricesAfterBaseDiscount);
-                // 29000원 이하로 내려가지 않도록 할인액 조정
                 return Math.max(0, minPrice - 29000);
             }
             return 0;
         }
 
-        // ===== [수정된 함수] 필터링 로직 변경 =====
         function filterData() {
             const resultsDiv = document.getElementById('results');
             resultsDiv.classList.add('filtering');
             
             setTimeout(() => {
-                // 1. 선택된 캐릭터 기준으로 1차 필터링
                 let filtered = {};
                 for(const [k, v] of Object.entries(luaData)) {
                     const chars = v.match(/.{1,3}/g)||[];
                     if(checkConditions(chars)) filtered[k] = v;
                 }
 
-                // 2. 1차 필터링된 모든 아이템 기준으로 '할인액' 계산
                 const allMatchingKeys = Object.keys(filtered);
                 const reductionAmount = calculateReductionAmount(allMatchingKeys);
         
-                // 3. '추천 조합 보기'가 활성화된 경우, 최종 할인가 기준으로 2차 필터링
                 const budgetSelected = budgetBox.classList.contains('selected');
                 if (budgetSelected) {
                     const budgetValue = parseFloat(budgetInput.value);
                     if (!isNaN(budgetValue) && budgetValue > 0) {
-                        const minPrice = budgetValue * 0.7; // 툴팁에 맞게 ±30%로 수정
+                        const minPrice = budgetValue * 0.7;
                         const maxPrice = budgetValue * 1.3;
 
                         filtered = Object.fromEntries(
                             Object.entries(filtered).filter(([key]) => {
                                 const originalPrice = getPrice(key);
-                                // 최종 할인가를 계산하여 예산 범위와 비교
                                 const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
                                 return finalPrice >= minPrice && finalPrice <= maxPrice;
                             })
@@ -778,7 +771,6 @@
                     }
                 }
                 
-                // 4. 필터링된 최종 결과를 displayResults 함수에 '할인액'과 함께 전달
                 displayResults(filtered, reductionAmount);
                 resultsDiv.classList.remove('filtering');
             }, 200);
@@ -890,7 +882,6 @@
             setupScrollIndicatorForItem(item);
         }
 
-        // ===== [수정된 함수] filterData로부터 'reductionAmount'를 인자로 받음 =====
         function displayResults(data, reductionAmount) {
             const res = document.getElementById('results');
             res.scrollTop = 0;
@@ -932,7 +923,6 @@
                 const rightSection = document.createElement('div');
                 rightSection.className = 'result-info-right';
 
-                // 전달받은 reductionAmount를 사용하여 최종 가격 계산
                 const originalPrice = getPrice(k);
                 const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
                 
@@ -1090,6 +1080,7 @@
 			popup.style.display = 'flex';
 		}
         
+        // ===== [수정된 함수] 복사 내용에 (번호) 추가 =====
         function copyToClipboard(el) {
             const itemKey = el.dataset.itemKey;
             const priceElement = el.querySelector('.price-krw');
@@ -1108,7 +1099,9 @@
             const characterPart = originalDataString.split('=')[0].trim();
             const discountedPriceText = priceElement.textContent;
             const formattedDiscountedPrice = discountedPriceText.replace('₩', '').trim();
-            const textToCopy = `${characterPart} = ${formattedDiscountedPrice}`;
+            
+            // 최종 복사 문자열에 (번호)를 다시 추가합니다.
+            const textToCopy = `${characterPart} = ${formattedDiscountedPrice} (${itemKey})`;
 
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showCopyMessage();
