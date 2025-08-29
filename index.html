@@ -1096,12 +1096,21 @@
                 return;
             }
 
+            // 정규식을 사용해 문자열 끝에서 "(숫자)" 패턴을 찾습니다.
+            let numericId = itemKey; // 기본값으로 itemKey를 사용 (안전장치)
+            const match = originalDataString.match(/\((\d+)\)\s*$/);
+            
+            // 정규식 매칭에 성공하면, 캡처된 숫자 부분을 numericId로 사용합니다.
+            if (match && match[1]) {
+                numericId = match[1];
+            }
+
             const characterPart = originalDataString.split('=')[0].trim();
             const discountedPriceText = priceElement.textContent;
             const formattedDiscountedPrice = discountedPriceText.replace('₩', '').trim();
             
-            // 최종 복사 문자열에 (번호)를 다시 추가합니다.
-            const textToCopy = `${characterPart} = ${formattedDiscountedPrice} (${itemKey})`;
+            // 최종 복사 문자열에 추출한 숫자 번호를 사용합니다.
+            const textToCopy = `${characterPart} = ${formattedDiscountedPrice} (${numericId})`;
 
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showCopyMessage();
