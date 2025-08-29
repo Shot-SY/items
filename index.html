@@ -610,7 +610,7 @@
         const exceptCharacters = ["reone","isabel","castol", "fumitchell", "myle", "ervin", "gerd", "thomas"];
 
         let sortedData = {}, luaData = {};
-        let itemObserver; // [추가] IntersectionObserver 변수
+        let itemObserver;
         const characterGrid = document.getElementById('characterGrid');
         const budgetBox = document.getElementById('budgetBox');
         const budgetInput = document.getElementById('budgetInput');
@@ -728,43 +728,58 @@
             }).catch(error => console.error('데이터 로딩 오류:', error));
         }
 
+        // ===== [새 함수] 현재 필터링된 아이템 목록 기준, 전체에 적용될 할인액 계산 =====
+        function calculateReductionAmount(itemKeys) {
+            const pricesAfterBaseDiscount = itemKeys
+                .map(k => getPrice(k) * 0.8)
+                .filter(p => p > 0);
+
+            if (pricesAfterBaseDiscount.length > 0) {
+                const minPrice = Math.min(...pricesAfterBaseDiscount);
+                // 29000원 이하로 내려가지 않도록 할인액 조정
+                return Math.max(0, minPrice - 29000);
+            }
+            return 0;
+        }
+
+        // ===== [수정된 함수] 필터링 로직 변경 =====
         function filterData() {
             const resultsDiv = document.getElementById('results');
             resultsDiv.classList.add('filtering');
             
             setTimeout(() => {
+                // 1. 선택된 캐릭터 기준으로 1차 필터링
                 let filtered = {};
                 for(const [k, v] of Object.entries(luaData)) {
                     const chars = v.match(/.{1,3}/g)||[];
                     if(checkConditions(chars)) filtered[k] = v;
                 }
+
+                // 2. 1차 필터링된 모든 아이템 기준으로 '할인액' 계산
+                const allMatchingKeys = Object.keys(filtered);
+                const reductionAmount = calculateReductionAmount(allMatchingKeys);
         
+                // 3. '추천 조합 보기'가 활성화된 경우, 최종 할인가 기준으로 2차 필터링
                 const budgetSelected = budgetBox.classList.contains('selected');
                 if (budgetSelected) {
                     const budgetValue = parseFloat(budgetInput.value);
                     if (!isNaN(budgetValue) && budgetValue > 0) {
-                        const minPrice = budgetValue * 0.65;
-                        const maxPrice = budgetValue * 1.35;
+                        const minPrice = budgetValue * 0.7; // 툴팁에 맞게 ±30%로 수정
+                        const maxPrice = budgetValue * 1.3;
+
                         filtered = Object.fromEntries(
                             Object.entries(filtered).filter(([key]) => {
-                                const price = getPrice(key);
-                                return price >= minPrice && price <= maxPrice;
+                                const originalPrice = getPrice(key);
+                                // 최종 할인가를 계산하여 예산 범위와 비교
+                                const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
+                                return finalPrice >= minPrice && finalPrice <= maxPrice;
                             })
                         );
                     }
                 }
                 
-                const sortedKeys = Object.keys(filtered).sort((a, b) => {
-                    if (budgetSelected) {
-                        return getSelectedCharacterSum(filtered[b]) - getSelectedCharacterSum(filtered[a]);
-                    }
-                    return getPrice(a) - getPrice(b); 
-                });
-                
-                const final = {};
-                sortedKeys.forEach(key => { final[key] = filtered[key]; });
-                
-                displayResults(final);
+                // 4. 필터링된 최종 결과를 displayResults 함수에 '할인액'과 함께 전달
+                displayResults(filtered, reductionAmount);
                 resultsDiv.classList.remove('filtering');
             }, 200);
         }
@@ -875,35 +890,24 @@
             setupScrollIndicatorForItem(item);
         }
 
-        // ===== [수정된 displayResults 함수 시작] =====
-        function displayResults(data) {
+        // ===== [수정된 함수] filterData로부터 'reductionAmount'를 인자로 받음 =====
+        function displayResults(data, reductionAmount) {
             const res = document.getElementById('results');
             res.scrollTop = 0;
             const fragment = document.createDocumentFragment();
 			const container = document.createElement('div');
 			container.className = 'content-container';
 			fragment.appendChild(container);
-
-            // --- 새로운 가격 계산 로직 ---
-            const allItemKeys = Object.keys(data);
-            const pricesAfter30Off = allItemKeys
-                .map(k => getPrice(k) * 0.8)
-                .filter(p => p > 0);
-
-            let reductionAmount = 0;
-            if (pricesAfter30Off.length > 0) {
-                const minPriceAfter30Off = Math.min(...pricesAfter30Off);
-                reductionAmount = minPriceAfter30Off - 29000;
-            }
-            // --- 새로운 가격 계산 로직 끝 ---
             
             const budgetSelected = budgetBox.classList.contains('selected');
             const sortedKeys = Object.keys(data).sort((a, b) => {
                 if (budgetSelected) {
-                    return getSelectedCharacterSum(luaData[b]) - getSelectedCharacterSum(luaData[a]);
+                    const sumA = getSelectedCharacterSum(luaData[a]);
+                    const sumB = getSelectedCharacterSum(luaData[b]);
+                    if (sumB !== sumA) return sumB - sumA;
                 }
-                const finalPriceA = (getPrice(a) * 0.8) - reductionAmount;
-                const finalPriceB = (getPrice(b) * 0.8) - reductionAmount;
+                const finalPriceA = Math.round((getPrice(a) * 0.8) - reductionAmount);
+                const finalPriceB = Math.round((getPrice(b) * 0.8) - reductionAmount);
                 return finalPriceA - finalPriceB;
             });
             const displayKeys = budgetSelected ? sortedKeys.slice(0, 40) : sortedKeys;
@@ -928,10 +932,9 @@
                 const rightSection = document.createElement('div');
                 rightSection.className = 'result-info-right';
 
-                // --- 가격 계산 및 표시 로직 변경 ---
+                // 전달받은 reductionAmount를 사용하여 최종 가격 계산
                 const originalPrice = getPrice(k);
                 const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
-                // --- 가격 계산 및 표시 로직 변경 끝 ---
                 
                 const [originalChars] = val.split('=').map(s => s.trim());
                 
@@ -990,7 +993,6 @@
                 const priceBox = document.createElement('div');
 				priceBox.className = 'price-box';
 
-                // --- 가격 HTML 구조 변경 ---
                 if (originalPrice > 0) {
 				    priceBox.innerHTML = `
                         <div class="original-price">₩${originalPrice.toLocaleString()}</div>
@@ -999,7 +1001,6 @@
                 } else {
                     priceBox.innerHTML = `<div class="price-krw">₩0</div>`;
                 }
-                // --- 가격 HTML 구조 변경 끝 ---
 				rightSection.appendChild(priceBox);
 
                 const scrollIndicator = document.createElement('div');
@@ -1020,7 +1021,6 @@
             setupScrollIndicators();
             setupItemObserver();
         }
-        // ===== [수정된 displayResults 함수 끝] =====
         
         function setupScrollIndicators() {
 			document.querySelectorAll('#results .result-item').forEach(setupScrollIndicatorForItem);
@@ -1092,9 +1092,29 @@
         
         function copyToClipboard(el) {
             const itemKey = el.dataset.itemKey;
-            if (!itemKey) return;
-            const textToCopy = sortedData[itemKey] || itemKey;
-            navigator.clipboard.writeText(textToCopy).then(() => showCopyMessage(), err => console.error('복사 실패: ', err));
+            const priceElement = el.querySelector('.price-krw');
+
+            if (!itemKey || !priceElement) {
+                console.error('복사에 필요한 데이터 키 또는 가격 요소를 찾을 수 없습니다.');
+                return;
+            }
+            
+            const originalDataString = sortedData[itemKey];
+            if (!originalDataString) {
+                console.error(`키에 대한 원본 데이터를 찾을 수 없습니다: ${itemKey}`);
+                return;
+            }
+
+            const characterPart = originalDataString.split('=')[0].trim();
+            const discountedPriceText = priceElement.textContent;
+            const formattedDiscountedPrice = discountedPriceText.replace('₩', '').trim();
+            const textToCopy = `${characterPart} = ${formattedDiscountedPrice}`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showCopyMessage();
+            }, err => {
+                console.error('복사 실패: ', err);
+            });
         }
 
         function showCopyMessage(){
