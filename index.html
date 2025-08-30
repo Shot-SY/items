@@ -498,7 +498,7 @@
 	        display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-top: 10px;
 	    }
 
-        /* ===== [추가] 공지사항 모달 스타일 ===== */
+        /* ===== 공지사항 모달 스타일 ===== */
         .modal-overlay {
             display: none; /* 기본적으로 숨김 */
             position: fixed;
@@ -629,7 +629,6 @@
         </div>
     </div>
     <button id="filterButton">필터 적용</button>
-    <!-- ===== [수정] TMI 내용이 팝업으로 이동하여 기존 문구 정리 ===== -->
     <div id="copyInstruction">※ 클릭하면 물품 코드가 복사됩니다</div>
     <div id="results"></div>
     <div id="copyMessage">복사되었습니다</div>
@@ -641,7 +640,6 @@
 		</div>
 	</div>
 
-    <!-- ===== [추가] 공지사항 모달 HTML ===== -->
     <div id="noticeModal" class="modal-overlay">
         <div class="modal-content">
             <span class="modal-close-btn">&times;</span>
@@ -671,6 +669,14 @@
             }
         });
         
+        // ===== [수정] 모달을 띄우는 함수 정의 =====
+        function showNoticeModal() {
+            const noticeModal = document.getElementById('noticeModal');
+            if (noticeModal) {
+                noticeModal.style.display = 'flex';
+            }
+        }
+
         window.addEventListener('load', () => {
             const lastLoad = localStorage.getItem('lastLoadTime');
             const currentTime = Date.now();
@@ -683,7 +689,11 @@
             loadData().then(filterData).then(() => new Promise(r => setTimeout(r, 500)))
                 .then(() => { 
                     loader.classList.add('hidden'); 
-                    setTimeout(() => { loader.style.display = 'none'; }, 500); 
+                    setTimeout(() => { 
+                        loader.style.display = 'none';
+                        // ===== [수정] 로더가 사라진 후 공지 모달 호출 =====
+                        showNoticeModal();
+                    }, 500); 
                 })
                 .catch(error => {
                     console.error('초기 필터 적용 에러:', error);
@@ -836,24 +846,20 @@
             return 0;
         }
 
-        // ===== [수정된 함수] 할인액 계산을 필터링 이전에 수행 =====
         function filterData() {
             const resultsDiv = document.getElementById('results');
             resultsDiv.classList.add('filtering');
             
             setTimeout(() => {
-                // 중요: 어떤 필터링보다 먼저, '전체 데이터'를 기준으로 할인액을 계산합니다.
                 const allItemKeys = Object.keys(luaData);
                 const reductionAmount = calculateReductionAmount(allItemKeys);
 
-                // 1. 선택된 캐릭터 기준으로 1차 필터링
                 let filtered = {};
                 for(const [k, v] of Object.entries(luaData)) {
                     const chars = v.match(/.{1,3}/g)||[];
                     if(checkConditions(chars)) filtered[k] = v;
                 }
         
-                // 2. '추천 조합 보기'가 활성화된 경우, 최종 할인가 기준으로 2차 필터링
                 const budgetSelected = budgetBox.classList.contains('selected');
                 if (budgetSelected) {
                     const budgetValue = parseFloat(budgetInput.value);
@@ -864,7 +870,6 @@
                         filtered = Object.fromEntries(
                             Object.entries(filtered).filter(([key]) => {
                                 const originalPrice = getPrice(key);
-                                // 위에서 계산한 '고정된' 할인액을 사용하여 최종 가격을 계산합니다.
                                 const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
                                 return finalPrice >= minPrice && finalPrice <= maxPrice;
                             })
@@ -872,7 +877,6 @@
                     }
                 }
                 
-                // 3. 필터링된 최종 결과를 displayResults 함수에 '고정된 할인액'과 함께 전달
                 displayResults(filtered, reductionAmount);
                 resultsDiv.classList.remove('filtering');
             }, 200);
@@ -1237,7 +1241,6 @@
         
         document.getElementById('filterButton').addEventListener('click', () => {
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-            // 필터 버튼 클릭 시 데이터 리로딩은 불필요할 수 있으나, 최신 데이터를 보장하기 위해 유지합니다.
             loadData().then(() => { 
                 filterData(); 
                 gtag('event', 'apply_filter', { 'selected_characters': getSelectedCharacters() });
@@ -1245,6 +1248,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
+            // 기타 팝업 로직
             const extrasPopup = document.getElementById('extrasPopup');
 			const closeExtrasBtn = document.getElementById('closeExtrasPopup');
 			const hideExtrasPopup = () => { extrasPopup.style.display = 'none'; };
@@ -1253,6 +1257,7 @@
 				if (event.target == extrasPopup) hideExtrasPopup();
 			});
 
+            // 스크롤 관련 로직
             const resultsContainer = document.getElementById('results');
             if (resultsContainer) {
                 resultsContainer.addEventListener('scroll', resetAllScrolledItems);
@@ -1263,26 +1268,15 @@
                 }
             });
 
-            // ===== [추가] 공지사항 모달 로직 =====
+            // ===== [수정] 공지사항 모달 닫기 이벤트 핸들러만 설정 =====
             const noticeModal = document.getElementById('noticeModal');
             const closeModalBtn = noticeModal.querySelector('.modal-close-btn');
 
-            // 세션 스토리지에 'noticeShown' 키가 없으면 모달을 보여줌
-            if (!sessionStorage.getItem('noticeShown')) {
-                noticeModal.style.display = 'flex';
-                // 모달을 보여준 후, 세션 스토리지에 기록하여 같은 세션에서는 다시 보이지 않게 함
-                sessionStorage.setItem('noticeShown', 'true');
-            }
-
-            // 모달 닫기 함수
             const hideModal = () => {
                 noticeModal.style.display = 'none';
             };
 
-            // 닫기 버튼(X) 클릭 시 모달 닫기
             closeModalBtn.addEventListener('click', hideModal);
-
-            // 모달의 배경(오버레이) 클릭 시 모달 닫기
             noticeModal.addEventListener('click', (event) => {
                 if (event.target === noticeModal) {
                     hideModal();
