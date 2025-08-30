@@ -133,7 +133,7 @@
 	    .character-box.selected .spinbox-container {
 	        visibility: visible;
 	        opacity: 1;
-		    transform: translateY(0);
+	        transform: translateY(0);
 	    }
 	    .spinbox-container input[type="number"] {
 	        width: 50px;
@@ -498,76 +498,79 @@
 	        display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-top: 10px;
 	    }
 
-        /* TMI 공지사항 스타일 */
-        #tmiAnnouncement {
-            display: none; /* 초기에는 숨김 */
+        /* ===== [추가] 공지사항 모달 스타일 ===== */
+        .modal-overlay {
+            display: none; /* 기본적으로 숨김 */
             position: fixed;
-            top: 0;
+            z-index: 5000;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            z-index: 5000;
-            display: flex;
+            background-color: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            padding: 20px;
-            box-sizing: border-box;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
-
-        #tmiAnnouncement.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .tmi-content {
-            background: linear-gradient(145deg, #202228, #1a1c20);
+        .modal-content {
+            background-color: #2a2c30;
+            padding: 30px;
             border: 2px solid #ff4081;
             border-radius: 15px;
-            padding: 30px;
-            max-width: 600px;
             width: 90%;
-            text-align: center;
-            box-shadow: 0 8px 30px rgba(255, 64, 129, 0.5);
+            max-width: 600px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.7);
             position: relative;
-        }
-
-        .tmi-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 2.2em;
-            color: #ff4081;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.3);
-        }
-
-        .tmi-text {
-            font-size: 1.1em;
             color: #e0e0e0;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            white-space: pre-wrap; /* 줄 바꿈 유지 */
         }
-
-        .tmi-close-button {
-            background: linear-gradient(45deg, #ff4081, #f50057);
-            color: #fff;
-            border: none;
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-size: 1.1em;
-            font-weight: 600;
+        .modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #ff4081;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+        .modal-content p, .modal-content ul {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        .modal-content ul {
+            list-style-type: none;
+            padding-left: 0;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .modal-content li {
+            margin-bottom: 8px;
+        }
+        .modal-content li:last-child {
+            margin-bottom: 0;
+        }
+        .modal-content strong {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .modal-summary {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 15px;
+            color: #ccc;
+        }
+        .modal-close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            box-shadow: 0 4px 15px rgba(255, 64, 129, 0.6);
+            transition: color 0.2s;
         }
-
-        .tmi-close-button:hover {
-            transform: translateY(-2px);
-            background: linear-gradient(45deg, #f50057, #ff4081);
+        .modal-close-btn:hover, .modal-close-btn:focus {
+            color: #fff;
         }
 
 	    @media (max-width: 768px) {
@@ -591,3 +594,701 @@
 	        #copyMessage { font-size: 1em; padding: 15px 20px; }
 	        .item-box { width: 55px; height: 52px; } /* [크기 조정] */
 	        .item-box .item-title { font-size: 10px; margin-bottom: 0; }
+	        .extras-box .item-title { font-size: 13px; } /* [크기 조정] */
+	        .item-box .item-count { font-size: 12px; }
+	        .price-box .original-price { font-size: 13px; } /* [크기 조정] */
+	        .price-box .price-krw { font-size: 18px; } /* [크기 조정] */
+	        .scroll-indicator { display: none !important; }
+	
+	        .budget-box { width: 100%; max-width: 280px; }
+	        .budget-text { font-size: 16px; }
+	        .budget-input-container input[type="number"] { width: 100px; padding: 6px 10px; font-size: 14px; }
+	        .extras-popup-content { width: 90%; padding: 20px; }
+            .modal-content p, .modal-content ul { font-size: 14px; }
+            .modal-content h2 { font-size: 1.5em; }
+	    }
+	</style>
+</head>
+<body>
+    <div id="loader"><div class="spinner"></div></div>
+    <div id="tsparticles"></div>
+    <h1>영웅전설: 가가브 트릴로지</h1>
+    <div class="character-grid" id="characterGrid"></div>
+    <div id="budgetContainer">
+        <div class="budget-box" id="budgetBox">
+            <div class="budget-text-container">
+                <span class="budget-text">추천 조합 보기</span>
+                <span class="tooltip-content">입력한 예산의 ±30% 범위 내에서 추천 조합을 찾아드립니다. 선택된 캐릭터들의 개수 총합 순으로 물품이 정렬됩니다. 꼭 포함시키고 싶은 캐릭터는 1 이상의 수를 입력하세요 (0으로 두는 걸 추천드립니다)</span>
+            </div>
+            <div class="budget-input-wrapper">
+                <div class="budget-input-container">
+                    <input type="number" id="budgetInput" min="0" step="5000" placeholder="금액 입력" disabled />
+                    <span class="budget-unit">원</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button id="filterButton">필터 적용</button>
+    <!-- ===== [수정] TMI 내용이 팝업으로 이동하여 기존 문구 정리 ===== -->
+    <div id="copyInstruction">※ 클릭하면 물품 코드가 복사됩니다</div>
+    <div id="results"></div>
+    <div id="copyMessage">복사되었습니다</div>
+
+    <div id="extrasPopup">
+		<div class="extras-popup-content">
+			<span class="close-button" id="closeExtrasPopup">×</span>
+			<div id="extras-popup-grid"></div>
+		</div>
+	</div>
+
+    <!-- ===== [추가] 공지사항 모달 HTML ===== -->
+    <div id="noticeModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close-btn">&times;</span>
+            <h2>중요 공지사항</h2>
+            <p>실제 계정에는 표시된 일부 영웅 대신 <strong>선택권</strong>이 포함되어 있습니다.</p>
+            <ul>
+                <li>레오네 4장 → <strong>Ⅱ전설선택권 4장</strong></li>
+                <li>구(舊)전설 각 1장 → <strong>Ⅰ전설선택권 4장</strong></li>
+                <li>새리아 3장 → <strong>3성선택권 3장</strong></li>
+            </ul>
+            <p class="modal-summary">
+                따라서, '개미첼' 등 다른 영웅을 원하시는 경우,
+                <br><strong>[Ⅱ전설선택권]</strong>으로 다른 전설 영웅을 선택하여 받으실 수 있습니다.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let lastActivityTime = Date.now();
+        const updateActivityTime = () => { lastActivityTime = Date.now(); };
+        ['click', 'touchstart', 'scroll', 'keypress'].forEach(event => document.addEventListener(event, updateActivityTime));
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                const inactiveTime = Date.now() - lastActivityTime;
+                if (inactiveTime > 7200000) window.location.reload(true);
+                else lastActivityTime = Date.now();
+            }
+        });
+        
+        window.addEventListener('load', () => {
+            const lastLoad = localStorage.getItem('lastLoadTime');
+            const currentTime = Date.now();
+            if (!lastLoad || (currentTime - parseInt(lastLoad)) > 1000) {
+                localStorage.setItem('lastLoadTime', currentTime);
+                window.location.reload(true);
+                return;
+            }
+            const loader = document.getElementById('loader');
+            loadData().then(filterData).then(() => new Promise(r => setTimeout(r, 500)))
+                .then(() => { 
+                    loader.classList.add('hidden'); 
+                    setTimeout(() => { loader.style.display = 'none'; }, 500); 
+                })
+                .catch(error => {
+                    console.error('초기 필터 적용 에러:', error);
+                    loader.classList.add('hidden');
+                    setTimeout(() => loader.style.display = 'none', 500);
+                });
+        });
+
+        const characters = [
+            ["reone","레오네"],["isabel","이자벨"],["castol","카스톨"],["fumitchell","개미첼"],["myle","마일"],["ervin","어빈"],["gerd","게르드"],["thomas","토마스"],
+            ["hwiri","휘리"],["guse","구스"],["dominique","도미니크"],["aph","알프"],["mgisa","마기사"],["sria","새리아"],["kzimu","카지무"],["ysara","여사라"],["gglas","계글라스"],["buruka","부루카"],
+            ["intis","인티스"],["bomuna","봄우나"],["jyoanna","죠안나"],["daerael","대라엘"],
+            ["stella","스텔라"],["altos","알토스"],["mitchell","미첼"],["duol","듀올"],["morison","모리슨"],
+            ["lody","로디"],["elenoa","엘레노아"],["imel","아이멜"],["shannon","섀넌"],["rachel","레이첼"],["muse","뮤즈"],
+            ["sdigma","스티그마"],["aria","아리아"],["luthis","루티스"],["aida","아이다"],["sarah","사라"],["rookius","루키어스"],
+            ["volgade","볼게이드"],["gawain","가웨인"],["varius","베리어스"],["palman","팔만"],["madram","매드람"]
+        ];
+
+        const tierCharacters = [ "hwiri", "guse", "dominique", "aph", "mgisa", "sria", "kzimu", "ysara", "gglas", "buruka", "intis", "bomuna", "jyoanna", "daerael", "stella", "altos"];
+        const exceptCharacters = ["reone","isabel","castol", "fumitchell", "myle", "ervin", "gerd", "thomas"];
+
+        let sortedData = {}, luaData = {};
+        let itemObserver;
+        const characterGrid = document.getElementById('characterGrid');
+        const budgetBox = document.getElementById('budgetBox');
+        const budgetInput = document.getElementById('budgetInput');
+
+        characters.forEach(([eng, kor]) => {
+            const charBox = document.createElement('div');
+            charBox.className = 'character-box';
+            charBox.dataset.engName = eng;
+            
+            if (exceptCharacters.includes(eng)) {
+                charBox.classList.add('super-rare');
+            } else if (tierCharacters.includes(eng)) {
+                charBox.classList.add('rare');
+            }
+
+            const img = document.createElement('img');
+            img.src = `cropped_characters/${kor}.png`;
+            img.alt = kor;
+            img.className = 'character-img';
+            img.loading = 'lazy';
+            img.decoding = 'async';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'character-name';
+            nameSpan.textContent = kor;
+
+            const spinboxContainer = document.createElement('div');
+            spinboxContainer.className = 'spinbox-container';
+
+            const spinbox = document.createElement('input');
+            spinbox.type = 'number';
+            spinbox.id = `${eng}-spin`;
+            spinbox.min = 0;
+            spinbox.max = 8;
+            spinbox.value = 0;
+            spinbox.disabled = true;
+
+            spinboxContainer.appendChild(spinbox);
+            charBox.append(img, nameSpan, spinboxContainer);
+            characterGrid.appendChild(charBox);
+
+            charBox.addEventListener('click', (e) => { if(e.target.tagName.toLowerCase() !== 'input') toggleSelection(charBox); });
+            spinbox.addEventListener('click', (e) => { 
+                e.stopPropagation();
+                if(!charBox.classList.contains('selected')) {
+                    charBox.classList.add('selected');
+                    spinbox.disabled = false;
+                    if(spinbox.value === '0') spinbox.value = '1';
+                }
+            });
+        });
+
+        budgetBox.addEventListener('click', (e) => { if(e.target.tagName.toLowerCase() !== 'input') toggleBudgetSelection(budgetBox); });
+        budgetInput.addEventListener('click', (e) => { e.stopPropagation(); });
+
+        function toggleBudgetSelection(budgetBox) {
+            const isActivating = !budgetBox.classList.contains('selected');
+            const budgetTextContainer = budgetBox.querySelector('.budget-text-container');
+            
+            [...document.getElementsByClassName('character-box')].forEach(box => {
+                if (!exceptCharacters.includes(box.dataset.engName)) {
+                    box.classList.remove('selected');
+                    const spinbox = box.querySelector('input[type="number"]');
+                    spinbox.disabled = true;
+                    spinbox.value = '0';
+                }
+            });
+        
+            if (isActivating) {
+                budgetBox.classList.add('selected');
+                budgetInput.disabled = false;
+                budgetTextContainer.querySelector('.budget-text').textContent = '예산';
+                setTimeout(() => budgetInput.focus(), 300);
+        
+                tierCharacters.forEach((eng) => {
+                    if (!exceptCharacters.includes(eng)) {
+                        const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
+                        if (box) {
+                            box.classList.add('selected');
+                            const spinbox = box.querySelector('input[type="number"]');
+                            spinbox.disabled = false;
+                            spinbox.value = '0';
+                        }
+                    }
+                });
+            } else {
+                budgetBox.classList.remove('selected');
+                budgetInput.disabled = true;
+                budgetInput.value = '';
+                budgetTextContainer.querySelector('.budget-text').textContent = '추천 조합 보기';
+            }
+        }
+
+        function toggleSelection(charBox) {
+            const spinbox = charBox.querySelector('input[type="number"]');
+            if(charBox.classList.toggle('selected')) {
+                spinbox.disabled = false;
+                spinbox.value = spinbox.value === '0' ? '1' : spinbox.value;
+            } else {
+                spinbox.disabled = true;
+                spinbox.value = 0;
+            }
+        }
+
+        function loadData() {
+            const ts = new Date().getTime();
+            return Promise.all([
+                fetch(`sorted_data_with_keys.txt?t=${ts}`).then(r => r.text()),
+                fetch(`data.lua?t=${ts}`).then(r => r.text())
+            ]).then(([sortedText, luaText]) => {
+                sortedData = {};
+                sortedText.split('\n').forEach(line => { const [k,...v] = line.split(' '); if(k && v.length) sortedData[k]=v.join(' '); });
+                luaData = {};
+                luaText.split('\n').forEach(line => { const m = line.match(/\["(.+)"\]\s*=\s*"(.+)"/); if(m) luaData[m[1]] = m[2]; });
+            }).catch(error => console.error('데이터 로딩 오류:', error));
+        }
+
+        function calculateReductionAmount(itemKeys) {
+            const pricesAfterBaseDiscount = itemKeys
+                .map(k => getPrice(k) * 0.8)
+                .filter(p => p > 0);
+
+            if (pricesAfterBaseDiscount.length > 0) {
+                const minPrice = Math.min(...pricesAfterBaseDiscount);
+                return Math.max(0, minPrice - 29000);
+            }
+            return 0;
+        }
+
+        // ===== [수정된 함수] 할인액 계산을 필터링 이전에 수행 =====
+        function filterData() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.classList.add('filtering');
+            
+            setTimeout(() => {
+                // 중요: 어떤 필터링보다 먼저, '전체 데이터'를 기준으로 할인액을 계산합니다.
+                const allItemKeys = Object.keys(luaData);
+                const reductionAmount = calculateReductionAmount(allItemKeys);
+
+                // 1. 선택된 캐릭터 기준으로 1차 필터링
+                let filtered = {};
+                for(const [k, v] of Object.entries(luaData)) {
+                    const chars = v.match(/.{1,3}/g)||[];
+                    if(checkConditions(chars)) filtered[k] = v;
+                }
+        
+                // 2. '추천 조합 보기'가 활성화된 경우, 최종 할인가 기준으로 2차 필터링
+                const budgetSelected = budgetBox.classList.contains('selected');
+                if (budgetSelected) {
+                    const budgetValue = parseFloat(budgetInput.value);
+                    if (!isNaN(budgetValue) && budgetValue > 0) {
+                        const minPrice = budgetValue * 0.7;
+                        const maxPrice = budgetValue * 1.3;
+
+                        filtered = Object.fromEntries(
+                            Object.entries(filtered).filter(([key]) => {
+                                const originalPrice = getPrice(key);
+                                // 위에서 계산한 '고정된' 할인액을 사용하여 최종 가격을 계산합니다.
+                                const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
+                                return finalPrice >= minPrice && finalPrice <= maxPrice;
+                            })
+                        );
+                    }
+                }
+                
+                // 3. 필터링된 최종 결과를 displayResults 함수에 '고정된 할인액'과 함께 전달
+                displayResults(filtered, reductionAmount);
+                resultsDiv.classList.remove('filtering');
+            }, 200);
+        }
+        
+        function getSelectedCharacterSum(luaString) {
+            const chars = luaString.match(/.{1,3}/g) || [];
+            let sum = 0;
+            chars.forEach(char => {
+                const name = char.slice(0, 2);
+                const num = parseInt(char[2]);
+                const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName.startsWith(name));
+                if (box && box.classList.contains('selected')) {
+                    sum += num;
+                }
+            });
+            return sum;
+        }
+
+        function checkConditions(chars) {
+            const count = {};
+            chars.forEach(c => { 
+                const name = c.slice(0,2); 
+                const num = parseInt(c[2]); 
+                count[name] = (count[name]||0)+num;
+            });
+            return characters.every(([eng]) => {
+                const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
+                if(box && box.classList.contains('selected')){
+                    return (count[eng.slice(0,2)] || 0) >= parseInt(box.querySelector('input').value);
+                }
+                return true;
+            });
+        }
+
+        function getPrice(k) {
+            const m = sortedData[k]?.match(/=\s*([\d,]+)/);
+            return m ? parseInt(m[1].replace(/,/g,'')) : 0;
+        }
+
+        function createCharacterImageElement(charData, isLazy = false) {
+            const container = document.createElement('div');
+            container.className = 'image-with-count-container';
+            if (isLazy) container.classList.add('js-lazy-loaded');
+            
+            const img = document.createElement('img');
+            img.src = charData.src;
+            img.alt = charData.alt;
+            img.className = 'small-character-img';
+            
+            let badgeClass = '';
+            if (exceptCharacters.includes(charData.engName)) {
+                img.classList.add('super-rare');
+                badgeClass = 'super-rare-badge';
+            } else if (tierCharacters.includes(charData.engName)) {
+                img.classList.add('rare');
+                badgeClass = 'rare-badge';
+            }
+            container.appendChild(img);
+
+            if (charData.count > 1) {
+                const badge = document.createElement('div');
+                badge.className = `image-count-badge ${badgeClass}`;
+                badge.textContent = `x${charData.count}`;
+                container.appendChild(badge);
+            }
+            return container;
+        }
+
+        function setupItemObserver() {
+            if (itemObserver) itemObserver.disconnect();
+            const options = { root: document.getElementById('results'), rootMargin: '400px 0px', threshold: 0 };
+            itemObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    const item = entry.target;
+                    if (entry.isIntersecting) {
+                        clearTimeout(item.revertTimer);
+                        item.renderTimer = setTimeout(() => renderFullItem(item), 100);
+                    } else {
+                        clearTimeout(item.renderTimer);
+                        item.revertTimer = setTimeout(() => revertToLazyItem(item), 100);
+                    }
+                });
+            }, options);
+            const lazyItems = document.querySelectorAll('.lazy-load-item');
+            lazyItems.forEach(item => itemObserver.observe(item));
+        }
+
+        function renderFullItem(item) {
+            if (item.querySelector('.js-lazy-loaded')) return;
+            const remainingCharsData = item.dataset.remainingChars;
+            if (remainingCharsData) {
+                const remainingChars = JSON.parse(remainingCharsData);
+                const imageContainer = item.querySelector('.item-images');
+                const extrasBox = imageContainer.querySelector('.extras-box');
+                remainingChars.forEach(charData => {
+                    const imageElement = createCharacterImageElement(charData, true);
+                    if (extrasBox) imageContainer.insertBefore(imageElement, extrasBox);
+                    else imageContainer.appendChild(imageElement);
+                });
+            }
+            setupScrollIndicatorForItem(item);
+        }
+
+        function revertToLazyItem(item) {
+            const lazyElements = item.querySelectorAll('.js-lazy-loaded');
+            if (lazyElements.length === 0) return;
+            lazyElements.forEach(el => el.remove());
+            setupScrollIndicatorForItem(item);
+        }
+
+        function displayResults(data, reductionAmount) {
+            const res = document.getElementById('results');
+            res.scrollTop = 0;
+            const fragment = document.createDocumentFragment();
+			const container = document.createElement('div');
+			container.className = 'content-container';
+			fragment.appendChild(container);
+            
+            const budgetSelected = budgetBox.classList.contains('selected');
+            const sortedKeys = Object.keys(data).sort((a, b) => {
+                if (budgetSelected) {
+                    const sumA = getSelectedCharacterSum(luaData[a]);
+                    const sumB = getSelectedCharacterSum(luaData[b]);
+                    if (sumB !== sumA) return sumB - sumA;
+                }
+                const finalPriceA = Math.round((getPrice(a) * 0.8) - reductionAmount);
+                const finalPriceB = Math.round((getPrice(b) * 0.8) - reductionAmount);
+                return finalPriceA - finalPriceB;
+            });
+            const displayKeys = budgetSelected ? sortedKeys.slice(0, 40) : sortedKeys;
+
+            displayKeys.forEach(k => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.dataset.itemKey = k;
+                item.addEventListener('click', (e) => {
+					if (e.target.closest('.extras-box') || e.target.classList.contains('scroll-indicator')) return;
+					copyToClipboard(item);
+				});
+
+                const val = sortedData[k];
+                if (!val) return;
+
+                const imagesWrapper = document.createElement('div');
+                imagesWrapper.className = 'item-images-wrapper';
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'item-images';
+
+                const rightSection = document.createElement('div');
+                rightSection.className = 'result-info-right';
+
+                const originalPrice = getPrice(k);
+                const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
+                
+                const [originalChars] = val.split('=').map(s => s.trim());
+                
+                const allCharImages = [];
+                const extraCharImages = [];
+                const fixedItemsInfo = [
+                    { name: '태테르', countText: '60+' }, { name: '달증', countText: '120+' }, 
+                    { name: '빵', countText: '2000+' }, { name: '소환권', countText: '1200+' }
+                ];
+
+                originalChars.split(' ').forEach(it => {
+                    const m = it.match(/([가-힣]+)(\d*)/);
+                    if (m) {
+                        const [_, name, cnt] = m;
+                        const rep = cnt ? parseInt(cnt) : 1;
+                        const charInfo = characters.find(([_, kor]) => kor === name);
+                        if (charInfo) {
+                             const imageData = {
+                                src: `cropped_characters/${name}.png`, alt: name, engName: charInfo[0], count: rep
+                            };
+                            if (exceptCharacters.includes(charInfo[0]) || tierCharacters.includes(charInfo[0])) {
+                                allCharImages.push(imageData);
+                            } else {
+                                extraCharImages.push(imageData);
+                            }
+                        }
+                    }
+                });
+                
+                if (allCharImages.length > 0) {
+                    const firstCharData = allCharImages[0];
+                    imageContainer.appendChild(createCharacterImageElement(firstCharData, false));
+                    const remainingCharsData = allCharImages.slice(1);
+                    if (remainingCharsData.length > 0) {
+                        item.classList.add('lazy-load-item');
+                        item.dataset.remainingChars = JSON.stringify(remainingCharsData);
+                    }
+                }
+
+                const extrasContent = extraCharImages.map(imgData => ({ type: 'char', ...imgData }));
+                fixedItemsInfo.forEach(item => {
+                    extrasContent.push({ type: 'item', title: item.name, count: item.countText });
+                });
+
+                if (extrasContent.length > 0) {
+                    const extrasBox = document.createElement('div');
+					extrasBox.className = 'extras-box';
+					extrasBox.innerHTML = `<div class="item-title">기타</div>`;
+					extrasBox.addEventListener('click', (e) => {
+						e.stopPropagation();
+						showExtrasPopup(extrasContent);
+					});
+					imageContainer.appendChild(extrasBox);
+                }
+                
+                const priceBox = document.createElement('div');
+				priceBox.className = 'price-box';
+
+                if (originalPrice > 0) {
+				    priceBox.innerHTML = `
+                        <div class="original-price">₩${originalPrice.toLocaleString()}</div>
+                        <div class="price-krw">₩${finalPrice.toLocaleString()}</div>
+                    `;
+                } else {
+                    priceBox.innerHTML = `<div class="price-krw">₩0</div>`;
+                }
+				rightSection.appendChild(priceBox);
+
+                const scrollIndicator = document.createElement('div');
+                scrollIndicator.className = 'scroll-indicator';
+                scrollIndicator.innerHTML = '...';
+                
+                imagesWrapper.appendChild(imageContainer);
+                imagesWrapper.appendChild(scrollIndicator);
+                item.appendChild(imagesWrapper);
+                item.appendChild(rightSection);
+                container.appendChild(item);
+            });
+
+            res.innerHTML = '';
+            res.appendChild(fragment);
+            document.getElementById('copyInstruction').style.display = 'block';
+
+            setupScrollIndicators();
+            setupItemObserver();
+        }
+        
+        function setupScrollIndicators() {
+			document.querySelectorAll('#results .result-item').forEach(setupScrollIndicatorForItem);
+		}
+        
+        function setupScrollIndicatorForItem(item) {
+            const wrapper = item.querySelector('.item-images-wrapper');
+            const imagesContainer = item.querySelector('.item-images');
+            const scrollIndicator = item.querySelector('.scroll-indicator');
+            if (!wrapper || !imagesContainer || !scrollIndicator) return;
+            requestAnimationFrame(() => {
+                const hasScroll = imagesContainer.scrollWidth > imagesContainer.clientWidth;
+                if (hasScroll) {
+                    wrapper.classList.add('has-scroll');
+                    scrollIndicator.onclick = (e) => { e.stopPropagation(); imagesContainer.scroll({ left: imagesContainer.scrollWidth - imagesContainer.clientWidth, behavior: 'smooth' }); };
+                    imagesContainer.onscroll = () => { wrapper.classList.toggle('scrolled-to-end', imagesContainer.scrollLeft + imagesContainer.clientWidth >= imagesContainer.scrollWidth - 5); };
+                    imagesContainer.dispatchEvent(new Event('scroll'));
+                } else {
+                    wrapper.classList.remove('has-scroll', 'scrolled-to-end');
+                    imagesContainer.onscroll = null;
+                    scrollIndicator.onclick = null;
+                }
+            });
+        }
+        
+        function resetAllScrolledItems() {
+             document.querySelectorAll('.item-images-wrapper.has-scroll .item-images').forEach(container => {
+                if (container.scrollLeft > 0) {
+                    container.scroll({ left: 0, behavior: 'smooth' });
+                }
+            });
+        }
+
+        function showExtrasPopup(content) {
+			const popup = document.getElementById('extrasPopup');
+			const grid = document.getElementById('extras-popup-grid');
+			grid.innerHTML = '';
+
+			content.forEach(item => {
+                if (item.type === 'char') {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'image-with-count-container';
+                    
+                    const img = document.createElement('img');
+                    img.src = item.src;
+                    img.alt = item.alt;
+                    img.className = 'small-character-img';
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    imgContainer.appendChild(img);
+
+                    if (item.count > 1) {
+                        const badge = document.createElement('div');
+                        badge.className = 'image-count-badge';
+                        badge.textContent = `x${item.count}`;
+                        imgContainer.appendChild(badge);
+                    }
+                    grid.appendChild(imgContainer);
+
+                } else if (item.type === 'item') {
+                    const box = document.createElement('div');
+                    box.className = 'item-box';
+                    box.innerHTML = `<div class="item-title">${item.title}</div><div class="item-count">${item.count}</div>`;
+                    grid.appendChild(box);
+                }
+			});
+			popup.style.display = 'flex';
+		}
+        
+        function copyToClipboard(el) {
+            const itemKey = el.dataset.itemKey;
+            const priceElement = el.querySelector('.price-krw');
+
+            if (!itemKey || !priceElement) {
+                console.error('복사에 필요한 데이터 키 또는 가격 요소를 찾을 수 없습니다.');
+                return;
+            }
+            
+            const originalDataString = sortedData[itemKey];
+            if (!originalDataString) {
+                console.error(`키에 대한 원본 데이터를 찾을 수 없습니다: ${itemKey}`);
+                return;
+            }
+
+            let numericId = itemKey; 
+            const match = originalDataString.match(/\((\d+)\)\s*$/);
+            
+            if (match && match[1]) {
+                numericId = match[1];
+            }
+
+            const characterPart = originalDataString.split('=')[0].trim();
+            const discountedPriceText = priceElement.textContent;
+            const formattedDiscountedPrice = discountedPriceText.replace('₩', '').trim();
+            
+            const textToCopy = `${characterPart} = ${formattedDiscountedPrice} (${numericId})`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showCopyMessage();
+            }, err => {
+                console.error('복사 실패: ', err);
+            });
+        }
+
+        function showCopyMessage(){
+            const msg = document.getElementById('copyMessage');
+            msg.classList.add('show');
+            setTimeout(() => { msg.classList.remove('show'); }, 2000);
+        }
+
+        function getSelectedCharacters(){
+            let result = '';
+            if(budgetBox.classList.contains('selected')) {
+                result = budgetInput.value ? `${budgetInput.value} - ` : "nil - ";
+            }
+            result += [...document.getElementsByClassName('character-box')]
+                .filter(b => b.classList.contains('selected'))
+                .map(b => `${b.dataset.engName}:${b.querySelector('input').value}`)
+                .join(',');
+            return result;
+        }
+        
+        document.getElementById('filterButton').addEventListener('click', () => {
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            // 필터 버튼 클릭 시 데이터 리로딩은 불필요할 수 있으나, 최신 데이터를 보장하기 위해 유지합니다.
+            loadData().then(() => { 
+                filterData(); 
+                gtag('event', 'apply_filter', { 'selected_characters': getSelectedCharacters() });
+            }).catch(error => { console.error('필터 적용 에러:', error); });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const extrasPopup = document.getElementById('extrasPopup');
+			const closeExtrasBtn = document.getElementById('closeExtrasPopup');
+			const hideExtrasPopup = () => { extrasPopup.style.display = 'none'; };
+			closeExtrasBtn.addEventListener('click', hideExtrasPopup);
+			window.addEventListener('click', (event) => {
+				if (event.target == extrasPopup) hideExtrasPopup();
+			});
+
+            const resultsContainer = document.getElementById('results');
+            if (resultsContainer) {
+                resultsContainer.addEventListener('scroll', resetAllScrolledItems);
+            }
+            document.body.addEventListener('click', (e) => {
+                if (!e.target.closest('.result-item') && !e.target.classList.contains('scroll-indicator')) {
+                    resetAllScrolledItems();
+                }
+            });
+
+            // ===== [추가] 공지사항 모달 로직 =====
+            const noticeModal = document.getElementById('noticeModal');
+            const closeModalBtn = noticeModal.querySelector('.modal-close-btn');
+
+            // 세션 스토리지에 'noticeShown' 키가 없으면 모달을 보여줌
+            if (!sessionStorage.getItem('noticeShown')) {
+                noticeModal.style.display = 'flex';
+                // 모달을 보여준 후, 세션 스토리지에 기록하여 같은 세션에서는 다시 보이지 않게 함
+                sessionStorage.setItem('noticeShown', 'true');
+            }
+
+            // 모달 닫기 함수
+            const hideModal = () => {
+                noticeModal.style.display = 'none';
+            };
+
+            // 닫기 버튼(X) 클릭 시 모달 닫기
+            closeModalBtn.addEventListener('click', hideModal);
+
+            // 모달의 배경(오버레이) 클릭 시 모달 닫기
+            noticeModal.addEventListener('click', (event) => {
+                if (event.target === noticeModal) {
+                    hideModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
