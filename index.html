@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEVEN KNIGHTS RE:BIRTH</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CHQ2JPN68G"></script>
+    <title>영웅전설: 가가브 트릴로지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-CHQ2JPN68G');
+      gtag('config', 'G-37K1C9W7BK');
     </script>
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
 	<style>
@@ -41,7 +41,6 @@
 	        margin-bottom: 30px;
 	        position: relative;
 	        z-index: 1;
-	        transform: translateZ(0);
 	    }
 	    .character-box {
 	        background: rgba(26,26,26,0.2);
@@ -59,49 +58,54 @@
 	        box-shadow: 0 4px 12px rgba(0,0,0,0.7);
 	        backdrop-filter: blur(5px);
 	        z-index: 1;
-	        transform: translateZ(0);
 	    }
-        /* Tier 1 (Rare) */
 	    .character-box.rare {
 	        border: 2px solid #ff9800;
 	        box-shadow: 0 0 15px rgba(255,152,0,0.5), 0 4px 12px rgba(255,152,0,0.7);
 	    }
-        /* Tier 0 (Super Rare) */
-        .character-box.super-rare {
+	    .character-box.super-rare {
 	        border: 2px solid #D32F2F;
 	        box-shadow: 0 0 15px rgba(211, 47, 47, 0.5), 0 4px 12px rgba(211, 47, 47, 0.7);
 	    }
-        /* Tier 2 (Normal) */
-        .extras-character-border {
-            border: 2px solid #b0b0b0;
-            box-shadow: 0 0 10px rgba(176, 176, 176, 0.3);
-        }
 	    .character-box.selected {
 	        background-color: rgba(255,64,129,0.9);
 	        box-shadow: 0 0 20px rgba(255,64,129,0.7), 0 8px 20px rgba(255,64,129,0.8);
 	        transform: translateY(-5px);
 	        z-index: 2;
 	    }
+	    .character-box::after {
+	        content: "";
+	        position: absolute;
+	        top: 0; left: 0; width: 100%; height: 100%;
+	        background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
+	        opacity: 0.5;
+	        border-radius: 15px;
+	        pointer-events: none;
+	        z-index: 0;
+	    }
+	    .character-box > * {
+	        position: relative;
+	        z-index: 1;
+	    }
 	    @media (hover: hover) and (pointer: fine) {
 	        .character-box:hover {
 	            transform: scale(1.05);
 	            box-shadow: 0 6px 20px rgba(255,255,255,0.2);
 	            z-index: 10;
-	            transition: transform 0.3s, box-shadow 0.3s;
 	        }
 	        .result-item:hover {
-				background: linear-gradient(135deg, #33363d, #2a2c30);
-				box-shadow: 0 6px 25px rgba(0,0,0,0.7), 0 0 10px rgba(255, 64, 129, 0.4);
-				transform: translateY(-3px);
-				border-color: rgba(255, 64, 129, 0.5);
-			}
-			.result-item:hover::before {
-				opacity: 1;
-			}
-			.extras-box:hover {
-				background: rgba(176, 176, 176, 0.2);
-				border-color: rgba(176, 176, 176, 0.8);
-			}
+	            background: linear-gradient(135deg, #33363d, #2a2c30);
+	            box-shadow: 0 6px 25px rgba(0,0,0,0.7), 0 0 10px rgba(255, 64, 129, 0.4);
+	            transform: translateY(-3px);
+	            border-color: rgba(255, 64, 129, 0.5);
+	        }
+	        .result-item:hover::before {
+	            opacity: 1;
+	        }
+	        .extras-box:hover {
+	            background: rgba(176, 176, 176, 0.2);
+	            border-color: rgba(176, 176, 176, 0.8);
+	        }
 	    }
 	    .character-img {
 	        width: 80px;
@@ -110,8 +114,6 @@
 	        margin-bottom: 10px;
 	        border-radius: 10px;
 	        transition: transform 0.3s;
-	        transform: translateZ(0);
-	        backface-visibility: hidden;
 	    }
 	    .character-name {
 	        font-size: 16px;
@@ -142,13 +144,11 @@
 	        font-size: 14px;
 	        background-color: #1e1e1e;
 	        color: #e0e0e0;
-	        transition: border-color 0.3s, box-shadow 0.3s;
 	    }
 	    .spinbox-container input[type="number"]:focus {
 	        border-color: #ff4081;
 	        box-shadow: 0 0 5px rgba(255,64,129,0.5);
 	        outline: none;
-	        background-color: #2a2a2a;
 	    }
 	    #filterButton {
 	        display: flex;
@@ -167,18 +167,6 @@
 	        transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
 	        font-family: 'Poppins', sans-serif;
 	        font-weight: 600;
-	        position: relative;
-	        z-index: 1;
-	        transform: translateZ(0);
-	    }
-	     #filterButton:hover {
-	        background: linear-gradient(45deg, #ff4081, #f50057);
-	        box-shadow: 0 6px 20px rgba(255,64,129,0.8);
-	        transform: translateY(-3px);
-	    }
-	    #filterButton:active {
-	        transform: translateY(0);
-	        box-shadow: 0 4px 16px rgba(255,64,129,0.6);
 	    }
 	    #copyInstruction {
 	        margin-bottom: 15px;
@@ -187,15 +175,13 @@
 	        text-align: center;
 	        font-size: 1.2em;
 	        font-weight: 600;
-	        position: relative;
-	        z-index: 1;
 	    }
 	    #copyMessage {
 	        position: fixed;
 	        top: 50%;
 	        left: 50%;
 	        transform: translate(-50%, -50%) scale(0.8);
-	        background: linear-gradient(135deg, #232526 0%, #414345 100%);
+	        background-color: rgba(0,0,0,0.8);
 	        color: #fff;
 	        padding: 20px 30px;
 	        border-radius: 12px;
@@ -203,565 +189,474 @@
 	        opacity: 0;
 	        font-family: 'Poppins', sans-serif;
 	        font-size: 1.1em;
-	        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+	        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
 	        z-index: 1000;
 	        transition: opacity 0.3s ease, transform 0.3s ease;
-	        border-left: 4px solid #ff4081;
-	        will-change: transform, opacity;
 	    }
 	    #copyMessage.show {
+	        display: block;
+	        opacity: 1;
+	        transform: translate(-50%, -50%) scale(1);
+	    }
+	    #results {
+	        padding: 20px;
+	        height: 800px;
+	        max-height: 800px;
+	        overflow-y: auto;
+	        background-color: rgba(20,20,20,0.8);
+	        border-radius: 15px;
+	        box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+	        contain: strict;
+	        transform: translateZ(0);
+	    }
+	    #results.filtering .content-container {
+	        opacity: 0;
+	    }
+	    .result-item {
+	        margin-bottom: 18px; /* [크기 조정] */
+	        padding: 15px 24px; /* [크기 조정] */
+	        background: linear-gradient(135deg, #202228, #1a1c20);
+	        cursor: pointer;
+	        transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+	        border-radius: 12px;
+	        border: 1px solid rgba(255, 255, 255, 0.1);
+	        box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 2px rgba(0,0,0,0.4);
 	        display: flex;
 	        align-items: center;
+	        justify-content: space-between;
+	        flex-wrap: nowrap;
 	        gap: 15px;
-	        animation: messagePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+	        position: relative;
+	        overflow: hidden;
 	    }
-	    @keyframes messagePop {
-	        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-	        50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-	        100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+	    .result-item::before {
+	        content: '';
+	        position: absolute;
+	        top: 0;
+	        left: 0;
+	        width: 4px;
+	        height: 100%;
+	        background: linear-gradient(180deg, #ff4081, #f50057);
+	        opacity: 0.6;
+	        transition: opacity 0.3s;
 	    }
-	    .copy-icon {
-	        width: 24px;
-	        height: 24px;
-	        background-color: #ff4081;
-	        border-radius: 50%;
+	    .item-images-wrapper { 
+	        flex-grow: 1; 
+	        position: relative; 
+	        overflow: hidden; 
+	        display: flex;
+	    }
+	    .item-images {
 	        display: flex;
 	        align-items: center;
-	        justify-content: center;
-	        animation: pulse 1s infinite;
-	        transform: translateZ(0);
+	        flex-wrap: nowrap;
+	        gap: 10px; /* [크기 조정] */
+	        overflow-x: auto;
+	        padding: 5px 0;
+	        margin: -5px 0;
+	        scrollbar-width: none;
 	    }
-	    @keyframes pulse {
-	        0% { box-shadow: 0 0 0 0 rgba(255, 64, 129, 0.7); }
-	        70% { box-shadow: 0 0 0 10px rgba(255, 64, 129, 0); }
-	        100% { box-shadow: 0 0 0 0 rgba(255, 64, 129, 0); }
+	    .item-images::-webkit-scrollbar {
+	        display: none;
 	    }
-	    .copy-icon svg {
-	        width: 14px;
-	        height: 14px;
-	        fill: white;
-	        transform: translateZ(0);
+	
+	    .result-info-right {
+	        display: flex;
+	        align-items: center;
+	        flex-shrink: 0;
 	    }
-		#results {
-		    padding: 20px;
-		    height: 800px;
-		    max-height: 800px;
-		    overflow-y: auto;
-		    background-color: rgba(20,20,20,0.8);
-		    border-radius: 15px;
-		    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-		    position: relative;
-		    z-index: 1;
-		    will-change: scroll-position;
-		    -webkit-overflow-scrolling: touch;
-		    transform: translateZ(0);
-            transition: opacity 0.2s ease-in-out;
-		}
-        #results.sorting {
-            opacity: 0;
-        }
-	    #results .content-container {
-	        transform: translateZ(0);
-	        will-change: opacity;
-	        transition: opacity 0.2s ease;
-	        contain: layout paint style;
-	        backface-visibility: hidden;
-	    }
-	    #results.scrolling .result-item {
-	        transition: none !important;
-	    }
-		.result-item {
-			margin-bottom: 18px;
-			padding: 14px 24px;
-			background: linear-gradient(135deg, #202228, #1a1c20);
-			cursor: pointer;
-			transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-			border-radius: 14px;
-			border: 1px solid rgba(255, 255, 255, 0.1);
-			box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 2px rgba(0,0,0,0.4);
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			flex-wrap: nowrap;
-			gap: 18px;
-			position: relative;
-			overflow: hidden;
-		}
-		.result-item::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 4px;
-			height: 100%;
-			background: linear-gradient(180deg, #ff4081, #f50057);
-			opacity: 0.6;
-			transition: opacity 0.3s;
-		}
-        .item-images-wrapper {
-            flex-grow: 1; 
-            position: relative; 
-            overflow: hidden; 
-            display: flex;
-        }
-		.item-images {
-			display: flex;
-			align-items: center;
-			flex-wrap: nowrap;
-			gap: 10px;
-            overflow-x: auto;
-            padding: 6px;
-            scrollbar-width: none;
-		}
-        .item-images::-webkit-scrollbar {
-            display: none; 
-        }
-		.result-info-right {
-			display: flex;
-			align-items: center;
-			flex-wrap: nowrap;
-			gap: 10px;
-			justify-content: flex-end;
-            flex-shrink: 0;
-		}
+	
 	    .small-character-img {
-			height: 60px;
-			width: auto;
-            min-width: 45px;
-			object-fit: contain;
-			border-radius: 10px;
-			transition: transform 0.2s;
-			border: 1px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
+	        height: 60px; /* [크기 조정] */
+	        width: auto;
+	        object-fit: contain;
+	        border-radius: 8px;
+	        border: 1px solid rgba(255, 255, 255, 0.1);
 	    }
-		.extras-box {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 60px;
-			min-width: 84px;
-			padding: 0 12px;
-			background: rgba(176, 176, 176, 0.1);
-			border: 1px dashed rgba(176, 176, 176, 0.5);
-			border-radius: 10px;
-			cursor: pointer;
-			transition: background 0.2s, border-color 0.2s;
-            flex-shrink: 0;
-		}
-	    .small-character-img.rare { /* Tier 1 */
+	    .small-character-img.rare {
 	        border: 2px solid #ff9800;
 	        box-shadow: 0 0 8px rgba(255,152,0,0.6);
 	    }
-	    .small-character-img.super-rare { /* Tier 0 */
+	    .small-character-img.super-rare {
 	        border: 2px solid #D32F2F;
 	        box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);
 	    }
-	    body::before {
-	        content: "";
-	        position: absolute;
-	        top: 0;
-	        left: 0;
-	        width: 100%;
-	        height: 100%;
-	        background: url('https://www.transparenttextures.com/patterns/dark-matter.png') repeat;
-	        opacity: 0.1;
-	        z-index: -1;
-	    }
-	    .character-box::after {
-	        content: "";
-	        position: absolute;
-	        top: 0;
-	        left: 0;
-	        width: 100%;
-	        height: 100%;
-	        background: url('https://www.transparenttextures.com/patterns/gplay.png') repeat;
-	        opacity: 0.5;
-	        border-radius: 15px;
-	        pointer-events: none;
-	        z-index: 0;
-	    }
-	    .character-box > * {
+	    .image-with-count-container {
 	        position: relative;
-	        z-index: 1;
+	        display: inline-block;
+	        vertical-align: middle;
+	        flex-shrink: 0;
 	    }
-        .image-with-count-container {
-            position: relative;
-            display: inline-block;
-            vertical-align: middle;
-            flex-shrink: 0;
-        }
-		.image-count-badge {
-		    position: absolute;
-		    bottom: -5px;
-		    right: -5px; 
-		    min-width: 22px;
-		    text-align: center;
-		    background: rgba(0, 0, 0, 0.75);
-		    backdrop-filter: blur(4px);
-		    -webkit-backdrop-filter: blur(4px);
-		    color: #fff;
-		    padding: 2px 7px;
-		    border-radius: 10px; 
-		    font-family: 'Poppins', sans-serif;
-		    font-size: 15px; 
-		    font-weight: 600;
-		    line-height: 1.4;
-		    border: 1px solid rgba(255, 255, 255, 0.1);
-		    box-shadow: 0 2px 5px rgba(0,0,0,0.6); 
-		    pointer-events: none;
-		}
-		.image-count-badge.rare-badge { /* Tier 1 */
-		    color: #ffc107;
-		    text-shadow: 0 0 5px rgba(255, 193, 7, 0.7);
-		}
-		.image-count-badge.super-rare-badge { /* Tier 0 */
-		    color: #ff5252;
-		    text-shadow: 0 0 5px rgba(255, 82, 82, 0.7);
-		}
-        .costume-item-box {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 60px;
-            width: 70px;
-            border-radius: 10px;
-            flex-shrink: 0;
-            background: linear-gradient(135deg, #2d2a21, #1c1a16);
-			border: 2px solid #D4AF37;
-			box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
-            padding: 4px;
-            box-sizing: border-box;
-        }
-        .costume-item-box .costume-line-1 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #FFD700;
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.1;
-            text-shadow: 0 0 6px rgba(255, 215, 0, 0.8);
-        }
-        .costume-item-box .costume-line-2 {
-            font-size: 11px;
-            font-weight: 600;
-            color: #eee;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-		.price-box {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: flex-end;
-			height: 60px;
-			min-width: 114px;
-			padding: 0 12px;
-			background: linear-gradient(270deg, rgba(39, 174, 96, 0.2), transparent);
-			border-radius: 10px;
-			font-family: 'Poppins', sans-serif;
-		}
-		.price-box .price-usd {
-			font-size: 22px;
-			font-weight: 700;
-			color: #2ecc71;
-			text-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
-		}
-		.price-box .price-krw {
-			font-size: 14px;
-			color: #bdc3c7;
-		}
-	    .sort-container {
+	    .image-count-badge {
+	        position: absolute;
+	        bottom: -5px; /* [크기 조정] */
+	        right: -5px; /* [크기 조정] */
+	        min-width: 20px; /* [크기 조정] */
+	        text-align: center;
+	        background: rgba(0, 0, 0, 0.75);
+	        backdrop-filter: blur(4px);
+	        color: #fff;
+	        padding: 2px 7px; /* [크기 조정] */
+	        border-radius: 9px; /* [크기 조정] */
+	        font-family: 'Poppins', sans-serif;
+	        font-size: 14px; /* [크기 조정] */
+	        font-weight: 600;
+	        line-height: 1.4;
+	        border: 1px solid rgba(255, 255, 255, 0.1);
+	        box-shadow: 0 2px 5px rgba(0,0,0,0.6); 
+	        pointer-events: none;
+	    }
+	    .image-count-badge.rare-badge {
+	        color: #ffc107;
+	        text-shadow: 0 0 5px rgba(255, 193, 7, 0.7);
+	    }
+	    .image-count-badge.super-rare-badge {
+	        color: #ff5252;
+	        text-shadow: 0 0 5px rgba(255, 82, 82, 0.7);
+	    }
+	    .item-box {
+	        display: inline-flex;
+	        flex-direction: column;
+	        justify-content: center;
+	        align-items: center;
+	        width: 70px;
+	        height: 60px;
+	        background: linear-gradient(145deg, #4d3e00, #332a00);
+	        border: 2px solid #ffc107;
+	        box-shadow: 0 0 10px rgba(255, 193, 7, 0.6), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(255, 215, 0, 0.2);
+	        border-radius: 10px;
+	        flex-shrink: 0;
+	    }
+	    .item-box .item-title {
+	        color: #ffc107;
+	        font-size: 14px;
+	        font-weight: bold;
+	        text-shadow: 1px 1px 2px #000;
+	        margin-bottom: 4px;
+	    }
+	    .item-box .item-count {
+	        color: #fff;
+	        font-size: 12px;
+	        font-weight: 600;
+	    }
+	    .price-box {
 	        display: flex;
-	        justify-content: flex-end;
-	        margin-bottom: 15px;
-	        padding-right: 5px;
-	    }
-	    #sortDropdown {
-	        background-color: #2a2c30;
-	        color: #e0e0e0;
-	        border: 1px solid #555;
-	        padding: 8px 12px;
+	        flex-direction: column;
+	        justify-content: center;
+	        align-items: flex-end;
+	        height: 60px; /* [크기 조정] */
+	        min-width: 110px; /* [크기 조정] */
+	        padding: 0 10px;
+	        background: linear-gradient(270deg, rgba(255, 82, 82, 0.2), transparent); /* 수정됨 */
 	        border-radius: 8px;
 	        font-family: 'Poppins', sans-serif;
-	        font-size: 14px;
-	        cursor: pointer;
-	        outline: none;
-	        transition: border-color 0.3s, box-shadow 0.3s;
-	        -webkit-appearance: none;
-	        -moz-appearance: none;
-	        appearance: none;
-	        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e0e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-	        background-repeat: no-repeat;
-	        background-position: right 12px center;
-	        background-size: 1em;
-	        padding-right: 35px;
+	        line-height: 1.3; /* [크기 조정] */
 	    }
-	    #sortDropdown:focus, #sortDropdown:hover {
-	        border-color: #555;
-            outline: none;
-			box-shadow: none;
+	    .price-box .original-price {
+	        font-size: 14px; /* [크기 조정] */
+	        color: #aaa;
+	        text-decoration: line-through;
 	    }
-	    #tsparticles {
-	        position: fixed;
-	        top: 0;
-	        left: 0;
-	        width: 100%;
-	        height: 100%;
-	        z-index: 0;
-	        pointer-events: none;
+	    .price-box .price-krw {
+	        font-size: 20px; /* [크기 조정] */
+	        font-weight: 700;
+	        color: #ff5252; /* 수정됨 */
+	        text-shadow: 0 0 8px rgba(255, 82, 82, 0.6); /* 수정됨 */
 	    }
-		.scroll-indicator {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-			width: 28px;
-			height: 28px;
-			background: linear-gradient(135deg, rgba(40,40,40,0.8), rgba(20,20,20,0.8));
-			backdrop-filter: blur(5px);
-			border: 1px solid rgba(255,255,255,0.2);
-			color: #fff;
-			border-radius: 50%;
-			display: none;
-			align-items: center;
-			justify-content: center;
-			font-size: 24px;
-			line-height: 28px;
-			font-weight: bold;
-			cursor: pointer;
-			z-index: 10;
-			transition: opacity 0.2s;
-            text-shadow: 0 0 4px rgba(0,0,0,0.5);
-            user-select: none;
-		}
-        .scroll-indicator.visible {
-            display: flex;
-        }
-        .scroll-indicator-left {
-            left: 5px;
-        }
-        .scroll-indicator-right {
-            right: 5px;
-        }
-        .item-images-wrapper.has-scroll::before,
-        .item-images-wrapper.has-scroll::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            width: 70px;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
-            transition: opacity 0.3s;
-            opacity: 0;
-        }
-        .item-images-wrapper.has-scroll::before {
-            left: 0;
-            background: linear-gradient(to left, rgba(26, 28, 32, 0), #1a1c20 80%);
-        }
-        .item-images-wrapper.has-scroll::after {
-            right: 0;
-            background: linear-gradient(to right, rgba(26, 28, 32, 0), #1a1c20 80%);
-        }
-        .item-images-wrapper.scrolled-from-start::before {
-            opacity: 1;
-        }
-        .item-images-wrapper:not(.scrolled-to-end)::after {
-            opacity: 1;
-        }
-	    #loader {
-	        position: fixed;
-	        top: 0;
-	        left: 0;
-	        width: 100%;
-	        height: 100%;
-	        background-color: rgba(18,18,18,0.95);
-	        display: flex;
+	
+	    .scroll-indicator {
+	        position: absolute;
+	        top: 50%;
+	        right: 15px; 
+	        transform: translateY(-50%);
+	        width: 28px;
+	        height: 28px;
+	        background: linear-gradient(135deg, rgba(40,40,40,0.8), rgba(20,20,20,0.8));
+	        backdrop-filter: blur(5px);
+	        border: 1px solid rgba(255,255,255,0.2);
+	        color: #fff;
+	        border-radius: 50%;
+	        display: none; 
 	        align-items: center;
 	        justify-content: center;
-	        flex-direction: column;
-	        z-index: 2000;
-	        transition: opacity 0.5s ease, visibility 0.5s ease;
+	        font-size: 18px;
+	        line-height: 28px;
+	        font-weight: bold;
+	        cursor: pointer;
+	        z-index: 10;
+	        transition: opacity 0.2s;
+	        text-shadow: 0 0 4px rgba(0,0,0,0.5);
 	    }
-	    #loader.hidden {
+	    .item-images-wrapper.has-scroll .scroll-indicator {
+	        display: flex;
+	    }
+	    .item-images-wrapper.scrolled-to-end .scroll-indicator {
 	        opacity: 0;
-	        visibility: hidden;
+	        pointer-events: none;
 	    }
+	    .item-images-wrapper.has-scroll::after {
+	        content: '';
+	        position: absolute;
+	        top: 0;
+	        right: 0;
+	        width: 70px;
+	        height: 100%;
+	        background: linear-gradient(to right, rgba(26, 28, 32, 0), #1a1c20 80%);
+	        pointer-events: none;
+	        z-index: 5;
+	        transition: opacity 0.3s;
+	        opacity: 1;
+	    }
+	    .item-images-wrapper.scrolled-to-end::after {
+	        opacity: 0;
+	    }
+	
+	    #tsparticles {
+	        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+	    }
+	    #loader {
+	        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+	        background-color: rgba(18,18,18,0.95);
+	        display: flex; align-items: center; justify-content: center; flex-direction: column;
+	        z-index: 2000; transition: opacity 0.5s ease, visibility 0.5s ease;
+	    }
+	    #loader.hidden { opacity: 0; visibility: hidden; }
 	    .spinner {
-	        border: 8px solid #f3f3f3;
-	        border-top: 8px solid #ff4081;
-	        border-radius: 50%;
-	        width: 60px;
-	        height: 60px;
-	        animation: spin 1s linear infinite;
-	        margin-bottom: 20px;
-	        transform: translateZ(0);
+	        border: 8px solid #f3f3f3; border-top: 8px solid #ff4081; border-radius: 50%;
+	        width: 60px; height: 60px; animation: spin 1s linear infinite; margin-bottom: 20px;
 	    }
-	    @keyframes spin {
-	        0% { transform: rotate(0deg); }
-	        100% { transform: rotate(360deg); }
+	    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+	    
+	    #budgetContainer {
+	        display: flex; justify-content: center; margin-bottom: 30px;
 	    }
-		#extrasPopup {
-			display: none;
-			position: fixed;
-			z-index: 4000;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			background-color: rgba(0,0,0,0.7);
-			align-items: center;
-			justify-content: center;
-		}
-		.extras-popup-content {
-			background-color: #1e1e1e;
-			padding: 25px;
-			border: 2px solid #b0b0b0;
-			border-radius: 15px;
-			width: 80%;
-			max-width: 700px;
-			box-shadow: 0 5px 25px rgba(0,0,0,0.7);
-			position: relative;
-		}
-		.close-button {
-			color: #aaa;
-			position: absolute;
-			top: 10px;
-			right: 15px;
-			font-size: 28px;
-			font-weight: bold;
-			cursor: pointer;
-		}
-		.close-button:hover,
-		.close-button:focus {
-			color: #fff;
-		}
-		#extras-popup-grid {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 10px;
-			justify-content: center;
-			padding-top: 10px;
-		}
+	    .budget-box {
+	        width: 300px; height: 60px; padding: 10px 20px;
+	        display: flex; flex-direction: row; justify-content: center; align-items: center;
+	        margin-bottom: 20px; transition: all 0.2s ease; cursor: pointer;
+	        border: 1px solid rgba(255,255,255,0.1);
+	    }
+	    .budget-box:hover { border-color: rgba(255,64,129,0.4); }
+	    .budget-text { font-size: 18px; margin: 0; transition: all 0.2s ease; white-space: nowrap; color: #e0e0e0; }
+	    .budget-box.selected { justify-content: space-between; border-color: rgba(255,64,129,0.6); }
+	    .budget-text-container { display: flex; align-items: center; gap: 8px; position: relative; }
+	    .tooltip-content {
+	        position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+	        background: rgba(0, 0, 0, 0.9); padding: 12px 16px; border-radius: 8px;
+	        font-size: 14px; color: #fff; width: 280px; text-align: center;
+	        pointer-events: none; opacity: 0; visibility: hidden; transition: all 0.2s ease;
+	        z-index: 100; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	        border: 1px solid rgba(255, 64, 129, 0.3); margin-top: 10px;
+	    }
+	    .budget-box.selected .tooltip-content { opacity: 1; visibility: visible; }
+	    .budget-input-wrapper { display: none; align-items: center; opacity: 0; transition: all 0.2s ease; }
+	    .budget-box.selected .budget-input-wrapper { display: flex; opacity: 1; }
+	    .budget-input-container { display: flex; align-items: center; }
+	    .budget-input-container input[type="number"] {
+	        width: 120px; padding: 8px 12px; font-size: 16px; border-radius: 8px;
+	        border: 1px solid rgba(255,255,255,0.2); background-color: rgba(0,0,0,0.2); color: #fff;
+	    }
+	    .budget-input-container input[type="number"]:focus { border-color: #ff4081; outline: none; }
+	    .budget-unit { color: #e0e0e0; margin-left: 8px; font-size: 16px; }
+	
+	    .extras-box {
+	        display: flex;
+	        justify-content: center;
+	        align-items: center;
+	        height: 60px; /* [크기 조정] */
+	        min-width: 80px; /* [크기 조정] */
+	        padding: 0 10px;
+	        background: rgba(176, 176, 176, 0.1);
+	        border: 1px dashed rgba(176, 176, 176, 0.5);
+	        border-radius: 8px;
+	        cursor: pointer;
+	        transition: background 0.2s, border-color 0.2s;
+	        flex-shrink: 0;
+	    }
+	    .extras-box .item-title {
+	        color: #e0e0e0;
+	        font-size: 15px; /* [크기 조정] */
+	        text-decoration: none;
+	        font-weight: bold;
+	    }
+	    #extrasPopup {
+	        display: none; position: fixed; z-index: 4000; left: 0; top: 0;
+	        width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7);
+	        align-items: center; justify-content: center;
+	    }
+	    .extras-popup-content {
+	        background-color: #1e1e1e; padding: 25px; border: 2px solid #b0b0b0;
+	        border-radius: 15px; width: 80%; max-width: 700px; box-shadow: 0 5px 25px rgba(0,0,0,0.7);
+	        position: relative;
+	    }
+	    .close-button {
+	        color: #aaa; position: absolute; top: 10px; right: 15px;
+	        font-size: 28px; font-weight: bold; cursor: pointer;
+	    }
+	    .close-button:hover, .close-button:focus { color: #fff; }
+	    #extras-popup-grid {
+	        display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-top: 10px;
+	    }
+
+        /* ===== 공지사항 모달 스타일 ===== */
+        .modal-overlay {
+            display: none; /* 기본적으로 숨김 */
+            position: fixed;
+            z-index: 5000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #2a2c30;
+            padding: 30px;
+            border: 2px solid #ff4081;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.7);
+            position: relative;
+            color: #e0e0e0;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #ff4081;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+        .modal-content p, .modal-content ul {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        .modal-content ul {
+            list-style-type: none;
+            padding-left: 0;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .modal-content li {
+            margin-bottom: 8px;
+        }
+        .modal-content li:last-child {
+            margin-bottom: 0;
+        }
+        .modal-content strong {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .modal-summary {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 15px;
+            color: #ccc;
+        }
+        .modal-close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close-btn:hover, .modal-close-btn:focus {
+            color: #fff;
+        }
 
 	    @media (max-width: 768px) {
-	        .character-grid {
-	            grid-template-columns: repeat(auto-fill, minmax(80px,1fr));
-	            gap: 10px;
-	        }
-	        .character-box {
-	            height: 125px; 
-	            padding: 8px;
-	        }
-	        .character-box .character-img {
-	            width: 60px;
-	            height: 70px;
-	            margin-bottom: 5px;
-	        }
-	        .character-box .character-name {
-	            font-size: 14px;
-	        }
-	        .spinbox-container input[type="number"] {
-	            width: 45px;
-	        }
-	        #filterButton {
-	            font-size: 16px;
-	            padding: 12px;
-	        }
-	        .result-item {
-	            padding: 12px;
-				flex-wrap: wrap;
-	        }
-            .item-images-wrapper, .result-info-right {
-				flex-basis: 100%;
-			}
-			.result-info-right {
-				justify-content: flex-end;
-			}
-			.price-box {
-			    flex-grow: 1;
-			    align-items: center;
-			    background: rgba(39, 174, 96, 0.1);
-			    min-width: 0;
-			}
-			.small-character-img, .extras-box, .price-box, .costume-item-box {
-				height: 54px;
-			}
-            .costume-item-box {
-                width: 60px;
-            }
-	        .item-images {
-	            gap: 6px;
-	        }
-			.scroll-indicator {
-				display: none !important;
-			}
-            .item-images-wrapper.has-scroll::before,
-            .item-images-wrapper.has-scroll::after {
-                width: 60px;
-            }
-	        #copyInstruction {
-	            font-size: 1em;
-	        }
-	        #copyMessage {
-	            font-size: 1em;
-	            padding: 15px 20px;
-	        }
-			.extras-box .item-title {
-				font-size: 12px;
-			}
-			.costume-item-box .costume-line-1 {
-				font-size: 17px;
-			}
-            .costume-item-box .costume-line-2 {
-				font-size: 10px;
-			}
-			.price-box .price-usd {
-				font-size: 19px;
-			}
-			.price-box .price-krw {
-				font-size: 12px;
-			}
-			.extras-popup-content {
-				width: 90%;
-				padding: 20px;
-			}
+	        .character-grid { grid-template-columns: repeat(auto-fill, minmax(80px,1fr)); gap: 10px; }
+	        .character-box { height: 125px; padding: 8px; }
+	        .character-box .character-img { width: 60px; height: 70px; margin-bottom: 5px; }
+	        .character-box .character-name { font-size: 14px; }
+	        .spinbox-container input[type="number"] { width: 45px; }
+	        #filterButton { font-size: 16px; padding: 12px; }
+	        
+	        .result-item { flex-wrap: wrap; padding: 12px 15px; } /* [크기 조정] */
+	        .item-images-wrapper { flex-basis: 100%; }
+	        .item-images { flex-basis: 100%; }
+	        .result-info-right { flex-basis: 100%; justify-content: flex-end; }
+	        .price-box, .extras-box { flex-grow: 1; justify-content: center;}
+	        .price-box { align-items: center; }
+	        .small-character-img, .price-box, .extras-box { height: 52px; } /* [크기 조정] */
+	        .item-images { gap: 8px; } /* [크기 조정] */
+	
+	        #copyInstruction { font-size: 1em; }
+	        #copyMessage { font-size: 1em; padding: 15px 20px; }
+	        .item-box { width: 55px; height: 52px; } /* [크기 조정] */
+	        .item-box .item-title { font-size: 10px; margin-bottom: 0; }
+	        .extras-box .item-title { font-size: 13px; } /* [크기 조정] */
+	        .item-box .item-count { font-size: 12px; }
+	        .price-box .original-price { font-size: 13px; } /* [크기 조정] */
+	        .price-box .price-krw { font-size: 18px; } /* [크기 조정] */
+	        .scroll-indicator { display: none !important; }
+	
+	        .budget-box { width: 100%; max-width: 280px; }
+	        .budget-text { font-size: 16px; }
+	        .budget-input-container input[type="number"] { width: 100px; padding: 6px 10px; font-size: 14px; }
+	        .extras-popup-content { width: 90%; padding: 20px; }
+            .modal-content p, .modal-content ul { font-size: 14px; }
+            .modal-content h2 { font-size: 1.5em; }
 	    }
 	</style>
 </head>
 <body>
-    <div id="loader">
-        <div class="spinner"></div>
-    </div>
+    <div id="loader"><div class="spinner"></div></div>
     <div id="tsparticles"></div>
-    <h1>SEVEN KNIGHTS RE:BIRTH</h1>
+    <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
-    <button id="filterButton">Apply Filter</button>
-	<div id="copyInstruction">
-	  ※ Click item to copy
-	</div>
-    <div class="sort-container">
-        <select id="sortDropdown">
-            <option value="price" selected>Price</option>
-            <option value="total">Character Count</option>
-        </select>
-    </div>
-    <div id="results"></div>
-    <div id="copyMessage">
-        <div class="copy-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
+    <div id="budgetContainer">
+        <div class="budget-box" id="budgetBox">
+            <div class="budget-text-container">
+                <span class="budget-text">추천 조합 보기</span>
+                <span class="tooltip-content">입력한 예산의 ±30% 범위 내에서 추천 조합을 찾아드립니다. 선택된 캐릭터들의 개수 총합 순으로 물품이 정렬됩니다. 꼭 포함시키고 싶은 캐릭터는 1 이상의 수를 입력하세요 (0으로 두는 걸 추천드립니다)</span>
+            </div>
+            <div class="budget-input-wrapper">
+                <div class="budget-input-container">
+                    <input type="number" id="budgetInput" min="0" step="5000" placeholder="금액 입력" disabled />
+                    <span class="budget-unit">원</span>
+                </div>
+            </div>
         </div>
-        <span>Copied</span>
     </div>
+    <button id="filterButton">필터 적용</button>
+    <div id="copyInstruction">※ 클릭하면 물품 코드가 복사됩니다</div>
+    <div id="results"></div>
+    <div id="copyMessage">복사되었습니다</div>
 
-	<div id="extrasPopup">
+    <div id="extrasPopup">
 		<div class="extras-popup-content">
 			<span class="close-button" id="closeExtrasPopup">×</span>
 			<div id="extras-popup-grid"></div>
 		</div>
 	</div>
+
+    <div id="noticeModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close-btn">&times;</span>
+            <h2>공지사항</h2>
+            <p>실제 계정에는 표시된 일부 영웅 대신 <strong>선택권</strong>이 포함되어 있습니다.</p>
+            <ul>
+                <li>레오네 4장 → <strong>Ⅱ전설선택권 4장</strong></li>
+                <li>구전설 각 1장 → <strong>Ⅰ전설선택권 4장</strong></li>
+                <li>새리아 3장 → <strong>3성선택권 3장</strong></li>
+            </ul>
+            <p class="modal-summary">
+                따라서, '개미첼' 등 다른 영웅을 원하시는 경우,
+                <br><strong>[Ⅱ전설선택권]</strong>으로 다른 전설 영웅을 선택하여 받으시면 됩니다.
+				<br>요컨데 특정 영웅을 꼭 포함하지 않으셔도 된다는 뜻입니다.
+            </p>
+        </div>
+    </div>
 
     <script>
         let lastActivityTime = Date.now();
@@ -769,378 +664,261 @@
         ['click', 'touchstart', 'scroll', 'keypress'].forEach(event => document.addEventListener(event, updateActivityTime));
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
-                const currentTime = Date.now();
-                const inactiveTime = currentTime - lastActivityTime;
-                if (inactiveTime > 7200000) { window.location.reload(true); } else { lastActivityTime = currentTime; }
+                const inactiveTime = Date.now() - lastActivityTime;
+                if (inactiveTime > 7200000) window.location.reload(true);
+                else lastActivityTime = Date.now();
             }
         });
+        
+        // ===== [수정] 모달을 띄우는 함수 정의 =====
+        function showNoticeModal() {
+            const noticeModal = document.getElementById('noticeModal');
+            if (noticeModal) {
+                noticeModal.style.display = 'flex';
+            }
+        }
 
         window.addEventListener('load', () => {
             const lastLoad = localStorage.getItem('lastLoadTime');
             const currentTime = Date.now();
-            if (!lastLoad || (currentTime - parseInt(lastLoad)) > 15000) {
+            if (!lastLoad || (currentTime - parseInt(lastLoad)) > 1000) {
                 localStorage.setItem('lastLoadTime', currentTime);
                 window.location.reload(true);
                 return;
             }
             const loader = document.getElementById('loader');
-            loadCharacters()
-                .then(() => loadData())
-                .then(() => applyFiltersAndSort())
-                .then(() => new Promise(r => setTimeout(r, 500)))
-                .then(() => {
-                    loader.classList.add('hidden');
-                    setTimeout(() => {
+            loadData().then(filterData).then(() => new Promise(r => setTimeout(r, 500)))
+                .then(() => { 
+                    loader.classList.add('hidden'); 
+                    setTimeout(() => { 
                         loader.style.display = 'none';
-                        const results = document.getElementById('results');
-                        if (results) {
-                            results.style.willChange = 'scroll-position';
-                            results.style.webkitOverflowScrolling = 'touch';
-                            results.addEventListener('scroll', function() {
-                                if (!results.isScrolling) {
-                                    results.isScrolling = true;
-                                    results.classList.add('scrolling');
-                                }
-                                clearTimeout(results.scrollEndTimer);
-                                results.scrollEndTimer = setTimeout(function() {
-                                    results.isScrolling = false;
-                                    results.classList.remove('scrolling');
-                                }, 100);
-                            }, { passive: true });
-                        }
-                        optimizeImages();
-                        optimizeParticles();
-                    }, 500);
+                        // ===== [수정] 로더가 사라진 후 공지 모달 호출 =====
+                        showNoticeModal();
+                    }, 500); 
                 })
                 .catch(error => {
-                    console.error('Initial filter application error:', error);
+                    console.error('초기 필터 적용 에러:', error);
                     loader.classList.add('hidden');
                     setTimeout(() => loader.style.display = 'none', 500);
                 });
         });
 
-        function optimizeParticles() {
-            const pauseParticles = () => window.tsParticles?.domItem(0)?.pause();
-            const resumeParticles = () => window.tsParticles?.domItem(0)?.play();
-            const results = document.getElementById('results');
-            if (results) {
-                results.addEventListener('scroll', () => {
-                    if (!results.particlesPaused) {
-                        pauseParticles();
-                        results.particlesPaused = true;
-                        clearTimeout(results.particlesTimer);
-                        results.particlesTimer = setTimeout(() => {
-                            resumeParticles();
-                            results.particlesPaused = false;
-                        }, 200);
-                    }
-                }, { passive: true });
-            }
-            document.addEventListener('visibilitychange', () => {
-                document.visibilityState === 'hidden' ? pauseParticles() : resumeParticles();
-            });
-        }
+        const characters = [
+            ["reone","레오네"],["isabel","이자벨"],["castol","카스톨"],["fumitchell","개미첼"],["myle","마일"],["ervin","어빈"],["gerd","게르드"],["thomas","토마스"],
+            ["hwiri","휘리"],["guse","구스"],["dominique","도미니크"],["aph","알프"],["mgisa","마기사"],["sria","새리아"],["kzimu","카지무"],["ysara","여사라"],["gglas","계글라스"],["buruka","부루카"],
+            ["intis","인티스"],["bomuna","봄우나"],["jyoanna","죠안나"],["daerael","대라엘"],
+            ["stella","스텔라"],["altos","알토스"],["mitchell","미첼"],["duol","듀올"],["morison","모리슨"],
+            ["lody","로디"],["elenoa","엘레노아"],["imel","아이멜"],["shannon","섀넌"],["rachel","레이첼"],["muse","뮤즈"],
+            ["sdigma","스티그마"],["aria","아리아"],["luthis","루티스"],["aida","아이다"],["sarah","사라"],["rookius","루키어스"],
+            ["volgade","볼게이드"],["gawain","가웨인"],["varius","베리어스"],["palman","팔만"],["madram","매드람"]
+        ];
 
-        let characters = [];
-        let tier0Characters = [];
-        let tier1Characters = [];
-        let tier2Characters = [];
-        let currentFilteredData = {};
+        const tierCharacters = [ "hwiri", "guse", "dominique", "aph", "mgisa", "sria", "kzimu", "ysara", "gglas", "buruka", "intis", "bomuna", "jyoanna", "daerael", "stella", "altos"];
+        const exceptCharacters = ["reone","isabel","castol", "fumitchell", "myle", "ervin", "gerd", "thomas"];
+
+        let sortedData = {}, luaData = {};
         let itemObserver;
-
-		function loadCharacters() {
-            const ts = new Date().getTime();
-            return fetch(`Characters.txt?t=${ts}`)
-                .then(r => r.text())
-                .then(text => {
-                    const lines = text.split('\n');
-                    let currentTier = 0;
-
-                    lines.forEach(line => {
-                        const trimmedLine = line.trim();
-                        if (trimmedLine === '') {
-                            currentTier++;
-                            return;
-                        }
-                        const parts = trimmedLine.split(' ');
-                        if (parts.length >= 2) {
-                            const [eng, ...korParts] = parts;
-                            const kor = korParts.join(' ');
-                            const charData = [eng, kor];
-                            
-                            if (currentTier === 0) tier0Characters.push(charData);
-                            else if (currentTier === 1) tier1Characters.push(charData);
-                            else if (currentTier === 2) tier2Characters.push(charData);
-                        }
-                    });
-                    characters = [...tier0Characters, ...tier1Characters, ...tier2Characters];
-                    createCharacterBoxes();
-                })
-                .catch(error => { console.error('Character data loading error:', error); });
-        }
-
-        let luaData = {};
         const characterGrid = document.getElementById('characterGrid');
+        const budgetBox = document.getElementById('budgetBox');
+        const budgetInput = document.getElementById('budgetInput');
 
-        function createCharacterBoxes() {
-            const characterGrid = document.getElementById('characterGrid');
-            characterGrid.innerHTML = '';
-            const fragment = document.createDocumentFragment();
+        characters.forEach(([eng, kor]) => {
+            const charBox = document.createElement('div');
+            charBox.className = 'character-box';
+            charBox.dataset.engName = eng;
+            
+            if (exceptCharacters.includes(eng)) {
+                charBox.classList.add('super-rare');
+            } else if (tierCharacters.includes(eng)) {
+                charBox.classList.add('rare');
+            }
 
-            const tier0Eng = new Set(tier0Characters.map(([eng]) => eng));
-            const tier1Eng = new Set(tier1Characters.map(([eng]) => eng));
+            const img = document.createElement('img');
+            img.src = `cropped_characters/${kor}.png`;
+            img.alt = kor;
+            img.className = 'character-img';
+            img.loading = 'lazy';
+            img.decoding = 'async';
 
-            characters.forEach(([eng, kor]) => {
-                const charBox = document.createElement('div');
-                charBox.className = 'character-box';
-                charBox.dataset.engName = eng;
-                
-                if (tier0Eng.has(eng)) {
-                    charBox.classList.add('super-rare'); // Tier 0
-                } else if (tier1Eng.has(eng)) {
-                    charBox.classList.add('rare'); // Tier 1
-                } else {
-                    charBox.classList.add('extras-character-border'); // Tier 2
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'character-name';
+            nameSpan.textContent = kor;
+
+            const spinboxContainer = document.createElement('div');
+            spinboxContainer.className = 'spinbox-container';
+
+            const spinbox = document.createElement('input');
+            spinbox.type = 'number';
+            spinbox.id = `${eng}-spin`;
+            spinbox.min = 0;
+            spinbox.max = 8;
+            spinbox.value = 0;
+            spinbox.disabled = true;
+
+            spinboxContainer.appendChild(spinbox);
+            charBox.append(img, nameSpan, spinboxContainer);
+            characterGrid.appendChild(charBox);
+
+            charBox.addEventListener('click', (e) => { if(e.target.tagName.toLowerCase() !== 'input') toggleSelection(charBox); });
+            spinbox.addEventListener('click', (e) => { 
+                e.stopPropagation();
+                if(!charBox.classList.contains('selected')) {
+                    charBox.classList.add('selected');
+                    spinbox.disabled = false;
+                    if(spinbox.value === '0') spinbox.value = '1';
                 }
+            });
+        });
 
-                charBox.innerHTML = `
-                    <img src="Portrait/${kor}.png" alt="${kor}" class="character-img" loading="lazy" decoding="async">
-                    <span class="character-name">${eng}</span>
-                    <div class="spinbox-container">
-                        <input type="number" id="${eng}-spin" min="0" max="8" value="0" disabled>
-                    </div>`;
-                fragment.appendChild(charBox);
-                
-                charBox.addEventListener('click', (e) => {
-                    if (e.target.tagName.toLowerCase() !== 'input') toggleSelection(charBox);
-                });
-                charBox.querySelector('input').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (!charBox.classList.contains('selected')) {
-                        toggleSelection(charBox);
+        budgetBox.addEventListener('click', (e) => { if(e.target.tagName.toLowerCase() !== 'input') toggleBudgetSelection(budgetBox); });
+        budgetInput.addEventListener('click', (e) => { e.stopPropagation(); });
+
+        function toggleBudgetSelection(budgetBox) {
+            const isActivating = !budgetBox.classList.contains('selected');
+            const budgetTextContainer = budgetBox.querySelector('.budget-text-container');
+            
+            [...document.getElementsByClassName('character-box')].forEach(box => {
+                if (!exceptCharacters.includes(box.dataset.engName)) {
+                    box.classList.remove('selected');
+                    const spinbox = box.querySelector('input[type="number"]');
+                    spinbox.disabled = true;
+                    spinbox.value = '0';
+                }
+            });
+        
+            if (isActivating) {
+                budgetBox.classList.add('selected');
+                budgetInput.disabled = false;
+                budgetTextContainer.querySelector('.budget-text').textContent = '예산';
+                setTimeout(() => budgetInput.focus(), 300);
+        
+                tierCharacters.forEach((eng) => {
+                    if (!exceptCharacters.includes(eng)) {
+                        const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
+                        if (box) {
+                            box.classList.add('selected');
+                            const spinbox = box.querySelector('input[type="number"]');
+                            spinbox.disabled = false;
+                            spinbox.value = '0';
+                        }
                     }
                 });
-            });
-            characterGrid.appendChild(fragment);
+            } else {
+                budgetBox.classList.remove('selected');
+                budgetInput.disabled = true;
+                budgetInput.value = '';
+                budgetTextContainer.querySelector('.budget-text').textContent = '추천 조합 보기';
+            }
         }
 
         function toggleSelection(charBox) {
             const spinbox = charBox.querySelector('input[type="number"]');
-            const isSelected = charBox.classList.toggle('selected');
-            spinbox.disabled = !isSelected;
-            spinbox.value = isSelected ? (spinbox.value === '0' ? '1' : spinbox.value) : 0;
+            if(charBox.classList.toggle('selected')) {
+                spinbox.disabled = false;
+                spinbox.value = spinbox.value === '0' ? '1' : spinbox.value;
+            } else {
+                spinbox.disabled = true;
+                spinbox.value = 0;
+            }
         }
-
-        let itemDetailsMap = {};
 
         function loadData() {
             const ts = new Date().getTime();
-            return fetch(`account_prices.txt?t=${ts}`)
-                .then(r => r.text())
-                .then(text => {
-                    luaData = {};
-                    itemDetailsMap = {};
-                    const lines = text.split('\n');
-
-                    lines.forEach(line => {
-                        if (!line.trim() || !line.includes('=')) return;
-
-                        const parts = line.split('=');
-                        const pricePart = parts.pop().trim();
-                        const contentPart = parts.join('=').trim();
-                        const contentWords = contentPart.split(/\s+/);
-                        const key = contentWords.shift();
-
-                        const itemDetails = {
-                            originalText: line,
-                            price: parseFloat(pricePart.replace('$', '')),
-                            costume: line.toLowerCase().includes('[teo legend costume]'),
-                            totalCount: 0,
-                        };
-
-                        const currentItemChars = {};
-                        contentWords.forEach(word => {
-                            const match = word.match(/^([a-zA-Z]+)(\d+)$/);
-                            if (match) {
-                                const charName = match[1].toLowerCase();
-                                const count = parseInt(match[2]);
-                                currentItemChars[charName] = (currentItemChars[charName] || 0) + count;
-                            }
-                        });
-
-                        for (const charName in currentItemChars) {
-                            itemDetails.totalCount += currentItemChars[charName];
-                        }
-                        
-                        luaData[key] = currentItemChars;
-                        itemDetailsMap[key] = itemDetails;
-                    });
-                }).catch(error => { console.error('Data loading error:', error); });
+            return Promise.all([
+                fetch(`sorted_data_with_keys.txt?t=${ts}`).then(r => r.text()),
+                fetch(`data.lua?t=${ts}`).then(r => r.text())
+            ]).then(([sortedText, luaText]) => {
+                sortedData = {};
+                sortedText.split('\n').forEach(line => { const [k,...v] = line.split(' '); if(k && v.length) sortedData[k]=v.join(' '); });
+                luaData = {};
+                luaText.split('\n').forEach(line => { const m = line.match(/\["(.+)"\]\s*=\s*"(.+)"/); if(m) luaData[m[1]] = m[2]; });
+            }).catch(error => console.error('데이터 로딩 오류:', error));
         }
 
-        function applyFiltersAndSort() {
+        function calculateReductionAmount(itemKeys) {
+            const pricesAfterBaseDiscount = itemKeys
+                .map(k => getPrice(k) * 0.8)
+                .filter(p => p > 0);
+
+            if (pricesAfterBaseDiscount.length > 0) {
+                const minPrice = Math.min(...pricesAfterBaseDiscount);
+                return Math.max(0, minPrice - 29000);
+            }
+            return 0;
+        }
+
+        function filterData() {
             const resultsDiv = document.getElementById('results');
-            resultsDiv.classList.add('sorting'); 
-            window.tsParticles?.domItem(0)?.pause();
+            resultsDiv.classList.add('filtering');
+            
             setTimeout(() => {
-                currentFilteredData = Object.fromEntries(Object.entries(luaData).filter(([k, v]) => checkConditions(v)));
-                
-                const sortKey = document.getElementById('sortDropdown')?.value || 'price';
-                const sortedKeys = Object.keys(currentFilteredData).sort((a, b) => {
-                    const itemA = itemDetailsMap[a];
-                    const itemB = itemDetailsMap[b];
-                    
-                    if (sortKey === 'total') {
-                        const totalDiff = itemB.totalCount - itemA.totalCount;
-                        if (totalDiff !== 0) return totalDiff;
-                        return itemB.price - itemA.price;
+                const allItemKeys = Object.keys(luaData);
+                const reductionAmount = calculateReductionAmount(allItemKeys);
+
+                let filtered = {};
+                for(const [k, v] of Object.entries(luaData)) {
+                    const chars = v.match(/.{1,3}/g)||[];
+                    if(checkConditions(chars)) filtered[k] = v;
+                }
+        
+                const budgetSelected = budgetBox.classList.contains('selected');
+                if (budgetSelected) {
+                    const budgetValue = parseFloat(budgetInput.value);
+                    if (!isNaN(budgetValue) && budgetValue > 0) {
+                        const minPrice = budgetValue * 0.7;
+                        const maxPrice = budgetValue * 1.3;
+
+                        filtered = Object.fromEntries(
+                            Object.entries(filtered).filter(([key]) => {
+                                const originalPrice = getPrice(key);
+                                const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
+                                return finalPrice >= minPrice && finalPrice <= maxPrice;
+                            })
+                        );
                     }
-                    
-                    const priceDiff = itemB.price - itemA.price;
-                    if (priceDiff !== 0) return priceDiff;
-                    return itemB.totalCount - itemA.totalCount;
-                });
+                }
                 
-                displayResults(currentFilteredData, sortedKeys);
-                
-                resultsDiv.classList.remove('sorting');
-                window.tsParticles?.domItem(0)?.play();
+                displayResults(filtered, reductionAmount);
+                resultsDiv.classList.remove('filtering');
             }, 200);
         }
+        
+        function getSelectedCharacterSum(luaString) {
+            const chars = luaString.match(/.{1,3}/g) || [];
+            let sum = 0;
+            chars.forEach(char => {
+                const name = char.slice(0, 2);
+                const num = parseInt(char[2]);
+                const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName.startsWith(name));
+                if (box && box.classList.contains('selected')) {
+                    sum += num;
+                }
+            });
+            return sum;
+        }
 
-        function checkConditions(itemChars) {
+        function checkConditions(chars) {
+            const count = {};
+            chars.forEach(c => { 
+                const name = c.slice(0,2); 
+                const num = parseInt(c[2]); 
+                count[name] = (count[name]||0)+num;
+            });
             return characters.every(([eng]) => {
-                const box = document.querySelector(`.character-box[data-eng-name="${eng}"]`);
-                return !box?.classList.contains('selected') || (itemChars[eng.toLowerCase()] || 0) >= parseInt(box.querySelector('input').value);
+                const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
+                if(box && box.classList.contains('selected')){
+                    return (count[eng.slice(0,2)] || 0) >= parseInt(box.querySelector('input').value);
+                }
+                return true;
             });
         }
 
-        function optimizeImages() {
-            document.querySelectorAll('img').forEach(img => {
-                if (!img.hasAttribute('loading')) img.loading = 'lazy';
-                if (!img.hasAttribute('decoding')) img.decoding = 'async';
-            });
+        function getPrice(k) {
+            const m = sortedData[k]?.match(/=\s*([\d,]+)/);
+            return m ? parseInt(m[1].replace(/,/g,'')) : 0;
         }
-		
-		function displayResults(data, sortedKeys) {
-			const res = document.getElementById('results');
-			res.scrollTop = 0;
-			const fragment = document.createDocumentFragment();
-			const container = document.createElement('div');
-			container.className = 'content-container';
-			fragment.appendChild(container);
 
-            const tier0Eng = new Set(tier0Characters.map(([eng]) => eng));
-			
-			sortedKeys.forEach(k => {
-				const item = document.createElement('div');
-				item.className = 'result-item';
-				item.dataset.itemKey = k;
-
-				item.addEventListener('click', (e) => {
-					if (e.target.closest('.extras-box') || e.target.closest('.scroll-indicator')) return;
-					copyToClipboard(item);
-				});
-                item.addEventListener('mouseenter', () => resetOtherScrolledItems(item));
-                item.addEventListener('mouseleave', () => {
-                    const imgContainer = item.querySelector('.item-images-wrapper.has-scroll .item-images');
-                    if (imgContainer && imgContainer.scrollLeft > 0) {
-                        imgContainer.scroll({ left: 0, behavior: 'smooth' });
-                    }
-                });
-                
-                const imagesWrapper = document.createElement('div');
-                imagesWrapper.className = 'item-images-wrapper';
-				const imageContainer = document.createElement('div');
-				imageContainer.className = 'item-images'; 
-
-                const rightSection = document.createElement('div');
-                rightSection.className = 'result-info-right';
-
-				const charValue = data[k];
-                const itemDetails = itemDetailsMap[k];
-                let allItemsData = [];
-                const tier2ImageData = [];
-
-                for (const charName in charValue) {
-                    const charInfo = characters.find(([eng]) => eng.toLowerCase() === charName);
-                    if (!charInfo) continue;
-                    
-                    const [engName, korName] = charInfo;
-                    const originalIndex = characters.findIndex(([eng]) => eng === engName);
-                    const imageData = { type: 'character', src: `Portrait/${korName}.png`, alt: korName, engName: engName, count: charValue[charName], originalIndex: originalIndex };
-                    
-                    if (tier0Characters.some(c => c[0] === engName) || tier1Characters.some(c => c[0] === engName)) {
-                        allItemsData.push(imageData);
-                    } else {
-                        tier2ImageData.push(imageData);
-                    }
-                }
-
-                if (itemDetails.costume) {
-                    const teoIndex = allItemsData.findIndex(item => item.engName.toLowerCase() === 'teo');
-                    // Place costume after Teo, or at the start if Teo isn't present
-                    const costumeIndex = (teoIndex !== -1) ? teoIndex + 0.5 : -1; 
-                    allItemsData.push({ type: 'costume', originalIndex: costumeIndex });
-                }
-
-                allItemsData.sort((a, b) => a.originalIndex - b.originalIndex);
-                tier2ImageData.sort((a, b) => a.originalIndex - b.originalIndex);
-                
-                if (allItemsData.length > 0) {
-                    const firstItemData = allItemsData[0];
-                    if (firstItemData.type === 'costume') {
-                        imageContainer.appendChild(createCostumeBoxElement());
-                    } else {
-                        imageContainer.appendChild(createCharacterImageElement(firstItemData, tier0Eng));
-                    }
-
-                    const remainingItemsData = allItemsData.slice(1);
-                    if (remainingItemsData.length > 0 || tier2ImageData.length > 0) {
-                        item.classList.add('lazy-load-item');
-                        item.dataset.remainingItems = JSON.stringify(remainingItemsData);
-                    }
-                }
-
-				if (tier2ImageData.length > 0) {
-					const extrasBox = document.createElement('div');
-					extrasBox.className = 'extras-box'; 
-					extrasBox.innerHTML = `<div class="item-title">Extras</div>`;
-					extrasBox.addEventListener('click', (e) => { e.stopPropagation(); showExtrasPopup(tier2ImageData); });
-                    // Append extras box conditionally during lazy load
-				}
-
-                const priceBox = document.createElement('div');
-                priceBox.className = 'price-box';
-                const usdPrice = itemDetails.price.toFixed(2);
-                const krwPriceRounded = Math.round(itemDetails.price * 1380 / 1000) * 1000;
-                priceBox.innerHTML = `<div class="price-usd">$${usdPrice}</div><div class="price-krw">₩ ${krwPriceRounded.toLocaleString()}</div>`;
-                rightSection.appendChild(priceBox);
-                
-                const scrollIndicatorLeft = document.createElement('div');
-                scrollIndicatorLeft.className = 'scroll-indicator scroll-indicator-left';
-                scrollIndicatorLeft.innerHTML = '‹';
-                const scrollIndicatorRight = document.createElement('div');
-                scrollIndicatorRight.className = 'scroll-indicator scroll-indicator-right';
-                scrollIndicatorRight.innerHTML = '›';
-
-                imagesWrapper.appendChild(imageContainer);
-                imagesWrapper.appendChild(scrollIndicatorLeft);
-                imagesWrapper.appendChild(scrollIndicatorRight);
-				item.appendChild(imagesWrapper);
-                item.appendChild(rightSection);
-				container.appendChild(item);
-			});
-
-			res.innerHTML = '';
-			res.appendChild(fragment);
-			document.getElementById('copyInstruction').style.display = 'block';
-            
-            document.querySelectorAll('#results .result-item').forEach(setupScrollControlsForItem);
-            setupItemObserver();
-		}
-
-        function createCharacterImageElement(charData, tier0Eng, isLazy = false) {
+        function createCharacterImageElement(charData, isLazy = false) {
             const container = document.createElement('div');
             container.className = 'image-with-count-container';
             if (isLazy) container.classList.add('js-lazy-loaded');
@@ -1149,184 +927,299 @@
             img.src = charData.src;
             img.alt = charData.alt;
             img.className = 'small-character-img';
-            const isTier0 = tier0Eng.has(charData.engName);
-            img.classList.add(isTier0 ? 'super-rare' : 'rare');
+            
+            let badgeClass = '';
+            if (exceptCharacters.includes(charData.engName)) {
+                img.classList.add('super-rare');
+                badgeClass = 'super-rare-badge';
+            } else if (tierCharacters.includes(charData.engName)) {
+                img.classList.add('rare');
+                badgeClass = 'rare-badge';
+            }
             container.appendChild(img);
 
             if (charData.count > 1) {
                 const badge = document.createElement('div');
-                badge.className = 'image-count-badge';
+                badge.className = `image-count-badge ${badgeClass}`;
                 badge.textContent = `x${charData.count}`;
-                badge.classList.add(isTier0 ? 'super-rare-badge' : 'rare-badge');
                 container.appendChild(badge);
             }
             return container;
         }
 
-        function createCostumeBoxElement(isLazy = false) {
-            const box = document.createElement('div');
-            box.className = 'costume-item-box';
-            if (isLazy) box.classList.add('js-lazy-loaded');
-            box.innerHTML = `<div class="costume-line-1">LC</div><div class="costume-line-2">TEO TS</div>`;
-            return box;
-        }
-
         function setupItemObserver() {
             if (itemObserver) itemObserver.disconnect();
-            itemObserver = new IntersectionObserver((entries) => {
+            const options = { root: document.getElementById('results'), rootMargin: '400px 0px', threshold: 0 };
+            itemObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
+                    const item = entry.target;
                     if (entry.isIntersecting) {
-                        clearTimeout(entry.target.revertTimer);
-                        entry.target.renderTimer = setTimeout(() => renderFullItem(entry.target), 100);
+                        clearTimeout(item.revertTimer);
+                        item.renderTimer = setTimeout(() => renderFullItem(item), 100);
                     } else {
-                        clearTimeout(entry.target.renderTimer);
-                        entry.target.revertTimer = setTimeout(() => revertToLazyItem(entry.target), 100);
+                        clearTimeout(item.renderTimer);
+                        item.revertTimer = setTimeout(() => revertToLazyItem(item), 100);
                     }
                 });
-            }, { root: document.getElementById('results'), rootMargin: '400px 0px' });
-            document.querySelectorAll('.lazy-load-item').forEach(item => itemObserver.observe(item));
+            }, options);
+            const lazyItems = document.querySelectorAll('.lazy-load-item');
+            lazyItems.forEach(item => itemObserver.observe(item));
         }
 
         function renderFullItem(item) {
             if (item.querySelector('.js-lazy-loaded')) return;
-            const remainingItemsJSON = item.dataset.remainingItems;
-            if (remainingItemsJSON) {
-                const remainingItems = JSON.parse(remainingItemsJSON);
+            const remainingCharsData = item.dataset.remainingChars;
+            if (remainingCharsData) {
+                const remainingChars = JSON.parse(remainingCharsData);
                 const imageContainer = item.querySelector('.item-images');
-                const tier0Eng = new Set(tier0Characters.map(([eng]) => eng));
-                
-                remainingItems.forEach(itemData => {
-                    let element;
-                    if (itemData.type === 'costume') {
-                        element = createCostumeBoxElement(true);
-                    } else {
-                        element = createCharacterImageElement(itemData, tier0Eng, true);
-                    }
-                    imageContainer.appendChild(element);
+                const extrasBox = imageContainer.querySelector('.extras-box');
+                remainingChars.forEach(charData => {
+                    const imageElement = createCharacterImageElement(charData, true);
+                    if (extrasBox) imageContainer.insertBefore(imageElement, extrasBox);
+                    else imageContainer.appendChild(imageElement);
                 });
             }
-
-            // Check if extras box needs to be added (if it wasn't added initially)
-            if (!item.querySelector('.extras-box')) {
-                const k = item.dataset.itemKey;
-                const charValue = luaData[k];
-                const tier2ImageData = [];
-
-                 for (const charName in charValue) {
-                    const charInfo = characters.find(([eng]) => eng.toLowerCase() === charName);
-                    if (!charInfo || tier0Characters.some(c => c[0] === charInfo[0]) || tier1Characters.some(c => c[0] === charInfo[0])) continue;
-                     tier2ImageData.push({ engName: charInfo[0], src: `Portrait/${charInfo[1]}.png`, alt: charInfo[1], count: charValue[charName] });
-                 }
-
-                if(tier2ImageData.length > 0) {
-                    const extrasBox = document.createElement('div');
-                    extrasBox.className = 'extras-box js-lazy-loaded'; 
-                    extrasBox.innerHTML = `<div class="item-title">Extras</div>`;
-                    extrasBox.addEventListener('click', (e) => { e.stopPropagation(); showExtrasPopup(tier2ImageData); });
-                    item.querySelector('.item-images').appendChild(extrasBox);
-                }
-            }
-
-            setupScrollControlsForItem(item);
+            setupScrollIndicatorForItem(item);
         }
 
         function revertToLazyItem(item) {
             const lazyElements = item.querySelectorAll('.js-lazy-loaded');
             if (lazyElements.length === 0) return;
             lazyElements.forEach(el => el.remove());
-            setupScrollControlsForItem(item);
+            setupScrollIndicatorForItem(item);
         }
-        
-        function setupScrollControlsForItem(item) {
-            const wrapper = item.querySelector('.item-images-wrapper');
-            const imagesContainer = item.querySelector('.item-images');
-            const scrollLeftBtn = item.querySelector('.scroll-indicator-left');
-            const scrollRightBtn = item.querySelector('.scroll-indicator-right');
 
-            if (!wrapper || !imagesContainer || !scrollLeftBtn || !scrollRightBtn) return;
-
-            requestAnimationFrame(() => {
-                const hasScroll = imagesContainer.scrollWidth > imagesContainer.clientWidth;
-                
-                if (hasScroll) {
-                    wrapper.classList.add('has-scroll');
-
-                    scrollRightBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        imagesContainer.scrollBy({ left: imagesContainer.clientWidth * 0.8, behavior: 'smooth' });
-                    };
-                    scrollLeftBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        imagesContainer.scrollBy({ left: -imagesContainer.clientWidth * 0.8, behavior: 'smooth' });
-                    };
-
-                    imagesContainer.onscroll = () => {
-                        const { scrollLeft, scrollWidth, clientWidth } = imagesContainer;
-                        const tolerance = 5;
-
-                        const isAtStart = scrollLeft < tolerance;
-                        const isAtEnd = scrollLeft + clientWidth >= scrollWidth - tolerance;
-
-                        scrollLeftBtn.classList.toggle('visible', !isAtStart);
-                        scrollRightBtn.classList.toggle('visible', !isAtEnd);
-                        
-                        wrapper.classList.toggle('scrolled-from-start', !isAtStart);
-                        wrapper.classList.toggle('scrolled-to-end', isAtEnd);
-                    };
-                    imagesContainer.dispatchEvent(new Event('scroll'));
-                } else {
-                    wrapper.classList.remove('has-scroll', 'scrolled-from-start', 'scrolled-to-end');
-                    scrollLeftBtn.classList.remove('visible');
-                    scrollRightBtn.classList.remove('visible');
-                    imagesContainer.onscroll = null;
-                    scrollLeftBtn.onclick = null;
-                    scrollRightBtn.onclick = null;
+        function displayResults(data, reductionAmount) {
+            const res = document.getElementById('results');
+            res.scrollTop = 0;
+            const fragment = document.createDocumentFragment();
+			const container = document.createElement('div');
+			container.className = 'content-container';
+			fragment.appendChild(container);
+            
+            const budgetSelected = budgetBox.classList.contains('selected');
+            const sortedKeys = Object.keys(data).sort((a, b) => {
+                if (budgetSelected) {
+                    const sumA = getSelectedCharacterSum(luaData[a]);
+                    const sumB = getSelectedCharacterSum(luaData[b]);
+                    if (sumB !== sumA) return sumB - sumA;
                 }
+                const finalPriceA = Math.round((getPrice(a) * 0.8) - reductionAmount);
+                const finalPriceB = Math.round((getPrice(b) * 0.8) - reductionAmount);
+                return finalPriceA - finalPriceB;
             });
-        }
-        
-		function resetAllScrolledItems() {
-		    document.querySelectorAll('.item-images-wrapper.has-scroll .item-images').forEach(container => {
-		        if (container.scrollLeft > 0) {
-		            container.scroll({ left: 0, behavior: 'smooth' });
-		        }
-		    });
-		}
+            const displayKeys = budgetSelected ? sortedKeys.slice(0, 40) : sortedKeys;
 
-        function resetOtherScrolledItems(currentItem) {
-            document.querySelectorAll('.result-item').forEach(item => {
-                if (item !== currentItem) {
-                    const container = item.querySelector('.item-images-wrapper.has-scroll .item-images');
-                    if (container && container.scrollLeft > 0) {
-                        container.scroll({ left: 0, behavior: 'smooth' });
+            displayKeys.forEach(k => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.dataset.itemKey = k;
+                item.addEventListener('click', (e) => {
+					if (e.target.closest('.extras-box') || e.target.classList.contains('scroll-indicator')) return;
+					copyToClipboard(item);
+				});
+
+                const val = sortedData[k];
+                if (!val) return;
+
+                const imagesWrapper = document.createElement('div');
+                imagesWrapper.className = 'item-images-wrapper';
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'item-images';
+
+                const rightSection = document.createElement('div');
+                rightSection.className = 'result-info-right';
+
+                const originalPrice = getPrice(k);
+                const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
+                
+                const [originalChars] = val.split('=').map(s => s.trim());
+                
+                const allCharImages = [];
+                const extraCharImages = [];
+                const fixedItemsInfo = [
+                    { name: '태테르', countText: '60+' }, { name: '달증', countText: '120+' }, 
+                    { name: '빵', countText: '2000+' }, { name: '소환권', countText: '1200+' }
+                ];
+
+                originalChars.split(' ').forEach(it => {
+                    const m = it.match(/([가-힣]+)(\d*)/);
+                    if (m) {
+                        const [_, name, cnt] = m;
+                        const rep = cnt ? parseInt(cnt) : 1;
+                        const charInfo = characters.find(([_, kor]) => kor === name);
+                        if (charInfo) {
+                             const imageData = {
+                                src: `cropped_characters/${name}.png`, alt: name, engName: charInfo[0], count: rep
+                            };
+                            if (exceptCharacters.includes(charInfo[0]) || tierCharacters.includes(charInfo[0])) {
+                                allCharImages.push(imageData);
+                            } else {
+                                extraCharImages.push(imageData);
+                            }
+                        }
+                    }
+                });
+                
+                if (allCharImages.length > 0) {
+                    const firstCharData = allCharImages[0];
+                    imageContainer.appendChild(createCharacterImageElement(firstCharData, false));
+                    const remainingCharsData = allCharImages.slice(1);
+                    if (remainingCharsData.length > 0) {
+                        item.classList.add('lazy-load-item');
+                        item.dataset.remainingChars = JSON.stringify(remainingCharsData);
                     }
                 }
+
+                const extrasContent = extraCharImages.map(imgData => ({ type: 'char', ...imgData }));
+                fixedItemsInfo.forEach(item => {
+                    extrasContent.push({ type: 'item', title: item.name, count: item.countText });
+                });
+
+                if (extrasContent.length > 0) {
+                    const extrasBox = document.createElement('div');
+					extrasBox.className = 'extras-box';
+					extrasBox.innerHTML = `<div class="item-title">기타</div>`;
+					extrasBox.addEventListener('click', (e) => {
+						e.stopPropagation();
+						showExtrasPopup(extrasContent);
+					});
+					imageContainer.appendChild(extrasBox);
+                }
+                
+                const priceBox = document.createElement('div');
+				priceBox.className = 'price-box';
+
+                if (originalPrice > 0) {
+				    priceBox.innerHTML = `
+                        <div class="original-price">₩${originalPrice.toLocaleString()}</div>
+                        <div class="price-krw">₩${finalPrice.toLocaleString()}</div>
+                    `;
+                } else {
+                    priceBox.innerHTML = `<div class="price-krw">₩0</div>`;
+                }
+				rightSection.appendChild(priceBox);
+
+                const scrollIndicator = document.createElement('div');
+                scrollIndicator.className = 'scroll-indicator';
+                scrollIndicator.innerHTML = '...';
+                
+                imagesWrapper.appendChild(imageContainer);
+                imagesWrapper.appendChild(scrollIndicator);
+                item.appendChild(imagesWrapper);
+                item.appendChild(rightSection);
+                container.appendChild(item);
+            });
+
+            res.innerHTML = '';
+            res.appendChild(fragment);
+            document.getElementById('copyInstruction').style.display = 'block';
+
+            setupScrollIndicators();
+            setupItemObserver();
+        }
+        
+        function setupScrollIndicators() {
+			document.querySelectorAll('#results .result-item').forEach(setupScrollIndicatorForItem);
+		}
+        
+        function setupScrollIndicatorForItem(item) {
+            const wrapper = item.querySelector('.item-images-wrapper');
+            const imagesContainer = item.querySelector('.item-images');
+            const scrollIndicator = item.querySelector('.scroll-indicator');
+            if (!wrapper || !imagesContainer || !scrollIndicator) return;
+            requestAnimationFrame(() => {
+                const hasScroll = imagesContainer.scrollWidth > imagesContainer.clientWidth;
+                if (hasScroll) {
+                    wrapper.classList.add('has-scroll');
+                    scrollIndicator.onclick = (e) => { e.stopPropagation(); imagesContainer.scroll({ left: imagesContainer.scrollWidth - imagesContainer.clientWidth, behavior: 'smooth' }); };
+                    imagesContainer.onscroll = () => { wrapper.classList.toggle('scrolled-to-end', imagesContainer.scrollLeft + imagesContainer.clientWidth >= imagesContainer.scrollWidth - 5); };
+                    imagesContainer.dispatchEvent(new Event('scroll'));
+                } else {
+                    wrapper.classList.remove('has-scroll', 'scrolled-to-end');
+                    imagesContainer.onscroll = null;
+                    scrollIndicator.onclick = null;
+                }
+            });
+        }
+        
+        function resetAllScrolledItems() {
+             document.querySelectorAll('.item-images-wrapper.has-scroll .item-images').forEach(container => {
+                if (container.scrollLeft > 0) {
+                    container.scroll({ left: 0, behavior: 'smooth' });
+                }
             });
         }
 
-		function showExtrasPopup(images) {
+        function showExtrasPopup(content) {
 			const popup = document.getElementById('extrasPopup');
 			const grid = document.getElementById('extras-popup-grid');
 			grid.innerHTML = '';
-			images.forEach(charData => {
-				const container = document.createElement('div');
-				container.className = 'image-with-count-container';
-				container.innerHTML = `
-                    <img src="${charData.src}" alt="${charData.alt}" class="small-character-img extras-character-border" loading="lazy" decoding="async">
-                    ${charData.count > 1 ? `<div class="image-count-badge">x${charData.count}</div>` : ''}`;
-				grid.appendChild(container);
+
+			content.forEach(item => {
+                if (item.type === 'char') {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'image-with-count-container';
+                    
+                    const img = document.createElement('img');
+                    img.src = item.src;
+                    img.alt = item.alt;
+                    img.className = 'small-character-img';
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    imgContainer.appendChild(img);
+
+                    if (item.count > 1) {
+                        const badge = document.createElement('div');
+                        badge.className = 'image-count-badge';
+                        badge.textContent = `x${item.count}`;
+                        imgContainer.appendChild(badge);
+                    }
+                    grid.appendChild(imgContainer);
+
+                } else if (item.type === 'item') {
+                    const box = document.createElement('div');
+                    box.className = 'item-box';
+                    box.innerHTML = `<div class="item-title">${item.title}</div><div class="item-count">${item.count}</div>`;
+                    grid.appendChild(box);
+                }
 			});
 			popup.style.display = 'flex';
 		}
-
+        
         function copyToClipboard(el) {
             const itemKey = el.dataset.itemKey;
-            const itemDetails = itemDetailsMap[itemKey];
-            if (!itemDetails) return;
-            navigator.clipboard.writeText(itemDetails.originalText).then(
-                () => showCopyMessage(),
-                err => console.error('Copy failed: ', err)
-            );
+            const priceElement = el.querySelector('.price-krw');
+
+            if (!itemKey || !priceElement) {
+                console.error('복사에 필요한 데이터 키 또는 가격 요소를 찾을 수 없습니다.');
+                return;
+            }
+            
+            const originalDataString = sortedData[itemKey];
+            if (!originalDataString) {
+                console.error(`키에 대한 원본 데이터를 찾을 수 없습니다: ${itemKey}`);
+                return;
+            }
+
+            let numericId = itemKey; 
+            const match = originalDataString.match(/\((\d+)\)\s*$/);
+            
+            if (match && match[1]) {
+                numericId = match[1];
+            }
+
+            const characterPart = originalDataString.split('=')[0].trim();
+            const discountedPriceText = priceElement.textContent;
+            const formattedDiscountedPrice = discountedPriceText.replace('₩', '').trim();
+            
+            const textToCopy = `${characterPart} = ${formattedDiscountedPrice} (${numericId})`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showCopyMessage();
+            }, err => {
+                console.error('복사 실패: ', err);
+            });
         }
 
         function showCopyMessage(){
@@ -1335,66 +1228,62 @@
             setTimeout(() => { msg.classList.remove('show'); }, 2000);
         }
 
-		function getSelectedCharacters(){
-		    return [...document.querySelectorAll('.character-box.selected')]
-		        .map(b => `${b.dataset.engName}:${b.querySelector('input').value}`)
-		        .join(',');
-		}
-
-        function throttle(func, delay) {
-            let lastCall = 0;
-            return function(...args) {
-                const now = Date.now();
-                if (now - lastCall >= delay) {
-                    lastCall = now;
-                    func.apply(this, args);
-                }
-            };
-        }
-
-        function debounce(func, delay) {
-            let timeoutId;
-            return function(...args) {
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(() => func.apply(this, args), delay);
-            };
-        }
-
-		const throttledFilterHandler = throttle(function() {
-		    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-            applyFiltersAndSort();
-            const selectedCharsString = getSelectedCharacters();
-            if (selectedCharsString) {
-                gtag('event', 'apply_filter', { 'selected_characters': selectedCharsString });
+        function getSelectedCharacters(){
+            let result = '';
+            if(budgetBox.classList.contains('selected')) {
+                result = budgetInput.value ? `${budgetInput.value} - ` : "nil - ";
             }
-		}, 300);
-
-        document.getElementById('filterButton').addEventListener('click', throttledFilterHandler);
+            result += [...document.getElementsByClassName('character-box')]
+                .filter(b => b.classList.contains('selected'))
+                .map(b => `${b.dataset.engName}:${b.querySelector('input').value}`)
+                .join(',');
+            return result;
+        }
         
-        document.getElementById('sortDropdown').addEventListener('change', function() {
-            applyFiltersAndSort();
-            this.blur(); 
+        document.getElementById('filterButton').addEventListener('click', () => {
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            loadData().then(() => { 
+                filterData(); 
+                gtag('event', 'apply_filter', { 'selected_characters': getSelectedCharacters() });
+            }).catch(error => { console.error('필터 적용 에러:', error); });
         });
 
-		document.addEventListener('DOMContentLoaded', () => {
-			const extrasPopup = document.getElementById('extrasPopup');
+        document.addEventListener('DOMContentLoaded', () => {
+            // 기타 팝업 로직
+            const extrasPopup = document.getElementById('extrasPopup');
 			const closeExtrasBtn = document.getElementById('closeExtrasPopup');
 			const hideExtrasPopup = () => { extrasPopup.style.display = 'none'; };
 			closeExtrasBtn.addEventListener('click', hideExtrasPopup);
-			window.addEventListener('click', (event) => { if (event.target == extrasPopup) hideExtrasPopup(); });
+			window.addEventListener('click', (event) => {
+				if (event.target == extrasPopup) hideExtrasPopup();
+			});
 
+            // 스크롤 관련 로직
             const resultsContainer = document.getElementById('results');
             if (resultsContainer) {
                 resultsContainer.addEventListener('scroll', resetAllScrolledItems);
             }
             document.body.addEventListener('click', (e) => {
-                if (!e.target.closest('.result-item')) resetAllScrolledItems();
+                if (!e.target.closest('.result-item') && !e.target.classList.contains('scroll-indicator')) {
+                    resetAllScrolledItems();
+                }
             });
-			window.addEventListener('scroll', throttle(resetAllScrolledItems, 100));
-			window.addEventListener('resize', debounce(() => {
-                document.querySelectorAll('#results .result-item').forEach(setupScrollControlsForItem);
-            }, 50));
-		});
+
+            // ===== [수정] 공지사항 모달 닫기 이벤트 핸들러만 설정 =====
+            const noticeModal = document.getElementById('noticeModal');
+            const closeModalBtn = noticeModal.querySelector('.modal-close-btn');
+
+            const hideModal = () => {
+                noticeModal.style.display = 'none';
+            };
+
+            closeModalBtn.addEventListener('click', hideModal);
+            noticeModal.addEventListener('click', (event) => {
+                if (event.target === noticeModal) {
+                    hideModal();
+                }
+            });
+        });
     </script>
 </body>
 </html>
