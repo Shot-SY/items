@@ -223,7 +223,7 @@
 	        padding: 15px 24px;
 	        background: linear-gradient(135deg, #202228, #1a1c20);
 	        cursor: pointer;
-	        transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+	        transition: background 0.3s, box-shadow 0.3s;
 	        border-radius: 12px;
 	        border: 1px solid rgba(255, 255, 255, 0.1);
 	        box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 2px rgba(0,0,0,0.4);
@@ -366,7 +366,6 @@
             box-shadow: 0 0 0 1px rgba(255,255,255,.03),
                         0 4px 14px -4px rgba(0,0,0,.6),
                         0 0 28px -6px var(--glow);
-            transition: transform .4s var(--easing), box-shadow .4s var(--easing);
         }
         .selector-ticket-box::before, .selector-ticket-box::after {
             content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -429,7 +428,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.45) 50%, transparent 65%);
+            background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.5) 50%, transparent 65%);
             transform: translateX(-120%);
             animation: sweep 5.5s linear infinite;
             mix-blend-mode: color-dodge;
@@ -1016,19 +1015,20 @@
                 
                 lazyContent.forEach(itemData => {
                     let element;
+                    // ===== [수정] itemData.type을 정확히 확인하여 분기 =====
                     if (itemData.type === 'ticket') {
                         element = document.createElement('div');
-                        const themeClass = itemData.name.includes('전설') ? 'ticket-theme-legendary' : 'ticket-theme-3star';
+                        const themeClass = itemData.ticketClass === 'legendary' ? 'ticket-theme-legendary' : 'ticket-theme-3star';
                         element.className = `selector-ticket-box ${themeClass}`;
                         element.innerHTML = `<div class="ticket-name">${itemData.name}</div><div class="ticket-count">${itemData.count}</div>`;
                         element.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
                         element.classList.add('js-lazy-loaded');
-                    } else {
+                    } else if (itemData.type === 'character') { // character 타입 명시
                         element = createCharacterImageElement(itemData, true);
                     }
 
-                    if (extrasBox) imageContainer.insertBefore(element, extrasBox);
-                    else imageContainer.appendChild(element);
+                    if (element && extrasBox) imageContainer.insertBefore(element, extrasBox);
+                    else if (element) imageContainer.appendChild(element);
                 });
             }
             setupScrollIndicatorForItem(item);
@@ -1041,6 +1041,7 @@
             setupScrollIndicatorForItem(item);
         }
         
+        // ===== [수정] processCharacterReplacements 함수에서 ticket의 클래스 정보를 명확히 분리 =====
         function processCharacterReplacements(originalCharsString) {
             const parsedChars = originalCharsString.split(' ').map(it => {
                 const m = it.match(/([가-힣]+)(\d*)/);
@@ -1060,29 +1061,23 @@
                 if (char.name === '레오네') {
                     const toRemove = Math.min(char.count, 4 - reoneRemoved);
                     reoneRemoved += toRemove;
-                    if (char.count - toRemove > 0) {
-                        remainingChars.push({ ...char, count: char.count - toRemove });
-                    }
+                    if (char.count - toRemove > 0) remainingChars.push({ ...char, count: char.count - toRemove });
                 } else if (oldLegendaryNames.includes(char.name) && !oldLegendariesFound.has(char.name)) {
                     oldLegendariesFound.add(char.name);
-                    if (char.count > 1) {
-                        remainingChars.push({ ...char, count: char.count - 1 });
-                    }
+                    if (char.count > 1) remainingChars.push({ ...char, count: char.count - 1 });
                 } else if (char.name === '새리아') {
                     const toRemove = Math.min(char.count, 3 - sriaRemoved);
                     sriaRemoved += toRemove;
-                    if (char.count - toRemove > 0) {
-                        remainingChars.push({ ...char, count: char.count - toRemove });
-                    }
+                    if (char.count - toRemove > 0) remainingChars.push({ ...char, count: char.count - toRemove });
                 } else {
                     remainingChars.push(char);
                 }
             });
 
             const tickets = [];
-            if (reoneRemoved > 0) tickets.push({ type: 'legendary', name: 'Ⅱ전설선택권', count: '4장' });
-            if (oldLegendariesFound.size > 0) tickets.push({ type: 'legendary', name: 'Ⅰ전설선택권', count: '4장' });
-            if (sriaRemoved > 0) tickets.push({ type: '3star', name: '3성선택권', count: '3장' });
+            if (reoneRemoved > 0) tickets.push({ ticketClass: 'legendary', name: 'Ⅱ전설선택권', count: '4장' });
+            if (oldLegendariesFound.size > 0) tickets.push({ ticketClass: 'legendary', name: 'Ⅰ전설선택권', count: '4장' });
+            if (sriaRemoved > 0) tickets.push({ ticketClass: '3star', name: '3성선택권', count: '3장' });
 
             return { tickets, remainingChars };
         }
@@ -1149,9 +1144,9 @@
                         }
                     }
                 });
-
-                // ===== [수정] 지연 로딩 로직 최적화 =====
+                
                 const lazyLoadItems = [];
+                // ===== [수정] lazyLoadItems에 type을 명확히 추가 =====
                 tickets.forEach(ticket => lazyLoadItems.push({ type: 'ticket', ...ticket }));
                 allCharImages.forEach(char => lazyLoadItems.push({ type: 'character', ...char }));
 
@@ -1160,11 +1155,11 @@
                     let element;
                     if (firstItem.type === 'ticket') {
                         element = document.createElement('div');
-                        const themeClass = firstItem.name.includes('전설') ? 'ticket-theme-legendary' : 'ticket-theme-3star';
+                        const themeClass = firstItem.ticketClass === 'legendary' ? 'ticket-theme-legendary' : 'ticket-theme-3star';
                         element.className = `selector-ticket-box ${themeClass}`;
                         element.innerHTML = `<div class="ticket-name">${firstItem.name}</div><div class="ticket-count">${firstItem.count}</div>`;
                         element.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
-                    } else {
+                    } else { // character
                         element = createCharacterImageElement(firstItem, false);
                     }
                     imageContainer.appendChild(element);
@@ -1321,9 +1316,10 @@
             
             const { tickets, remainingChars } = processCharacterReplacements(characterPart);
             const ticketCopyText = tickets.map(t => {
-                if(t.type === 'legendary' && t.name.startsWith('Ⅱ')) return 'Ⅱ전설선택권4장';
-                if(t.type === 'legendary' && t.name.startsWith('Ⅰ')) return 'Ⅰ전설선택권4장';
-                if(t.type === '3star') return '3성선택권3장';
+                // ===== [수정] t.type 대신 t.ticketClass 사용 =====
+                if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅱ')) return 'Ⅱ전설선택권4장';
+                if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅰ')) return 'Ⅰ전설선택권4장';
+                if(t.ticketClass === '3star') return '3성선택권3장';
             }).join(' ');
             const remainingCharsCopyText = remainingChars.map(c => `${c.name}${c.count > 1 ? c.count : ''}`).join(' ');
             const newCharacterPart = [ticketCopyText, remainingCharsCopyText].filter(Boolean).join(' ');
