@@ -96,7 +96,6 @@
 	        .result-item:hover {
 	            background: linear-gradient(135deg, #33363d, #2a2c30);
 	            box-shadow: 0 6px 25px rgba(0,0,0,0.7), 0 0 10px rgba(255, 64, 129, 0.4);
-	            transform: translateY(-3px);
 	            border-color: rgba(255, 64, 129, 0.5);
 	        }
 	        .result-item:hover::before {
@@ -107,12 +106,11 @@
 	            border-color: rgba(176, 176, 176, 0.8);
 	        }
 	    }
-        /* ===== [추가] 캐릭터 이미지 래퍼 ===== */
         .character-img-wrapper {
             position: relative;
             overflow: hidden;
             border-radius: 10px;
-            line-height: 0; /* 이미지 하단 여백 제거 */
+            line-height: 0;
         }
 	    .character-img {
 	        width: 80px;
@@ -121,7 +119,7 @@
 	        margin-bottom: 10px;
 	        border-radius: 10px;
 	        transition: transform 0.3s;
-            display: block; /* 래퍼와 맞추기 위함 */
+            display: block;
 	    }
 	    .character-name {
 	        font-size: 16px;
@@ -221,8 +219,8 @@
 	        opacity: 0;
 	    }
 	    .result-item {
-	        margin-bottom: 18px; /* [크기 조정] */
-	        padding: 15px 24px; /* [크기 조정] */
+	        margin-bottom: 18px;
+	        padding: 15px 24px;
 	        background: linear-gradient(135deg, #202228, #1a1c20);
 	        cursor: pointer;
 	        transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
@@ -258,7 +256,7 @@
 	        display: flex;
 	        align-items: center;
 	        flex-wrap: nowrap;
-	        gap: 10px; /* [크기 조정] */
+	        gap: 10px;
 	        overflow-x: auto;
 	        padding: 5px 0;
 	        margin: -5px 0;
@@ -275,7 +273,7 @@
 	    }
 	
 	    .small-character-img {
-	        height: 60px; /* [크기 조정] */
+	        height: 60px;
 	        width: auto;
 	        object-fit: contain;
 	        border-radius: 8px;
@@ -295,30 +293,29 @@
 	        vertical-align: middle;
 	        flex-shrink: 0;
 	    }
-        /* ===== [추가] 슈퍼레어 이미지 컨테이너 ===== */
         .image-with-count-container.super-rare {
             overflow: hidden;
             border-radius: 8px;
         }
 	    .image-count-badge {
 	        position: absolute;
-	        bottom: -5px; /* [크기 조정] */
-	        right: -5px; /* [크기 조정] */
-	        min-width: 20px; /* [크기 조정] */
+	        bottom: -5px;
+	        right: -5px;
+	        min-width: 20px;
 	        text-align: center;
 	        background: rgba(0, 0, 0, 0.75);
 	        backdrop-filter: blur(4px);
 	        color: #fff;
-	        padding: 2px 7px; /* [크기 조정] */
-	        border-radius: 9px; /* [크기 조정] */
+	        padding: 2px 7px;
+	        border-radius: 9px;
 	        font-family: 'Poppins', sans-serif;
-	        font-size: 14px; /* [크기 조정] */
+	        font-size: 14px;
 	        font-weight: 600;
 	        line-height: 1.4;
 	        border: 1px solid rgba(255, 255, 255, 0.1);
 	        box-shadow: 0 2px 5px rgba(0,0,0,0.6); 
 	        pointer-events: none;
-            z-index: 3; /* 빛 효과 위에 표시 */
+            z-index: 3;
 	    }
 	    .image-count-badge.rare-badge {
 	        color: #ffc107;
@@ -353,7 +350,6 @@
 	        font-size: 12px;
 	        font-weight: 600;
 	    }
-        /* ===== 선택권 박스 고급 디자인 V2 ===== */
         :root { --easing: cubic-bezier(.4,.16,.2,.98); }
         .selector-ticket-box {
             --bg: #23262f; --border: #666; --glow: rgba(255,255,255,.08);
@@ -375,20 +371,10 @@
         .selector-ticket-box::before, .selector-ticket-box::after {
             content: ""; position: absolute; inset: 0; pointer-events: none;
         }
-        .selector-ticket-box::before { /* 조명 효과 */
+        .selector-ticket-box::before {
             opacity: .8; mix-blend-mode: color-dodge;
         }
         
-        @media (hover: hover) and (pointer: fine) {
-            .selector-ticket-box:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 0 0 1px rgba(255,255,255,.05),
-                            0 6px 18px -5px rgba(0,0,0,.7),
-                            0 0 38px -5px var(--glow);
-            }
-            .selector-ticket-box:hover::after { animation-play-state: running; }
-        }
-
         .selector-ticket-box .ticket-name {
             font-size: 13px; font-weight: 600; line-height: 1.25;
             background: linear-gradient(90deg, var(--text-main), var(--accent));
@@ -401,7 +387,6 @@
             text-shadow: 0 0 4px rgba(0,0,0,.5);
         }
 
-        /* Ⅱ/Ⅰ 전설 테마 (붉은색) */
         .ticket-theme-legendary {
             --bg: radial-gradient(ellipse at top center, #5c1f24, #1c0a0d);
             --border: rgba(255, 82, 82, 0.6);
@@ -416,7 +401,6 @@
                         radial-gradient(circle at 80% 20%, rgba(255, 80, 80, .5), transparent 55%);
         }
 
-        /* 3성 테마 (주황/금색) */
         .ticket-theme-3star {
             --bg: linear-gradient(145deg, #4d3e00, #2b2100);
             --border: rgba(255, 193, 7, 0.6);
@@ -439,28 +423,18 @@
                                0 0 38px -6px var(--glow); }
         }
 
-        /* ===== [추가/수정] 공용 Sweep 애니메이션 ===== */
         .selector-ticket-box::after,
         .character-img-wrapper::after,
         .image-with-count-container.super-rare::after {
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.25) 50%, transparent 65%);
+            background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.45) 50%, transparent 65%);
             transform: translateX(-120%);
             animation: sweep 5.5s linear infinite;
             mix-blend-mode: color-dodge;
             z-index: 2;
             pointer-events: none;
-        }
-        .selector-ticket-box::after {
-             /* 선택권 박스는 호버 시에만 동작하도록 기본 상태를 멈춤 */
-            animation-play-state: paused;
-        }
-         @media (hover: hover) and (pointer: fine) {
-            .selector-ticket-box:hover::after {
-                animation-play-state: running;
-            }
         }
         @keyframes sweep {
             0%, 20% { transform: translateX(-130%) skewX(-20deg); opacity: 0; }
@@ -473,24 +447,24 @@
 	        flex-direction: column;
 	        justify-content: center;
 	        align-items: flex-end;
-	        height: 60px; /* [크기 조정] */
-	        min-width: 110px; /* [크기 조정] */
+	        height: 60px;
+	        min-width: 110px;
 	        padding: 0 10px;
-	        background: linear-gradient(270deg, rgba(255, 82, 82, 0.2), transparent); /* 수정됨 */
+	        background: linear-gradient(270deg, rgba(255, 82, 82, 0.2), transparent);
 	        border-radius: 8px;
 	        font-family: 'Poppins', sans-serif;
-	        line-height: 1.3; /* [크기 조정] */
+	        line-height: 1.3;
 	    }
 	    .price-box .original-price {
-	        font-size: 14px; /* [크기 조정] */
+	        font-size: 14px;
 	        color: #aaa;
 	        text-decoration: line-through;
 	    }
 	    .price-box .price-krw {
-	        font-size: 20px; /* [크기 조정] */
+	        font-size: 20px;
 	        font-weight: 700;
-	        color: #ff5252; /* 수정됨 */
-	        text-shadow: 0 0 8px rgba(255, 82, 82, 0.6); /* 수정됨 */
+	        color: #ff5252;
+	        text-shadow: 0 0 8px rgba(255, 82, 82, 0.6);
 	    }
 	
 	    .scroll-indicator {
@@ -592,8 +566,8 @@
 	        display: flex;
 	        justify-content: center;
 	        align-items: center;
-	        height: 60px; /* [크기 조정] */
-	        min-width: 80px; /* [크기 조정] */
+	        height: 60px;
+	        min-width: 80px;
 	        padding: 0 10px;
 	        background: rgba(176, 176, 176, 0.1);
 	        border: 1px dashed rgba(176, 176, 176, 0.5);
@@ -604,7 +578,7 @@
 	    }
 	    .extras-box .item-title {
 	        color: #e0e0e0;
-	        font-size: 15px; /* [크기 조정] */
+	        font-size: 15px;
 	        text-decoration: none;
 	        font-weight: bold;
 	    }
@@ -627,81 +601,6 @@
 	        display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-top: 10px;
 	    }
 
-        /* ===== 공지사항 모달 스타일 ===== */
-        .modal-overlay {
-            display: none; /* 기본적으로 숨김 */
-            position: fixed;
-            z-index: 5000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.75);
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-content {
-            background-color: #2a2c30;
-            padding: 30px;
-            border: 2px solid #ff4081;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.7);
-            position: relative;
-            color: #e0e0e0;
-        }
-        .modal-content h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #ff4081;
-            text-align: center;
-            font-family: 'Poppins', sans-serif;
-        }
-        .modal-content p, .modal-content ul {
-            margin-bottom: 15px;
-            line-height: 1.7;
-            font-size: 16px;
-        }
-        .modal-content ul {
-            list-style-type: none;
-            padding-left: 0;
-            text-align: center;
-            background: rgba(0,0,0,0.2);
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .modal-content li {
-            margin-bottom: 8px;
-        }
-        .modal-content li:last-child {
-            margin-bottom: 0;
-        }
-        .modal-content strong {
-            color: #ffc107;
-            font-weight: bold;
-        }
-        .modal-summary {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 15px;
-            color: #ccc;
-        }
-        .modal-close-btn {
-            color: #aaa;
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .modal-close-btn:hover, .modal-close-btn:focus {
-            color: #fff;
-        }
-
 	    @media (max-width: 768px) {
 	        .character-grid { grid-template-columns: repeat(auto-fill, minmax(80px,1fr)); gap: 10px; }
 	        .character-box { height: 125px; padding: 8px; }
@@ -710,34 +609,32 @@
 	        .spinbox-container input[type="number"] { width: 45px; }
 	        #filterButton { font-size: 16px; padding: 12px; }
 	        
-	        .result-item { flex-wrap: wrap; padding: 12px 15px; } /* [크기 조정] */
+	        .result-item { flex-wrap: wrap; padding: 12px 15px; }
 	        .item-images-wrapper { flex-basis: 100%; }
 	        .item-images { flex-basis: 100%; }
 	        .result-info-right { flex-basis: 100%; justify-content: flex-end; }
 	        .price-box, .extras-box { flex-grow: 1; justify-content: center;}
 	        .price-box { align-items: center; }
-	        .small-character-img, .price-box, .extras-box, .selector-ticket-box { height: 52px; } /* [크기 조정] */
+	        .small-character-img, .price-box, .extras-box, .selector-ticket-box { height: 52px; }
             .selector-ticket-box { width: 75px; }
             .selector-ticket-box .ticket-name { font-size: 11px; }
             .selector-ticket-box .ticket-count { font-size: 10px; margin-top: 1px; }
-	        .item-images { gap: 8px; } /* [크기 조정] */
+	        .item-images { gap: 8px; }
 	
 	        #copyInstruction { font-size: 1em; }
 	        #copyMessage { font-size: 1em; padding: 15px 20px; }
-	        .item-box { width: 55px; height: 52px; } /* [크기 조정] */
+	        .item-box { width: 55px; height: 52px; }
 	        .item-box .item-title { font-size: 10px; margin-bottom: 0; }
-	        .extras-box .item-title { font-size: 13px; } /* [크기 조정] */
+	        .extras-box .item-title { font-size: 13px; }
 	        .item-box .item-count { font-size: 12px; }
-	        .price-box .original-price { font-size: 13px; } /* [크기 조정] */
-	        .price-box .price-krw { font-size: 18px; } /* [크기 조정] */
+	        .price-box .original-price { font-size: 13px; }
+	        .price-box .price-krw { font-size: 18px; }
 	        .scroll-indicator { display: none !important; }
 	
 	        .budget-box { width: 100%; max-width: 280px; }
 	        .budget-text { font-size: 16px; }
 	        .budget-input-container input[type="number"] { width: 100px; padding: 6px 10px; font-size: 14px; }
 	        .extras-popup-content { width: 90%; padding: 20px; }
-            .modal-content p, .modal-content ul { font-size: 14px; }
-            .modal-content h2 { font-size: 1.5em; }
 	    }
 	</style>
 </head>
@@ -772,24 +669,6 @@
 		</div>
 	</div>
 
-    <div id="noticeModal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close-btn">&times;</span>
-            <h2>공지사항</h2>
-            <p>실제 계정에는 표시된 일부 영웅 대신 <strong>선택권</strong>이 포함되어 있습니다.</p>
-            <ul>
-                <li>레오네 4장 → <strong>Ⅱ전설선택권 4장</strong></li>
-                <li>구전설 각 1장 → <strong>Ⅰ전설선택권 4장</strong></li>
-                <li>새리아 3장 → <strong>3성선택권 3장</strong></li>
-            </ul>
-            <p class="modal-summary">
-                따라서, '개미첼' 등 다른 영웅을 원하시는 경우,
-                <br><strong>[Ⅱ전설선택권]</strong>으로 다른 전설 영웅을 선택하여 받으시면 됩니다.
-				<br>요컨데 특정 영웅을 꼭 포함하지 않으셔도 된다는 뜻입니다.
-            </p>
-        </div>
-    </div>
-
     <script>
         let lastActivityTime = Date.now();
         const updateActivityTime = () => { lastActivityTime = Date.now(); };
@@ -801,13 +680,6 @@
                 else lastActivityTime = Date.now();
             }
         });
-        
-        function showNoticeModal() {
-            const noticeModal = document.getElementById('noticeModal');
-            if (noticeModal) {
-                noticeModal.style.display = 'flex';
-            }
-        }
 
         window.addEventListener('load', () => {
             const lastLoad = localStorage.getItem('lastLoadTime');
@@ -823,7 +695,6 @@
                     loader.classList.add('hidden'); 
                     setTimeout(() => { 
                         loader.style.display = 'none';
-                        showNoticeModal();
                     }, 500); 
                 })
                 .catch(error => {
@@ -863,7 +734,6 @@
                 charBox.classList.add('rare');
             }
 
-            // ===== [수정] 이미지를 래퍼로 감싸기 =====
             const imgWrapper = document.createElement('div');
             imgWrapper.className = 'character-img-wrapper';
 
@@ -876,9 +746,8 @@
 
             imgWrapper.appendChild(img);
 
-            // ===== [추가] 슈퍼레어 캐릭터에 애니메이션 딜레이 적용 =====
             if (charBox.classList.contains('super-rare')) {
-                imgWrapper.style.animationDelay = `-${(Math.random() * 5).toFixed(2)}s`;
+                imgWrapper.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
             }
 
             const nameSpan = document.createElement('span');
@@ -897,7 +766,7 @@
             spinbox.disabled = true;
 
             spinboxContainer.appendChild(spinbox);
-            charBox.append(imgWrapper, nameSpan, spinboxContainer); // imgWrapper를 추가
+            charBox.append(imgWrapper, nameSpan, spinboxContainer);
             characterGrid.appendChild(charBox);
 
             charBox.addEventListener('click', (e) => { if(e.target.tagName.toLowerCase() !== 'input') toggleSelection(charBox); });
@@ -1100,9 +969,8 @@
             let badgeClass = '';
             if (exceptCharacters.includes(charData.engName)) {
                 img.classList.add('super-rare');
-                // ===== [수정] 컨테이너에도 클래스 추가 및 딜레이 적용 =====
                 container.classList.add('super-rare');
-                container.style.animationDelay = `-${(Math.random() * 5).toFixed(2)}s`;
+                container.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
                 badgeClass = 'super-rare-badge';
             } else if (tierCharacters.includes(charData.engName)) {
                 img.classList.add('rare');
@@ -1140,15 +1008,27 @@
 
         function renderFullItem(item) {
             if (item.querySelector('.js-lazy-loaded')) return;
-            const remainingCharsData = item.dataset.remainingChars;
-            if (remainingCharsData) {
-                const remainingChars = JSON.parse(remainingCharsData);
+            const lazyContentData = item.dataset.lazyContent; 
+            if (lazyContentData) {
+                const lazyContent = JSON.parse(lazyContentData);
                 const imageContainer = item.querySelector('.item-images');
                 const extrasBox = imageContainer.querySelector('.extras-box');
-                remainingChars.forEach(charData => {
-                    const imageElement = createCharacterImageElement(charData, true);
-                    if (extrasBox) imageContainer.insertBefore(imageElement, extrasBox);
-                    else imageContainer.appendChild(imageElement);
+                
+                lazyContent.forEach(itemData => {
+                    let element;
+                    if (itemData.type === 'ticket') {
+                        element = document.createElement('div');
+                        const themeClass = itemData.name.includes('전설') ? 'ticket-theme-legendary' : 'ticket-theme-3star';
+                        element.className = `selector-ticket-box ${themeClass}`;
+                        element.innerHTML = `<div class="ticket-name">${itemData.name}</div><div class="ticket-count">${itemData.count}</div>`;
+                        element.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
+                        element.classList.add('js-lazy-loaded');
+                    } else {
+                        element = createCharacterImageElement(itemData, true);
+                    }
+
+                    if (extrasBox) imageContainer.insertBefore(element, extrasBox);
+                    else imageContainer.appendChild(element);
                 });
             }
             setupScrollIndicatorForItem(item);
@@ -1254,25 +1134,8 @@
                 const [originalChars] = val.split('=').map(s => s.trim());
                 
                 const { tickets, remainingChars } = processCharacterReplacements(originalChars);
-                
-                tickets.forEach(ticket => {
-                    const ticketBox = document.createElement('div');
-                    const themeClass = ticket.type === 'legendary' ? 'ticket-theme-legendary' : 'ticket-theme-3star';
-                    ticketBox.className = `selector-ticket-box ${themeClass}`;
-                    ticketBox.innerHTML = `
-                        <div class="ticket-name">${ticket.name}</div>
-                        <div class="ticket-count">${ticket.count}</div>
-                    `;
-                    imageContainer.appendChild(ticketBox);
-                });
-
                 const allCharImages = [];
                 const extraCharImages = [];
-                const fixedItemsInfo = [
-                    { name: '태테르', countText: '60+' }, { name: '달증', countText: '120+' }, 
-                    { name: '빵', countText: '2000+' }, { name: '소환권', countText: '1200+' }
-                ];
-
                 remainingChars.forEach(char => {
                     const charInfo = characters.find(([_, kor]) => kor === char.name);
                     if (charInfo) {
@@ -1286,17 +1149,36 @@
                         }
                     }
                 });
-                
-                if (allCharImages.length > 0) {
-                    const firstCharData = allCharImages[0];
-                    imageContainer.appendChild(createCharacterImageElement(firstCharData, false));
-                    const remainingDisplayChars = allCharImages.slice(1);
-                    if (remainingDisplayChars.length > 0) {
-                        item.classList.add('lazy-load-item');
-                        item.dataset.remainingChars = JSON.stringify(remainingDisplayChars);
-                    }
-                }
 
+                // ===== [수정] 지연 로딩 로직 최적화 =====
+                const lazyLoadItems = [];
+                tickets.forEach(ticket => lazyLoadItems.push({ type: 'ticket', ...ticket }));
+                allCharImages.forEach(char => lazyLoadItems.push({ type: 'character', ...char }));
+
+                if (lazyLoadItems.length > 0) {
+                    const firstItem = lazyLoadItems.shift();
+                    let element;
+                    if (firstItem.type === 'ticket') {
+                        element = document.createElement('div');
+                        const themeClass = firstItem.name.includes('전설') ? 'ticket-theme-legendary' : 'ticket-theme-3star';
+                        element.className = `selector-ticket-box ${themeClass}`;
+                        element.innerHTML = `<div class="ticket-name">${firstItem.name}</div><div class="ticket-count">${firstItem.count}</div>`;
+                        element.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
+                    } else {
+                        element = createCharacterImageElement(firstItem, false);
+                    }
+                    imageContainer.appendChild(element);
+                }
+                
+                if (lazyLoadItems.length > 0) {
+                    item.classList.add('lazy-load-item');
+                    item.dataset.lazyContent = JSON.stringify(lazyLoadItems);
+                }
+                
+                const fixedItemsInfo = [
+                    { name: '태테르', countText: '60+' }, { name: '달증', countText: '120+' }, 
+                    { name: '빵', countText: '2000+' }, { name: '소환권', countText: '1200+' }
+                ];
                 const extrasContent = extraCharImages.map(imgData => ({ type: 'char', ...imgData }));
                 fixedItemsInfo.forEach(item => {
                     extrasContent.push({ type: 'item', title: item.name, count: item.countText });
@@ -1500,20 +1382,6 @@
             document.body.addEventListener('click', (e) => {
                 if (!e.target.closest('.result-item') && !e.target.classList.contains('scroll-indicator')) {
                     resetAllScrolledItems();
-                }
-            });
-
-            const noticeModal = document.getElementById('noticeModal');
-            const closeModalBtn = noticeModal.querySelector('.modal-close-btn');
-
-            const hideModal = () => {
-                noticeModal.style.display = 'none';
-            };
-
-            closeModalBtn.addEventListener('click', hideModal);
-            noticeModal.addEventListener('click', (event) => {
-                if (event.target === noticeModal) {
-                    hideModal();
                 }
             });
         });
