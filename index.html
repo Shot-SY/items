@@ -339,6 +339,44 @@
 	        font-size: 12px;
 	        font-weight: 600;
 	    }
+        /* ===== 선택권 텍스트 박스 스타일 ===== */
+        .selector-ticket-box {
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: auto; /* 자동 너비 */
+            min-width: 70px;
+            height: 60px; /* 이미지와 높이 동일하게 */
+            padding: 0 10px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .selector-ticket-box .item-title {
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px #000;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .selector-ticket-box.tier-2 { /* Ⅱ전설 */
+            background: linear-gradient(145deg, #4a00e0, #8e2de2);
+            border: 2px solid #c593ff;
+            box-shadow: 0 0 12px rgba(138, 45, 226, 0.7), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(200, 150, 255, 0.3);
+        }
+        .selector-ticket-box.tier-1 { /* Ⅰ전설 */
+            background: linear-gradient(145deg, #004d40, #00796b);
+            border: 2px solid #4db6ac;
+            box-shadow: 0 0 12px rgba(0, 121, 107, 0.7), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(77, 182, 172, 0.3);
+        }
+        .selector-ticket-box.tier-3star { /* 3성 */
+            background: linear-gradient(145deg, #1565c0, #42a5f5);
+            border: 2px solid #64b5f6;
+            box-shadow: 0 0 12px rgba(66, 165, 245, 0.7), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(100, 181, 246, 0.3);
+        }
 	    .price-box {
 	        display: flex;
 	        flex-direction: column;
@@ -587,7 +625,8 @@
 	        .result-info-right { flex-basis: 100%; justify-content: flex-end; }
 	        .price-box, .extras-box { flex-grow: 1; justify-content: center;}
 	        .price-box { align-items: center; }
-	        .small-character-img, .price-box, .extras-box { height: 52px; } /* [크기 조정] */
+	        .small-character-img, .price-box, .extras-box, .selector-ticket-box { height: 52px; } /* [크기 조정] */
+            .selector-ticket-box .item-title { font-size: 12px; }
 	        .item-images { gap: 8px; } /* [크기 조정] */
 	
 	        #copyInstruction { font-size: 1em; }
@@ -899,11 +938,41 @@
 
         function checkConditions(chars) {
             const count = {};
-            chars.forEach(c => { 
+            
+            // ===== [수정] 선택권으로 캐릭터를 교체한 후 필터링 =====
+            let reoneRemoved = 0;
+            const oldLegendaryEng = ['my', 'er', 'ge', 'th']; // 마일, 어빈, 게르드, 토마스
+            const oldLegendaryFound = new Set();
+            let sriaRemoved = 0;
+            const charsAfterReplacement = [];
+
+            chars.forEach(c => {
+                const name = c.slice(0, 2);
+                const num = parseInt(c[2]);
+                
+                if (name === 're') { // 레오네
+                    const toRemove = Math.min(num, 4 - reoneRemoved);
+                    reoneRemoved += toRemove;
+                    if (num - toRemove > 0) charsAfterReplacement.push(`${name}${num - toRemove}`);
+                } else if (oldLegendaryEng.includes(name) && !oldLegendaryFound.has(name)) { // 구전설
+                    oldLegendaryFound.add(name);
+                    if (num > 1) charsAfterReplacement.push(`${name}${num - 1}`);
+                } else if (name === 'sr') { // 새리아
+                    const toRemove = Math.min(num, 3 - sriaRemoved);
+                    sriaRemoved += toRemove;
+                    if (num - toRemove > 0) charsAfterReplacement.push(`${name}${num - toRemove}`);
+                } else {
+                    charsAfterReplacement.push(c);
+                }
+            });
+
+            // 교체 후 남은 캐릭터들로 개수 계산
+            charsAfterReplacement.forEach(c => { 
                 const name = c.slice(0,2); 
                 const num = parseInt(c[2]); 
                 count[name] = (count[name]||0)+num;
             });
+
             return characters.every(([eng]) => {
                 const box = [...document.getElementsByClassName('character-box')].find(b => b.dataset.engName === eng);
                 if(box && box.classList.contains('selected')){
@@ -988,6 +1057,53 @@
             lazyElements.forEach(el => el.remove());
             setupScrollIndicatorForItem(item);
         }
+        
+        // ===== [수정] 캐릭터 목록을 처리하여 선택권과 남은 캐릭터로 분리하는 함수 =====
+        function processCharacterReplacements(originalCharsString) {
+            const parsedChars = originalCharsString.split(' ').map(it => {
+                const m = it.match(/([가-힣]+)(\d*)/);
+                if (!m) return null;
+                const [_, name, cntStr] = m;
+                return { name, count: cntStr ? parseInt(cntStr) : 1 };
+            }).filter(Boolean);
+
+            let reoneRemoved = 0;
+            const oldLegendaryNames = ['마일', '어빈', '게르드', '토마스'];
+            const oldLegendariesFound = new Set();
+            let sriaRemoved = 0;
+            
+            const remainingChars = [];
+
+            parsedChars.forEach(char => {
+                if (char.name === '레오네') {
+                    const toRemove = Math.min(char.count, 4 - reoneRemoved);
+                    reoneRemoved += toRemove;
+                    if (char.count - toRemove > 0) {
+                        remainingChars.push({ ...char, count: char.count - toRemove });
+                    }
+                } else if (oldLegendaryNames.includes(char.name) && !oldLegendariesFound.has(char.name)) {
+                    oldLegendariesFound.add(char.name);
+                    if (char.count > 1) {
+                        remainingChars.push({ ...char, count: char.count - 1 });
+                    }
+                } else if (char.name === '새리아') {
+                    const toRemove = Math.min(char.count, 3 - sriaRemoved);
+                    sriaRemoved += toRemove;
+                    if (char.count - toRemove > 0) {
+                        remainingChars.push({ ...char, count: char.count - toRemove });
+                    }
+                } else {
+                    remainingChars.push(char);
+                }
+            });
+
+            const tickets = [];
+            if (reoneRemoved > 0) tickets.push({ type: 'tier2', text: 'Ⅱ전설선택권 4장' });
+            if (oldLegendariesFound.size > 0) tickets.push({ type: 'tier1', text: 'Ⅰ전설선택권 4장' });
+            if (sriaRemoved > 0) tickets.push({ type: 'tier3star', text: '3성선택권 3장' });
+
+            return { tickets, remainingChars };
+        }
 
         function displayResults(data, reductionAmount) {
             const res = document.getElementById('results');
@@ -1035,6 +1151,17 @@
                 
                 const [originalChars] = val.split('=').map(s => s.trim());
                 
+                // ===== [수정] 선택권 처리 로직 적용 =====
+                const { tickets, remainingChars } = processCharacterReplacements(originalChars);
+                
+                // 선택권 박스 추가
+                tickets.forEach(ticket => {
+                    const ticketBox = document.createElement('div');
+                    ticketBox.className = `selector-ticket-box ${ticket.type}`;
+                    ticketBox.innerHTML = `<div class="item-title">${ticket.text}</div>`;
+                    imageContainer.appendChild(ticketBox);
+                });
+
                 const allCharImages = [];
                 const extraCharImages = [];
                 const fixedItemsInfo = [
@@ -1042,21 +1169,17 @@
                     { name: '빵', countText: '2000+' }, { name: '소환권', countText: '1200+' }
                 ];
 
-                originalChars.split(' ').forEach(it => {
-                    const m = it.match(/([가-힣]+)(\d*)/);
-                    if (m) {
-                        const [_, name, cnt] = m;
-                        const rep = cnt ? parseInt(cnt) : 1;
-                        const charInfo = characters.find(([_, kor]) => kor === name);
-                        if (charInfo) {
-                             const imageData = {
-                                src: `cropped_characters/${name}.png`, alt: name, engName: charInfo[0], count: rep
-                            };
-                            if (exceptCharacters.includes(charInfo[0]) || tierCharacters.includes(charInfo[0])) {
-                                allCharImages.push(imageData);
-                            } else {
-                                extraCharImages.push(imageData);
-                            }
+                // 남은 캐릭터들 처리
+                remainingChars.forEach(char => {
+                    const charInfo = characters.find(([_, kor]) => kor === char.name);
+                    if (charInfo) {
+                        const imageData = {
+                            src: `cropped_characters/${char.name}.png`, alt: char.name, engName: charInfo[0], count: char.count
+                        };
+                        if (exceptCharacters.includes(charInfo[0]) || tierCharacters.includes(charInfo[0])) {
+                            allCharImages.push(imageData);
+                        } else {
+                            extraCharImages.push(imageData);
                         }
                     }
                 });
@@ -1064,10 +1187,10 @@
                 if (allCharImages.length > 0) {
                     const firstCharData = allCharImages[0];
                     imageContainer.appendChild(createCharacterImageElement(firstCharData, false));
-                    const remainingCharsData = allCharImages.slice(1);
-                    if (remainingCharsData.length > 0) {
+                    const remainingDisplayChars = allCharImages.slice(1);
+                    if (remainingDisplayChars.length > 0) {
                         item.classList.add('lazy-load-item');
-                        item.dataset.remainingChars = JSON.stringify(remainingCharsData);
+                        item.dataset.remainingChars = JSON.stringify(remainingDisplayChars);
                     }
                 }
 
@@ -1210,10 +1333,21 @@
             }
 
             const characterPart = originalDataString.split('=')[0].trim();
+            
+            // ===== [수정] 복사 텍스트에 선택권 반영 =====
+            const { tickets, remainingChars } = processCharacterReplacements(characterPart);
+            const ticketCopyText = tickets.map(t => {
+                if(t.type === 'tier2') return 'Ⅱ전설선택권4장';
+                if(t.type === 'tier1') return 'Ⅰ전설선택권4장';
+                if(t.type === 'tier3star') return '3성선택권3장';
+            }).join(' ');
+            const remainingCharsCopyText = remainingChars.map(c => `${c.name}${c.count > 1 ? c.count : ''}`).join(' ');
+            const newCharacterPart = [ticketCopyText, remainingCharsCopyText].filter(Boolean).join(' ');
+            
             const discountedPriceText = priceElement.textContent;
             const formattedDiscountedPrice = discountedPriceText.replace('₩', '').trim();
             
-            const textToCopy = `${characterPart} = ${formattedDiscountedPrice} (${numericId})`;
+            const textToCopy = `${newCharacterPart} = ${formattedDiscountedPrice} (${numericId})`;
 
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showCopyMessage();
