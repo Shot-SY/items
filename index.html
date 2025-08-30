@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>영웅전설: 가가브 트릴로지</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-37K1C9W7BK"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js/id=G-37K1C9W7BK"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -339,44 +339,61 @@
 	        font-size: 12px;
 	        font-weight: 600;
 	    }
-        /* ===== 선택권 텍스트 박스 스타일 ===== */
+        /* ===== [수정] 선택권 텍스트 박스 고급 디자인 ===== */
         .selector-ticket-box {
             display: inline-flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: auto; /* 자동 너비 */
-            min-width: 70px;
-            height: 60px; /* 이미지와 높이 동일하게 */
-            padding: 0 10px;
+            width: 85px;
+            height: 60px;
             border-radius: 10px;
             flex-shrink: 0;
             text-align: center;
             box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
         }
-        .selector-ticket-box .item-title {
-            color: #fff;
-            font-size: 14px;
+        .selector-ticket-box .ticket-name {
+            font-size: 13px;
             font-weight: bold;
-            text-shadow: 1px 1px 2px #000;
-            margin: 0;
-            line-height: 1.2;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            line-height: 1.3;
+        }
+        .selector-ticket-box .ticket-count {
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 2px;
         }
         .selector-ticket-box.tier-2 { /* Ⅱ전설 */
-            background: linear-gradient(145deg, #4a00e0, #8e2de2);
-            border: 2px solid #c593ff;
-            box-shadow: 0 0 12px rgba(138, 45, 226, 0.7), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(200, 150, 255, 0.3);
+            background: radial-gradient(ellipse at center, #7e3ff2, #4a00e0);
+            border: 2px solid #ab82ff;
+            box-shadow: 0 0 15px rgba(171, 130, 255, 0.6), 
+                        inset 0 0 8px rgba(255, 255, 255, 0.2), 
+                        0 2px 5px rgba(0,0,0,0.5);
         }
+        .selector-ticket-box.tier-2 .ticket-name { color: #f0e6ff; }
+        .selector-ticket-box.tier-2 .ticket-count { color: #d9c0ff; }
+
         .selector-ticket-box.tier-1 { /* Ⅰ전설 */
-            background: linear-gradient(145deg, #004d40, #00796b);
-            border: 2px solid #4db6ac;
-            box-shadow: 0 0 12px rgba(0, 121, 107, 0.7), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(77, 182, 172, 0.3);
+            background: radial-gradient(ellipse at center, #26a69a, #004d40);
+            border: 2px solid #80cbc4;
+            box-shadow: 0 0 15px rgba(77, 182, 172, 0.6), 
+                        inset 0 0 8px rgba(255, 255, 255, 0.2), 
+                        0 2px 5px rgba(0,0,0,0.5);
         }
+        .selector-ticket-box.tier-1 .ticket-name { color: #e0f2f1; }
+        .selector-ticket-box.tier-1 .ticket-count { color: #b2dfdb; }
+
         .selector-ticket-box.tier-3star { /* 3성 */
-            background: linear-gradient(145deg, #1565c0, #42a5f5);
-            border: 2px solid #64b5f6;
-            box-shadow: 0 0 12px rgba(66, 165, 245, 0.7), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 5px rgba(100, 181, 246, 0.3);
+            background: radial-gradient(ellipse at center, #2979ff, #1565c0);
+            border: 2px solid #82b1ff;
+            box-shadow: 0 0 15px rgba(130, 177, 255, 0.6), 
+                        inset 0 0 8px rgba(255, 255, 255, 0.2), 
+                        0 2px 5px rgba(0,0,0,0.5);
         }
+        .selector-ticket-box.tier-3star .ticket-name { color: #e3f2fd; }
+        .selector-ticket-box.tier-3star .ticket-count { color: #bbdefb; }
 	    .price-box {
 	        display: flex;
 	        flex-direction: column;
@@ -626,7 +643,9 @@
 	        .price-box, .extras-box { flex-grow: 1; justify-content: center;}
 	        .price-box { align-items: center; }
 	        .small-character-img, .price-box, .extras-box, .selector-ticket-box { height: 52px; } /* [크기 조정] */
-            .selector-ticket-box .item-title { font-size: 12px; }
+            .selector-ticket-box { width: 75px; }
+            .selector-ticket-box .ticket-name { font-size: 11px; }
+            .selector-ticket-box .ticket-count { font-size: 10px; margin-top: 1px; }
 	        .item-images { gap: 8px; } /* [크기 조정] */
 	
 	        #copyInstruction { font-size: 1em; }
@@ -939,7 +958,6 @@
         function checkConditions(chars) {
             const count = {};
             
-            // ===== [수정] 선택권으로 캐릭터를 교체한 후 필터링 =====
             let reoneRemoved = 0;
             const oldLegendaryEng = ['my', 'er', 'ge', 'th']; // 마일, 어빈, 게르드, 토마스
             const oldLegendaryFound = new Set();
@@ -966,7 +984,6 @@
                 }
             });
 
-            // 교체 후 남은 캐릭터들로 개수 계산
             charsAfterReplacement.forEach(c => { 
                 const name = c.slice(0,2); 
                 const num = parseInt(c[2]); 
@@ -1058,7 +1075,6 @@
             setupScrollIndicatorForItem(item);
         }
         
-        // ===== [수정] 캐릭터 목록을 처리하여 선택권과 남은 캐릭터로 분리하는 함수 =====
         function processCharacterReplacements(originalCharsString) {
             const parsedChars = originalCharsString.split(' ').map(it => {
                 const m = it.match(/([가-힣]+)(\d*)/);
@@ -1098,9 +1114,9 @@
             });
 
             const tickets = [];
-            if (reoneRemoved > 0) tickets.push({ type: 'tier2', text: 'Ⅱ전설선택권 4장' });
-            if (oldLegendariesFound.size > 0) tickets.push({ type: 'tier1', text: 'Ⅰ전설선택권 4장' });
-            if (sriaRemoved > 0) tickets.push({ type: 'tier3star', text: '3성선택권 3장' });
+            if (reoneRemoved > 0) tickets.push({ type: 'tier-2', name: 'Ⅱ전설선택권', count: '4장' });
+            if (oldLegendariesFound.size > 0) tickets.push({ type: 'tier-1', name: 'Ⅰ전설선택권', count: '4장' });
+            if (sriaRemoved > 0) tickets.push({ type: 'tier-3star', name: '3성선택권', count: '3장' });
 
             return { tickets, remainingChars };
         }
@@ -1151,14 +1167,16 @@
                 
                 const [originalChars] = val.split('=').map(s => s.trim());
                 
-                // ===== [수정] 선택권 처리 로직 적용 =====
                 const { tickets, remainingChars } = processCharacterReplacements(originalChars);
                 
-                // 선택권 박스 추가
+                // ===== [수정] 선택권 박스 2줄 레이아웃으로 추가 =====
                 tickets.forEach(ticket => {
                     const ticketBox = document.createElement('div');
                     ticketBox.className = `selector-ticket-box ${ticket.type}`;
-                    ticketBox.innerHTML = `<div class="item-title">${ticket.text}</div>`;
+                    ticketBox.innerHTML = `
+                        <div class="ticket-name">${ticket.name}</div>
+                        <div class="ticket-count">${ticket.count}</div>
+                    `;
                     imageContainer.appendChild(ticketBox);
                 });
 
@@ -1169,7 +1187,6 @@
                     { name: '빵', countText: '2000+' }, { name: '소환권', countText: '1200+' }
                 ];
 
-                // 남은 캐릭터들 처리
                 remainingChars.forEach(char => {
                     const charInfo = characters.find(([_, kor]) => kor === char.name);
                     if (charInfo) {
@@ -1334,12 +1351,11 @@
 
             const characterPart = originalDataString.split('=')[0].trim();
             
-            // ===== [수정] 복사 텍스트에 선택권 반영 =====
             const { tickets, remainingChars } = processCharacterReplacements(characterPart);
             const ticketCopyText = tickets.map(t => {
-                if(t.type === 'tier2') return 'Ⅱ전설선택권4장';
-                if(t.type === 'tier1') return 'Ⅰ전설선택권4장';
-                if(t.type === 'tier3star') return '3성선택권3장';
+                if(t.type === 'tier-2') return 'Ⅱ전설선택권4장';
+                if(t.type === 'tier-1') return 'Ⅰ전설선택권4장';
+                if(t.type === 'tier-3star') return '3성선택권3장';
             }).join(' ');
             const remainingCharsCopyText = remainingChars.map(c => `${c.name}${c.count > 1 ? c.count : ''}`).join(' ');
             const newCharacterPart = [ticketCopyText, remainingCharsCopyText].filter(Boolean).join(' ');
