@@ -339,61 +339,100 @@
 	        font-size: 12px;
 	        font-weight: 600;
 	    }
-        /* ===== [수정] 선택권 텍스트 박스 고급 디자인 ===== */
+        /* ===== [수정] 선택권 박스 고급 디자인 V2 ===== */
+        :root { --easing: cubic-bezier(.4,.16,.2,.98); }
         .selector-ticket-box {
-            display: inline-flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 85px;
-            height: 60px;
+            --bg: #23262f; --border: #666; --glow: rgba(255,255,255,.08);
+            --accent: #bbb; --text-main: #f5f7fa; --text-sub: #c2c8d6;
+            
+            position: relative; display: inline-flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            width: 85px; height: 60px;
             border-radius: 10px;
             flex-shrink: 0;
-            text-align: center;
-            box-sizing: border-box;
-            position: relative;
             overflow: hidden;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 0 1px rgba(255,255,255,.03),
+                        0 4px 14px -4px rgba(0,0,0,.6),
+                        0 0 28px -6px var(--glow);
+            transition: transform .4s var(--easing), box-shadow .4s var(--easing);
         }
+        .selector-ticket-box::before, .selector-ticket-box::after {
+            content: ""; position: absolute; inset: 0; pointer-events: none;
+        }
+        .selector-ticket-box::before { /* 조명 효과 */
+            opacity: .8; mix-blend-mode: color-dodge;
+        }
+        .selector-ticket-box::after { /* 광택 Sweep 애니메이션 */
+            background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.25) 50%, transparent 65%);
+            transform:translateX(-120%);
+            animation: sweep 5s linear infinite;
+            opacity:0;
+        }
+        @keyframes sweep {
+            0%,40% { transform:translateX(-130%); opacity:0; } 52% { opacity:1; }
+            70% { opacity:0; } 100% { transform:translateX(130%); opacity:0; }
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .selector-ticket-box:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 0 0 1px rgba(255,255,255,.05),
+                            0 6px 18px -5px rgba(0,0,0,.7),
+                            0 0 38px -5px var(--glow);
+            }
+            .selector-ticket-box:hover::after { animation-play-state: running; }
+        }
+
         .selector-ticket-box .ticket-name {
-            font-size: 13px;
-            font-weight: bold;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-            line-height: 1.3;
+            font-size: 13px; font-weight: 600; line-height: 1.25;
+            background: linear-gradient(90deg, var(--text-main), var(--accent));
+            -webkit-background-clip: text; color: transparent;
+            text-shadow: 0 0 8px rgba(0,0,0,.3);
         }
         .selector-ticket-box .ticket-count {
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 2px;
+            font-size: 12px; font-weight: 500; margin-top: 3px;
+            color: var(--text-sub);
+            text-shadow: 0 0 4px rgba(0,0,0,.5);
         }
-        .selector-ticket-box.tier-2 { /* Ⅱ전설 */
-            background: radial-gradient(ellipse at center, #7e3ff2, #4a00e0);
-            border: 2px solid #ab82ff;
-            box-shadow: 0 0 15px rgba(171, 130, 255, 0.6), 
-                        inset 0 0 8px rgba(255, 255, 255, 0.2), 
-                        0 2px 5px rgba(0,0,0,0.5);
-        }
-        .selector-ticket-box.tier-2 .ticket-name { color: #f0e6ff; }
-        .selector-ticket-box.tier-2 .ticket-count { color: #d9c0ff; }
 
-        .selector-ticket-box.tier-1 { /* Ⅰ전설 */
-            background: radial-gradient(ellipse at center, #26a69a, #004d40);
-            border: 2px solid #80cbc4;
-            box-shadow: 0 0 15px rgba(77, 182, 172, 0.6), 
-                        inset 0 0 8px rgba(255, 255, 255, 0.2), 
-                        0 2px 5px rgba(0,0,0,0.5);
+        /* Ⅱ/Ⅰ 전설 테마 (붉은색) */
+        .ticket-theme-legendary {
+            --bg: radial-gradient(ellipse at top center, #5c1f24, #1c0a0d);
+            --border: rgba(255, 82, 82, 0.6);
+            --glow: rgba(255, 64, 129, 0.6);
+            --accent: #ffcdd2;
+            --text-main: #fff5f5;
+            --text-sub: #ffc4c4;
+            animation: subtlePulse 6s ease-in-out infinite;
         }
-        .selector-ticket-box.tier-1 .ticket-name { color: #e0f2f1; }
-        .selector-ticket-box.tier-1 .ticket-count { color: #b2dfdb; }
+        .ticket-theme-legendary::before {
+            background: radial-gradient(circle at 20% 85%, rgba(255, 100, 150, .45), transparent 60%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 80, 80, .5), transparent 55%);
+        }
 
-        .selector-ticket-box.tier-3star { /* 3성 */
-            background: radial-gradient(ellipse at center, #2979ff, #1565c0);
-            border: 2px solid #82b1ff;
-            box-shadow: 0 0 15px rgba(130, 177, 255, 0.6), 
-                        inset 0 0 8px rgba(255, 255, 255, 0.2), 
-                        0 2px 5px rgba(0,0,0,0.5);
+        /* 3성 테마 (주황/금색) */
+        .ticket-theme-3star {
+            --bg: linear-gradient(145deg, #4d3e00, #2b2100);
+            --border: rgba(255, 193, 7, 0.6);
+            --glow: rgba(255, 160, 0, 0.5);
+            --accent: #ffe082;
+            --text-main: #fffde7;
+            --text-sub: #ffecb3;
         }
-        .selector-ticket-box.tier-3star .ticket-name { color: #e3f2fd; }
-        .selector-ticket-box.tier-3star .ticket-count { color: #bbdefb; }
+        .ticket-theme-3star::before {
+            background: radial-gradient(circle at 15% 20%, rgba(255, 230, 150, .4), transparent 60%),
+                        linear-gradient(160deg, rgba(255, 185, 84, .25), transparent 70%);
+        }
+        
+        @keyframes subtlePulse {
+            0%,100% { box-shadow: 0 0 0 1px rgba(255,255,255,.03),
+                                 0 4px 14px -4px rgba(0,0,0,.6),
+                                 0 0 28px -6px var(--glow); }
+            50% { box-shadow: 0 0 0 1px rgba(255,255,255,.06),
+                               0 4px 18px -4px rgba(0,0,0,.7),
+                               0 0 38px -6px var(--glow); }
+        }
 	    .price-box {
 	        display: flex;
 	        flex-direction: column;
@@ -1114,9 +1153,9 @@
             });
 
             const tickets = [];
-            if (reoneRemoved > 0) tickets.push({ type: 'tier-2', name: 'Ⅱ전설선택권', count: '4장' });
-            if (oldLegendariesFound.size > 0) tickets.push({ type: 'tier-1', name: 'Ⅰ전설선택권', count: '4장' });
-            if (sriaRemoved > 0) tickets.push({ type: 'tier-3star', name: '3성선택권', count: '3장' });
+            if (reoneRemoved > 0) tickets.push({ type: 'legendary', name: 'Ⅱ전설선택권', count: '4장' });
+            if (oldLegendariesFound.size > 0) tickets.push({ type: 'legendary', name: 'Ⅰ전설선택권', count: '4장' });
+            if (sriaRemoved > 0) tickets.push({ type: '3star', name: '3성선택권', count: '3장' });
 
             return { tickets, remainingChars };
         }
@@ -1169,10 +1208,11 @@
                 
                 const { tickets, remainingChars } = processCharacterReplacements(originalChars);
                 
-                // ===== [수정] 선택권 박스 2줄 레이아웃으로 추가 =====
+                // ===== [수정] 고급 테마 적용 로직 =====
                 tickets.forEach(ticket => {
                     const ticketBox = document.createElement('div');
-                    ticketBox.className = `selector-ticket-box ${ticket.type}`;
+                    const themeClass = ticket.type === 'legendary' ? 'ticket-theme-legendary' : 'ticket-theme-3star';
+                    ticketBox.className = `selector-ticket-box ${themeClass}`;
                     ticketBox.innerHTML = `
                         <div class="ticket-name">${ticket.name}</div>
                         <div class="ticket-count">${ticket.count}</div>
@@ -1353,9 +1393,9 @@
             
             const { tickets, remainingChars } = processCharacterReplacements(characterPart);
             const ticketCopyText = tickets.map(t => {
-                if(t.type === 'tier-2') return 'Ⅱ전설선택권4장';
-                if(t.type === 'tier-1') return 'Ⅰ전설선택권4장';
-                if(t.type === 'tier-3star') return '3성선택권3장';
+                if(t.type === 'legendary' && t.name.startsWith('Ⅱ')) return 'Ⅱ전설선택권4장';
+                if(t.type === 'legendary' && t.name.startsWith('Ⅰ')) return 'Ⅰ전설선택권4장';
+                if(t.type === '3star') return '3성선택권3장';
             }).join(' ');
             const remainingCharsCopyText = remainingChars.map(c => `${c.name}${c.count > 1 ? c.count : ''}`).join(' ');
             const newCharacterPart = [ticketCopyText, remainingCharsCopyText].filter(Boolean).join(' ');
