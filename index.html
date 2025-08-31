@@ -367,10 +367,8 @@
                         0 4px 14px -4px rgba(0,0,0,.6),
                         0 0 28px -6px var(--glow);
         }
-        .selector-ticket-box::before, .selector-ticket-box::after {
-            content: ""; position: absolute; inset: 0; pointer-events: none;
-        }
         .selector-ticket-box::before {
+            content: ""; position: absolute; inset: 0; pointer-events: none;
             opacity: .8; mix-blend-mode: color-dodge;
         }
         
@@ -393,7 +391,6 @@
             --accent: #ffcdd2;
             --text-main: #fff5f5;
             --text-sub: #ffc4c4;
-            animation: subtlePulse 6s ease-in-out infinite;
         }
         .ticket-theme-legendary::before {
             background: radial-gradient(circle at 20% 85%, rgba(255, 100, 150, .45), transparent 60%),
@@ -413,34 +410,6 @@
                         linear-gradient(160deg, rgba(255, 185, 84, .25), transparent 70%);
         }
         
-        @keyframes subtlePulse {
-            0%,100% { box-shadow: 0 0 0 1px rgba(255,255,255,.03),
-                                 0 4px 14px -4px rgba(0,0,0,.6),
-                                 0 0 28px -6px var(--glow); }
-            50% { box-shadow: 0 0 0 1px rgba(255,255,255,.06),
-                               0 4px 18px -4px rgba(0,0,0,.7),
-                               0 0 38px -6px var(--glow); }
-        }
-
-        .selector-ticket-box::after,
-        .character-img-wrapper::after,
-        .image-with-count-container.super-rare::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.5) 50%, transparent 65%);
-            transform: translateX(-120%);
-            animation: sweep 5.5s linear infinite;
-            mix-blend-mode: color-dodge;
-            z-index: 2;
-            pointer-events: none;
-        }
-        @keyframes sweep {
-            0%, 20% { transform: translateX(-130%) skewX(-20deg); opacity: 0; }
-            35% { opacity: 1; }
-            50% { opacity: 0; }
-            100% { transform: translateX(130%) skewX(-20deg); opacity: 0; }
-        }
 	    .price-box {
 	        display: flex;
 	        flex-direction: column;
@@ -744,10 +713,11 @@
             img.decoding = 'async';
 
             imgWrapper.appendChild(img);
-
-            if (charBox.classList.contains('super-rare')) {
-                imgWrapper.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
-            }
+            
+            // ===== [제거] 애니메이션 딜레이 제거 =====
+            // if (charBox.classList.contains('super-rare')) {
+            //     imgWrapper.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
+            // }
 
             const nameSpan = document.createElement('span');
             nameSpan.className = 'character-name';
@@ -969,7 +939,6 @@
             if (exceptCharacters.includes(charData.engName)) {
                 img.classList.add('super-rare');
                 container.classList.add('super-rare');
-                container.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
                 badgeClass = 'super-rare-badge';
             } else if (tierCharacters.includes(charData.engName)) {
                 img.classList.add('rare');
@@ -1015,15 +984,13 @@
                 
                 lazyContent.forEach(itemData => {
                     let element;
-                    // ===== [수정] itemData.type을 정확히 확인하여 분기 =====
                     if (itemData.type === 'ticket') {
                         element = document.createElement('div');
                         const themeClass = itemData.ticketClass === 'legendary' ? 'ticket-theme-legendary' : 'ticket-theme-3star';
                         element.className = `selector-ticket-box ${themeClass}`;
                         element.innerHTML = `<div class="ticket-name">${itemData.name}</div><div class="ticket-count">${itemData.count}</div>`;
-                        element.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
                         element.classList.add('js-lazy-loaded');
-                    } else if (itemData.type === 'character') { // character 타입 명시
+                    } else if (itemData.type === 'character') {
                         element = createCharacterImageElement(itemData, true);
                     }
 
@@ -1041,7 +1008,6 @@
             setupScrollIndicatorForItem(item);
         }
         
-        // ===== [수정] processCharacterReplacements 함수에서 ticket의 클래스 정보를 명확히 분리 =====
         function processCharacterReplacements(originalCharsString) {
             const parsedChars = originalCharsString.split(' ').map(it => {
                 const m = it.match(/([가-힣]+)(\d*)/);
@@ -1146,7 +1112,6 @@
                 });
                 
                 const lazyLoadItems = [];
-                // ===== [수정] lazyLoadItems에 type을 명확히 추가 =====
                 tickets.forEach(ticket => lazyLoadItems.push({ type: 'ticket', ...ticket }));
                 allCharImages.forEach(char => lazyLoadItems.push({ type: 'character', ...char }));
 
@@ -1158,7 +1123,6 @@
                         const themeClass = firstItem.ticketClass === 'legendary' ? 'ticket-theme-legendary' : 'ticket-theme-3star';
                         element.className = `selector-ticket-box ${themeClass}`;
                         element.innerHTML = `<div class="ticket-name">${firstItem.name}</div><div class="ticket-count">${firstItem.count}</div>`;
-                        element.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
                     } else { // character
                         element = createCharacterImageElement(firstItem, false);
                     }
@@ -1316,7 +1280,6 @@
             
             const { tickets, remainingChars } = processCharacterReplacements(characterPart);
             const ticketCopyText = tickets.map(t => {
-                // ===== [수정] t.type 대신 t.ticketClass 사용 =====
                 if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅱ')) return 'Ⅱ전설선택권4장';
                 if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅰ')) return 'Ⅰ전설선택권4장';
                 if(t.ticketClass === '3star') return '3성선택권3장';
