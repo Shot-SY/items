@@ -186,8 +186,9 @@
 	        position: fixed;
 	        top: 50%;
 	        left: 50%;
-	        transform: translate(-50%, -50%) scale(0.8);
-	        background-color: rgba(0,0,0,0.8);
+            --copy-translate-y: -50%; 
+	        transform: translate(-50%, var(--copy-translate-y)) scale(0.8);
+	        background: linear-gradient(135deg, #232526 0%, #414345 100%);
 	        color: #fff;
 	        padding: 20px 30px;
 	        border-radius: 12px;
@@ -195,14 +196,42 @@
 	        opacity: 0;
 	        font-family: 'Poppins', sans-serif;
 	        font-size: 1.1em;
-	        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-	        z-index: 1000;
+	        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+	        z-index: 5000;
 	        transition: opacity 0.3s ease, transform 0.3s ease;
+	        border-left: 4px solid #ff4081;
+	        will-change: transform, opacity;
 	    }
 	    #copyMessage.show {
-	        display: block;
-	        opacity: 1;
-	        transform: translate(-50%, -50%) scale(1);
+	        display: flex;
+	        align-items: center;
+	        gap: 15px;
+	        animation: messagePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+	    }
+	    @keyframes messagePop {
+	        0% { opacity: 0; transform: translate(-50%, var(--copy-translate-y)) scale(0.8); }
+	        50% { opacity: 1; transform: translate(-50%, var(--copy-translate-y)) scale(1.05); }
+	        100% { opacity: 1; transform: translate(-50%, var(--copy-translate-y)) scale(1); }
+	    }
+	    .copy-icon {
+	        width: 24px;
+	        height: 24px;
+	        background-color: #ff4081;
+	        border-radius: 50%;
+	        display: flex;
+	        align-items: center;
+	        justify-content: center;
+	        animation: pulse 1s infinite;
+	    }
+	    @keyframes pulse {
+	        0% { box-shadow: 0 0 0 0 rgba(255, 64, 129, 0.7); }
+	        70% { box-shadow: 0 0 0 10px rgba(255, 64, 129, 0); }
+	        100% { box-shadow: 0 0 0 0 rgba(255, 64, 129, 0); }
+	    }
+	    .copy-icon svg {
+	        width: 14px;
+	        height: 14px;
+	        fill: white;
 	    }
 	    #results {
 	        padding: 20px;
@@ -563,24 +592,114 @@
 	    .close-button {
 	        color: #aaa; position: absolute; top: 10px; right: 15px;
 	        font-size: 28px; font-weight: bold; cursor: pointer;
+            z-index: 10;
 	    }
 	    .close-button:hover, .close-button:focus { color: #fff; }
 	    #extras-popup-grid {
 	        display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-top: 10px;
 	    }
+        /* --- START: ADDED/MODIFIED FOR POPUP & UI IMPROVEMENTS --- */
+        .new-character-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+            text-transform: uppercase;
+        }
+        .character-box.super-rare .new-character-placeholder,
+        .detail-popup-img.super-rare.new-character-placeholder,
+        .small-character-img.super-rare.new-character-placeholder {
+            border: 2px solid #D32F2F;
+            color: #ff5252;
+            text-shadow: 0 0 8px rgba(255, 82, 82, 0.7);
+            box-shadow: inset 0 0 10px rgba(211, 47, 47, 0.5);
+        }
+        .character-box.rare .new-character-placeholder,
+        .detail-popup-img.rare.new-character-placeholder,
+        .small-character-img.rare.new-character-placeholder {
+            border: 2px solid #ff9800;
+            color: #ffc107;
+            text-shadow: 0 0 8px rgba(255, 193, 7, 0.7);
+            box-shadow: inset 0 0 10px rgba(255, 152, 0, 0.5);
+        }
+        .character-box .new-character-placeholder {
+            width: 80px; height: 90px; font-size: 22px; margin-bottom: 10px;
+        }
+        .image-with-count-container .new-character-placeholder {
+            height: 60px; width: 45px; min-width: 45px; font-size: 14px;
+        }
+        #item-detail-popup-grid .new-character-placeholder {
+            height: 55px; width: 45px; font-size: 12px;
+        }
+		#itemDetailPopup {
+			display: none; position: fixed; z-index: 4500; left: 0; top: 0;
+			width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8);
+			align-items: center; justify-content: center;
+		}
+		.item-detail-popup-content {
+			background-color: #1e1e1e; padding: 25px; border: 1px solid #555;
+			border-radius: 15px; width: 90%; max-width: 800px;
+			box-shadow: 0 5px 25px rgba(0,0,0,0.7);
+            max-height: 80vh; display: flex; flex-direction: column;
+		}
+        #item-detail-popup-grid {
+            overflow-y: auto; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+            padding: 20px 10px; margin-top: 10px;
+            scrollbar-width: thin; scrollbar-color: #ff4081 #1e1e1e;
+        }
+        #item-detail-popup-grid::-webkit-scrollbar { width: 8px; }
+        #item-detail-popup-grid::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 10px; }
+        #item-detail-popup-grid::-webkit-scrollbar-thumb { background-color: #ff4081; border-radius: 10px; border: 2px solid #1e1e1e; }
+        .detail-popup-img {
+            height: 55px; width: auto; object-fit: contain; border-radius: 8px;
+        }
+        .detail-popup-img.rare {
+            border: 2px solid #ff9800; box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+        }
+        .detail-popup-img.super-rare {
+            border: 2px solid #D32F2F; box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);
+        }
+        .detail-popup-img.default-border {
+             border: 2px solid #b0b0b0; box-shadow: 0 0 6px rgba(176, 176, 176, 0.3);
+        }
+        #item-detail-popup-grid .selector-ticket-box {
+            transform: scale(0.9);
+        }
+        .item-detail-popup-footer {
+            margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;
+            display: flex; justify-content: space-around; align-items: center;
+            flex-wrap: wrap; gap: 15px; text-align: center;
+        }
+        .popup-info-box {
+            font-family: 'Poppins', sans-serif; flex: 1;
+        }
+        .footer-label { font-size: 14px; color: #bdc3c7; }
+        .footer-value { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        #popup-total-count-value {
+            color: #ff9800; text-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+        }
+        #popup-price-krw {
+			font-size: 22px; font-weight: 700; color: #ff5252;
+            text-shadow: 0 0 8px rgba(255, 82, 82, 0.6); margin-bottom: 4px;
+        }
+        #popup-original-price { font-size: 14px; color: #bdc3c7; text-decoration: line-through;}
+        /* --- END: ADDED/MODIFIED --- */
 
 	    @media (max-width: 768px) {
 	        .character-grid { grid-template-columns: repeat(auto-fill, minmax(80px,1fr)); gap: 10px; }
 	        .character-box { height: 125px; padding: 8px; }
-	        .character-box .character-img { width: 60px; height: 70px; margin-bottom: 5px; }
+	        .character-box .character-img, .character-box .new-character-placeholder { width: 60px; height: 70px; margin-bottom: 5px; }
 	        .character-box .character-name { font-size: 14px; }
 	        .spinbox-container input[type="number"] { width: 45px; }
 	        #filterButton { font-size: 16px; padding: 12px; }
 	        
 	        .result-item { flex-wrap: wrap; padding: 12px 15px; }
-	        .item-images-wrapper { flex-basis: 100%; }
-	        .item-images { flex-basis: 100%; }
-	        .result-info-right { flex-basis: 100%; justify-content: flex-end; }
+	        .item-images-wrapper, .result-info-right { flex-basis: 100%; }
+	        .result-info-right { justify-content: flex-end; }
 	        .price-box, .extras-box { flex-grow: 1; justify-content: center;}
 	        .price-box { align-items: center; }
 	        .small-character-img, .price-box, .extras-box, .selector-ticket-box { height: 52px; }
@@ -590,7 +709,6 @@
 	        .item-images { gap: 8px; }
 	
 	        #copyInstruction { font-size: 1em; }
-	        #copyMessage { font-size: 1em; padding: 15px 20px; }
 	        .item-box { width: 55px; height: 52px; }
 	        .item-box .item-title { font-size: 10px; margin-bottom: 0; }
 	        .extras-box .item-title { font-size: 13px; }
@@ -603,6 +721,16 @@
 	        .budget-text { font-size: 16px; }
 	        .budget-input-container input[type="number"] { width: 100px; padding: 6px 10px; font-size: 14px; }
 	        .extras-popup-content { width: 90%; padding: 20px; }
+            
+            /* --- Responsive Popup Styles --- */
+            .item-detail-popup-content { width: 95%; padding: 15px; }
+            #item-detail-popup-grid { gap: 5px; padding: 15px 5px; }
+            .detail-popup-img, #item-detail-popup-grid .new-character-placeholder { height: 45px; }
+            #item-detail-popup-grid .selector-ticket-box { transform: scale(0.85); margin: -5px; }
+            .item-detail-popup-footer { gap: 10px; }
+            .footer-label { font-size: 12px; }
+            .footer-value, #popup-price-krw { font-size: 18px; }
+            #popup-original-price { font-size: 12px; }
 	    }
 	</style>
 </head>
@@ -628,7 +756,14 @@
     <button id="filterButton">필터 적용</button>
     <div id="copyInstruction">※ 클릭하면 물품 코드가 복사됩니다</div>
     <div id="results"></div>
-    <div id="copyMessage">복사되었습니다</div>
+    <div id="copyMessage">
+        <div class="copy-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+        </div>
+        <span>복사되었습니다</span>
+    </div>
 
     <div id="extrasPopup">
 		<div class="extras-popup-content">
@@ -637,7 +772,37 @@
 		</div>
 	</div>
 
+    <div id="itemDetailPopup">
+        <div class="item-detail-popup-content">
+            <span class="close-button" id="closeItemDetailPopup">×</span>
+            <div id="item-detail-popup-grid"></div>
+            <div class="item-detail-popup-footer">
+                <div class="popup-info-box">
+                    <div class="footer-value" id="popup-total-count-value"></div>
+                    <div class="footer-label">Total Items</div>
+                </div>
+                <div class="popup-info-box">
+                    <div id="popup-price-krw"></div>
+                    <div id="popup-original-price"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function handleImageError(imgElement) {
+            if (imgElement.dataset.errorHandled) return;
+            imgElement.dataset.errorHandled = 'true';
+
+            const placeholder = document.createElement('div');
+            placeholder.textContent = 'NEW';
+            placeholder.className = imgElement.className;
+            placeholder.classList.add('new-character-placeholder');
+            placeholder.classList.remove('character-img', 'small-character-img', 'detail-popup-img');
+            
+            imgElement.replaceWith(placeholder);
+        }
+
         let lastActivityTime = Date.now();
         const updateActivityTime = () => { lastActivityTime = Date.now(); };
         ['click', 'touchstart', 'scroll', 'keypress'].forEach(event => document.addEventListener(event, updateActivityTime));
@@ -704,21 +869,8 @@
 
             const imgWrapper = document.createElement('div');
             imgWrapper.className = 'character-img-wrapper';
-
-            const img = document.createElement('img');
-            img.src = `cropped_characters/${kor}.png`;
-            img.alt = kor;
-            img.className = 'character-img';
-            img.loading = 'lazy';
-            img.decoding = 'async';
-
-            imgWrapper.appendChild(img);
+            imgWrapper.innerHTML = `<img src="cropped_characters/${kor}.png" alt="${kor}" class="character-img" loading="lazy" decoding="async" onerror="handleImageError(this)">`;
             
-            // ===== [제거] 애니메이션 딜레이 제거 =====
-            // if (charBox.classList.contains('super-rare')) {
-            //     imgWrapper.style.animationDelay = `-${(Math.random() * 5.5).toFixed(2)}s`;
-            // }
-
             const nameSpan = document.createElement('span');
             nameSpan.className = 'character-name';
             nameSpan.textContent = kor;
@@ -934,6 +1086,9 @@
             img.src = charData.src;
             img.alt = charData.alt;
             img.className = 'small-character-img';
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            img.onerror = function() { handleImageError(this) };
             
             let badgeClass = '';
             if (exceptCharacters.includes(charData.engName)) {
@@ -987,9 +1142,8 @@
                     if (itemData.type === 'ticket') {
                         element = document.createElement('div');
                         const themeClass = itemData.ticketClass === 'legendary' ? 'ticket-theme-legendary' : 'ticket-theme-3star';
-                        element.className = `selector-ticket-box ${themeClass}`;
+                        element.className = `selector-ticket-box ${themeClass} js-lazy-loaded`;
                         element.innerHTML = `<div class="ticket-name">${itemData.name}</div><div class="ticket-count">${itemData.count}</div>`;
-                        element.classList.add('js-lazy-loaded');
                     } else if (itemData.type === 'character') {
                         element = createCharacterImageElement(itemData, true);
                     }
@@ -1075,7 +1229,7 @@
                 item.dataset.itemKey = k;
                 item.addEventListener('click', (e) => {
 					if (e.target.closest('.extras-box') || e.target.classList.contains('scroll-indicator')) return;
-					copyToClipboard(item);
+					showItemDetailPopup(k);
 				});
 
                 const val = sortedData[k];
@@ -1234,6 +1388,7 @@
                     img.className = 'small-character-img';
                     img.loading = 'lazy';
                     img.decoding = 'async';
+                    img.onerror = function() { handleImageError(this) };
                     imgContainer.appendChild(img);
 
                     if (item.count > 1) {
@@ -1254,15 +1409,68 @@
 			popup.style.display = 'flex';
 		}
         
-        function copyToClipboard(el) {
-            const itemKey = el.dataset.itemKey;
-            const priceElement = el.querySelector('.price-krw');
+        function showItemDetailPopup(itemKey) {
+            const popup = document.getElementById('itemDetailPopup');
+            const grid = document.getElementById('item-detail-popup-grid');
+            grid.innerHTML = '';
+            grid.scrollTop = 0;
 
-            if (!itemKey || !priceElement) {
-                console.error('복사에 필요한 데이터 키 또는 가격 요소를 찾을 수 없습니다.');
-                return;
-            }
+            const originalDataString = sortedData[itemKey];
+            if (!originalDataString) return;
+
+            const [originalChars] = originalDataString.split('=').map(s => s.trim());
+            const { tickets, remainingChars } = processCharacterReplacements(originalChars);
             
+            let totalItemCount = 0;
+
+            tickets.forEach(ticket => {
+                const ticketBox = document.createElement('div');
+                const themeClass = ticket.ticketClass === 'legendary' ? 'ticket-theme-legendary' : 'ticket-theme-3star';
+                ticketBox.className = `selector-ticket-box ${themeClass}`;
+                ticketBox.innerHTML = `<div class="ticket-name">${ticket.name}</div><div class="ticket-count">${ticket.count}</div>`;
+                grid.appendChild(ticketBox);
+                totalItemCount += parseInt(ticket.count.replace('장',''));
+            });
+
+            remainingChars.forEach(char => {
+                const charInfo = characters.find(([_, kor]) => kor === char.name);
+                if (charInfo) {
+                    totalItemCount += char.count;
+                    for (let i = 0; i < char.count; i++) {
+                        const img = document.createElement('img');
+                        img.src = `cropped_characters/${char.name}.png`;
+                        img.alt = char.name;
+                        img.className = 'detail-popup-img';
+                        img.loading = 'lazy';
+                        img.decoding = 'async';
+                        img.onerror = function() { handleImageError(this) };
+
+                        if (exceptCharacters.includes(charInfo[0])) {
+                            img.classList.add('super-rare');
+                        } else if (tierCharacters.includes(charInfo[0])) {
+                            img.classList.add('rare');
+                        } else {
+                            img.classList.add('default-border');
+                        }
+                        grid.appendChild(img);
+                    }
+                }
+            });
+
+            const allItemKeys = Object.keys(luaData);
+            const reductionAmount = calculateReductionAmount(allItemKeys);
+            const originalPrice = getPrice(itemKey);
+            const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
+
+            document.getElementById('popup-total-count-value').textContent = totalItemCount;
+            document.getElementById('popup-price-krw').textContent = `₩${finalPrice.toLocaleString()}`;
+            document.getElementById('popup-original-price').textContent = originalPrice > 0 ? `₩${originalPrice.toLocaleString()}` : '';
+            
+            popup.style.display = 'flex';
+            copyToClipboard(itemKey);
+        }
+
+        function copyToClipboard(itemKey) {
             const originalDataString = sortedData[itemKey];
             if (!originalDataString) {
                 console.error(`키에 대한 원본 데이터를 찾을 수 없습니다: ${itemKey}`);
@@ -1271,26 +1479,27 @@
 
             let numericId = itemKey; 
             const match = originalDataString.match(/\((\d+)\)\s*$/);
-            
             if (match && match[1]) {
                 numericId = match[1];
             }
 
             const characterPart = originalDataString.split('=')[0].trim();
-            
             const { tickets, remainingChars } = processCharacterReplacements(characterPart);
             const ticketCopyText = tickets.map(t => {
                 if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅱ')) return 'Ⅱ전설선택권4장';
                 if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅰ')) return 'Ⅰ전설선택권4장';
                 if(t.ticketClass === '3star') return '3성선택권3장';
             }).join(' ');
+
             const remainingCharsCopyText = remainingChars.map(c => `${c.name}${c.count > 1 ? c.count : ''}`).join(' ');
             const newCharacterPart = [ticketCopyText, remainingCharsCopyText].filter(Boolean).join(' ');
             
-            const discountedPriceText = priceElement.textContent;
-            const formattedDiscountedPrice = discountedPriceText.replace('₩', '').trim();
+            const allItemKeys = Object.keys(luaData);
+            const reductionAmount = calculateReductionAmount(allItemKeys);
+            const originalPrice = getPrice(itemKey);
+            const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
             
-            const textToCopy = `${newCharacterPart} = ${formattedDiscountedPrice} (${numericId})`;
+            const textToCopy = `${newCharacterPart} = ${finalPrice.toLocaleString()} (${numericId})`;
 
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showCopyMessage();
@@ -1301,8 +1510,27 @@
 
         function showCopyMessage(){
             const msg = document.getElementById('copyMessage');
+            const popup = document.getElementById('itemDetailPopup');
+            const popupContent = popup.querySelector('.item-detail-popup-content');
+
+            if (popup && popup.style.display === 'flex' && popupContent) {
+                const popupRect = popupContent.getBoundingClientRect();
+                msg.style.top = `${popupRect.bottom + 15}px`;
+                msg.style.setProperty('--copy-translate-y', '0');
+            } else {
+                msg.style.top = '50%';
+                msg.style.setProperty('--copy-translate-y', '-50%');
+            }
+            
             msg.classList.add('show');
-            setTimeout(() => { msg.classList.remove('show'); }, 2000);
+            
+            setTimeout(() => {
+                msg.classList.remove('show');
+                setTimeout(() => {
+                    msg.style.top = '';
+                    msg.style.removeProperty('--copy-translate-y');
+                }, 300);
+            }, 2000);
         }
 
         function getSelectedCharacters(){
@@ -1328,11 +1556,25 @@
         document.addEventListener('DOMContentLoaded', () => {
             const extrasPopup = document.getElementById('extrasPopup');
 			const closeExtrasBtn = document.getElementById('closeExtrasPopup');
+            const itemDetailPopup = document.getElementById('itemDetailPopup');
+			const closeItemDetailBtn = document.getElementById('closeItemDetailPopup');
+
 			const hideExtrasPopup = () => { extrasPopup.style.display = 'none'; };
+			const hideItemDetailPopup = () => { itemDetailPopup.style.display = 'none'; };
+
 			closeExtrasBtn.addEventListener('click', hideExtrasPopup);
+            closeItemDetailBtn.addEventListener('click', hideItemDetailPopup);
+
 			window.addEventListener('click', (event) => {
 				if (event.target == extrasPopup) hideExtrasPopup();
+                if (event.target == itemDetailPopup) hideItemDetailPopup();
 			});
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    if (extrasPopup.style.display === 'flex') hideExtrasPopup();
+                    if (itemDetailPopup.style.display === 'flex') hideItemDetailPopup();
+                }
+            });
 
             const resultsContainer = document.getElementById('results');
             if (resultsContainer) {
