@@ -1486,9 +1486,9 @@
             const characterPart = originalDataString.split('=')[0].trim();
             const { tickets, remainingChars } = processCharacterReplacements(characterPart);
             const ticketCopyText = tickets.map(t => {
-                if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅱ')) return 'Ⅱ전설선택권4장';
+                if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅱ')) return 'Ⅱ전설선택권5장';
                 if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅰ')) return 'Ⅰ전설선택권4장';
-                if(t.ticketClass === '3star') return '3성선택권3장';
+                if(t.ticketClass === '3star') return '3성선택권4장';
             }).join(' ');
 
             const remainingCharsCopyText = remainingChars.map(c => `${c.name}${c.count > 1 ? c.count : ''}`).join(' ');
