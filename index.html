@@ -1195,6 +1195,11 @@
             });
 
             const tickets = [];
+            // --- 추가된 부분 시작: 무조건 추가되는 티켓 ---
+            tickets.push({ ticketClass: 'legendary', name: '전체전설선택권', count: '1장' });
+            tickets.push({ ticketClass: 'legendary', name: 'Ⅲ전설선택권', count: '1장' });
+            // --- 추가된 부분 끝 ---
+
             if (reoneRemoved > 0) tickets.push({ ticketClass: 'legendary', name: 'Ⅱ전설선택권', count: '5장' });
             if (oldLegendariesFound.size > 0) tickets.push({ ticketClass: 'legendary', name: 'Ⅰ전설선택권', count: '4장' });
             if (sriaRemoved > 0) tickets.push({ ticketClass: '3star', name: '3성선택권', count: '5장' });
@@ -1486,10 +1491,14 @@
             const characterPart = originalDataString.split('=')[0].trim();
             const { tickets, remainingChars } = processCharacterReplacements(characterPart);
             const ticketCopyText = tickets.map(t => {
+                // --- 추가된 부분: 복사 텍스트 매핑 ---
+                if(t.name === '전체전설선택권') return '전체전설선택권1장';
+                if(t.name === 'Ⅲ전설선택권' && t.count === '1장') return 'Ⅲ전설선택권1장';
+                // ----------------------------------
                 if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅱ')) return 'Ⅱ전설선택권5장';
                 if(t.ticketClass === 'legendary' && t.name.startsWith('Ⅰ')) return 'Ⅰ전설선택권4장';
                 if(t.ticketClass === '3star') return '3성선택권5장';
-            }).join(' ');
+            }).filter(Boolean).join(' ');
 
             const remainingCharsCopyText = remainingChars.map(c => `${c.name}${c.count > 1 ? c.count : ''}`).join(' ');
             const newCharacterPart = [ticketCopyText, remainingCharsCopyText].filter(Boolean).join(' ');
