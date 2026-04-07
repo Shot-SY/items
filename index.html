@@ -12,7 +12,6 @@
       gtag('js', new Date());
       gtag('config', 'G-37K1C9W7BK');
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
 	<style>
 	    body {
 	        font-family: 'Roboto', sans-serif;
@@ -43,7 +42,7 @@
 	        z-index: 1;
 	    }
 	    .character-box {
-	        background: rgba(26,26,26,0.2);
+	        background: rgba(26,26,26,0.85);
 	        border: none;
 	        padding: 15px;
 	        text-align: center;
@@ -56,7 +55,6 @@
 	        height: 160px;
 	        border-radius: 15px;
 	        box-shadow: 0 4px 12px rgba(0,0,0,0.7);
-	        backdrop-filter: blur(5px);
 	        z-index: 1;
 	    }
 	    .character-box.rare {
@@ -332,8 +330,7 @@
 	        right: -5px;
 	        min-width: 20px;
 	        text-align: center;
-	        background: rgba(0, 0, 0, 0.75);
-	        backdrop-filter: blur(4px);
+	        background: rgba(0, 0, 0, 0.85);
 	        color: #fff;
 	        padding: 2px 7px;
 	        border-radius: 9px;
@@ -471,8 +468,7 @@
 	        transform: translateY(-50%);
 	        width: 28px;
 	        height: 28px;
-	        background: linear-gradient(135deg, rgba(40,40,40,0.8), rgba(20,20,20,0.8));
-	        backdrop-filter: blur(5px);
+	        background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(20,20,20,0.9));
 	        border: 1px solid rgba(255,255,255,0.2);
 	        color: #fff;
 	        border-radius: 50%;
@@ -511,9 +507,6 @@
 	        opacity: 0;
 	    }
 	
-	    #tsparticles {
-	        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-	    }
 	    #loader {
 	        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
 	        background-color: rgba(18,18,18,0.95);
@@ -736,7 +729,6 @@
 </head>
 <body>
     <div id="loader"><div class="spinner"></div></div>
-    <div id="tsparticles"></div>
     <h1>영웅전설: 가가브 트릴로지</h1>
     <div class="character-grid" id="characterGrid"></div>
     <div id="budgetContainer">
