@@ -1500,7 +1500,7 @@
             const originalPrice = getPrice(itemKey);
             const finalPrice = Math.round((originalPrice * 0.8) - reductionAmount);
             
-            const textToCopy = `${newCharacterPart} = ${finalPrice.toLocaleString()} (${numericId})`;
+            const textToCopy = `${itemKey} ${newCharacterPart} = ${finalPrice.toLocaleString()} (${numericId})`;
 
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showCopyMessage();
